@@ -1,11 +1,14 @@
 
 import React from 'react';
+import Toolbar from './Toolbar';
 import './App.css';
+import './Main.css';
 import createEngine, { 
   DefaultLinkModel, 
-  DefaultNodeModel,
   DiagramModel 
 } from '@projectstorm/react-diagrams';
+import {StoryNode} from './StoryNode'
+import {TSCustomNodeFactory} from './StoryNodeFactory'
 import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
@@ -29,31 +32,28 @@ class App extends React.Component{
   render(){
     // 1) setup the diagram engine
 var engine = createEngine();
+engine.getNodeFactories().registerFactory(new TSCustomNodeFactory());
 // node 1
-const node1 = new DefaultNodeModel({
-	name: 'Node 1',
-	color: 'rgb(0,192,255)',
-});
+const node1 = new StoryNode({ color: 'rgb(0,192,255)', text: "You are walking down a dark path...", beginning: true });
 node1.setPosition(100, 100);
-let port1 = node1.addOutPort('Out');
-node1.addOutPort('Path 2');
-
-// node 2
-const node2 = new DefaultNodeModel({
-	name: 'Node 2',
-	color: 'rgb(0,192,128)',
-});
-node2.setPosition(100, 200);
-let port2 = node2.addInPort('In');
+const node2 = new StoryNode({ color: 'rgb(0,192,128)', text:"Goodbye!" });
+node2.setPosition(200, 100);
+//let port2 = node2.addInPort('In');
 // link them and add a label to the link
-const link = port1.link<DefaultLinkModel>(port2);
-link.addLabel('Hello World!')
+const link1 = new DefaultLinkModel();
+var p1 = node1.getPort('out');
+if(p1)
+  link1.setSourcePort(p1);
+p1 = node2.getPort('in');
+if(p1)
+  link1.setTargetPort(p1);
 const model = new DiagramModel();
-model.addAll(node1, node2, link);
+model.addAll(node1, node2, link1);
 engine.setModel(model);
       return (
     <div className="App">
       <CanvasWidget className='Graph' engine={engine}/>
+      <Toolbar/>
     </div>
   );
 }
