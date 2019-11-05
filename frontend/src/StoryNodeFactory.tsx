@@ -12,7 +12,7 @@ export class TSCustomNodeFactory extends AbstractReactFactory<StoryNode, Diagram
 	}
 
 	generateModel(initialConfig: any) {
-		return new StoryNode();
+		return new StoryNode({text: "", engine: this.engine});
 	}
 
 	generateReactWidget(event: any): JSX.Element {

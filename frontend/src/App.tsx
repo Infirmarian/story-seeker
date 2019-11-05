@@ -14,6 +14,7 @@ import {TSCustomNodeFactory} from './StoryNodeFactory'
 import {
   CanvasWidget, InputType
 } from '@projectstorm/react-canvas-core';
+import { string } from 'prop-types';
 const SERVER_URL = 'http://need_to_actually_set_this_up.com/graph/submit'
 var story_data = {
   title: "Hello world!",
@@ -57,20 +58,13 @@ class App extends React.Component<{}, AppState>{
 //    engine.getActionEventBus().registerAction(); TODO: Register a delete edge event
 
     engine.getNodeFactories().registerFactory(new TSCustomNodeFactory(this.updateSelectedNode));
-    const node1 = new StoryNode({ text: "You are walking down a dark path...", beginning: true });
+    const node1 = new StoryNode({ text: "You are walking down a dark path...", beginning: true, engine });
     node1.setPosition(100, 100);
     node1.addOutputPort('blue');
     node1.addOutputPort('red');
-    const node2 = new StoryNode({text:"Goodbye!" });
+    const node2 = new StoryNode({text:"Goodbye!", engine });
     node2.setPosition(200, 100);
-    const link1 = new DefaultLinkModel();
-    var p1 = node1.getPort('out');
-    if(p1)
-      link1.setSourcePort(p1);
-    p1 = node2.getPort('in');
-    if(p1)
-      link1.setTargetPort(p1);
-    model.addAll(node1, node2, link1);
+    model.addAll(node1, node2);
     engine.setModel(model);
 
     this.state = {
@@ -85,22 +79,19 @@ class App extends React.Component<{}, AppState>{
    );
   }
   addNode(){
-    console.log('Adding Node from App.tsx');
-    const Node1 = new StoryNode({text: 'Default'});
+    const Node1 = new StoryNode({text: 'Default', engine: this.state.engine});
     this.state.model.addNode(Node1);
-    this.forceUpdate();
+    this.state.engine.repaintCanvas();
   }
   compressModelToJson(): string{
     const model = this.state.model;
     const nodes = model.getNodes();
-    let result = {}
+    let result = {};
     nodes.forEach(element => {
       const question = element as StoryNode;
       question.getOutputPorts().forEach(port =>{
         const links = port.getLinks();
-        if(Object.keys(links).length !== 1){
-          console.log('Too many outputs on a port');
-        }
+        links[0].getTargetPort().getNode();
       })
     });
     return JSON.stringify(result);
@@ -112,6 +103,7 @@ class App extends React.Component<{}, AppState>{
       }
     })
     ns.setBeginning();
+    this.state.engine.repaintCanvas();
   }
   render(){
     const {selectedNode} = this.state;

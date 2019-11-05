@@ -42,7 +42,8 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
     }
     render(){
         const {isBeginning, fulltext} = this.state;
-        if(!this.props.node){
+        const {node} = this.props;
+        if(!node){
             return (
                 <div className = 'toolbar'></div>
             )
@@ -54,18 +55,15 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
                 <form>
                     <textarea value={fulltext}
                         onChange={(event)=>{this.recalculateState({isBeginning, fulltext: event.target.value})}}></textarea>
-                    <select name="outputs">
-                        <option value="0">0</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
                     <input type='checkbox' name='beginning' checked={isBeginning} readOnly/>
                     Beginning Node
                     <input type='button' name='make beginning' value='make beginning'
-                    onClick={()=>{this.props.setBeginning(this.props.node)}}/>
+                    onClick={()=>{this.props.setBeginning(node)}}/>
                     <input type='submit' value='Save Node'
-                    onClick = {(event)=>{event.preventDefault(); this.saveNode(this.props.node);}}/>
+                    onClick = {(event)=>{event.preventDefault(); this.saveNode(node);}}/>
                 </form>
+                <button className={'append-button button ' + (node.getOutputPorts().length < 3 ? 'append-button-enabled' : '')} 
+                onClick={()=>{node.addOutputPort('hello world?')}}>Add Question</button>
             </div>
         )
     }

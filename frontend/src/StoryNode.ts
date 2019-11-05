@@ -1,11 +1,12 @@
-import { NodeModel } from '@projectstorm/react-diagrams';
+import { NodeModel, DiagramEngine } from '@projectstorm/react-diagrams';
 import { QuestionPort, InputPort } from './CustomPorts';
 import { BaseModelOptions } from '@projectstorm/react-canvas-core';
-
-export interface TSCustomNodeModelOptions extends BaseModelOptions {
+const uuid = require('uuid/v4');
+export interface StoryNodeOptions extends BaseModelOptions {
     color?: string;
     text: string;
     beginning?: boolean;
+    engine: DiagramEngine;
 }
 const MIN_TEXT_LENGTH = 20;
 
@@ -15,8 +16,9 @@ export class StoryNode extends NodeModel {
     question: string;
     isBeginning: boolean;
     inputPort: InputPort | null;
+    engine: DiagramEngine;
 
-	constructor(options: TSCustomNodeModelOptions = {text:""}) {
+	constructor(options: StoryNodeOptions) {
 		super({
 			...options,
 			type: 'ts-custom-node'
@@ -25,6 +27,7 @@ export class StoryNode extends NodeModel {
         this.text = options.text;
         this.question = "...?";
         this.isBeginning = options.beginning || false;
+        this.engine = options.engine;
 
         // If not the beginning node, add an input port
         if(!this.isBeginning){
@@ -56,13 +59,11 @@ export class StoryNode extends NodeModel {
             new QuestionPort({
                 question: option,
                 in: false,
-                name: 'qport'
+                name: String(uuid())
             })
         );
-        console.log('Added new port with option '+option);
         return true;
     }
-
     getShortText(): string{
         return this.text.substring(0, MIN_TEXT_LENGTH)+' ...';
     }
@@ -87,9 +88,26 @@ export class StoryNode extends NodeModel {
         return this.inputPort;
     }
     setBeginning(): void{
+        if(this.inputPort){
+            var incomingLinks = []
+            for(var v in this.inputPort.getLinks()){
+                incomingLinks.push(this.inputPort.getLinks()[v]);
+            }
+            incomingLinks.forEach(element => {
+                element.remove();
+            });
+            this.inputPort.remove();
+            this.inputPort = null;
+        }
         this.isBeginning = true;
     }
     clearBeginning(): void{
+        this.inputPort = this.addPort(
+            new InputPort({
+                in: true,
+                name: 'in'
+            })
+        ) as InputPort;
         this.isBeginning = false;
     }
 }
