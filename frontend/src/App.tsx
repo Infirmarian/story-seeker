@@ -6,7 +6,8 @@ import './Main.css';
 import createEngine, { 
   DefaultLinkModel, 
   DiagramModel, 
-  DiagramEngine
+  DiagramEngine,
+  DefaultDiagramState
 } from '@projectstorm/react-diagrams';
 import {StoryNode} from './StoryNode'
 import {TSCustomNodeFactory} from './StoryNodeFactory'
@@ -39,6 +40,11 @@ class App extends React.Component<{}, AppState>{
     super(props);
     const engine = createEngine();
     const model = new DiagramModel();
+    const state = engine.getStateMachine().getCurrentState();
+    if (state instanceof DefaultDiagramState) {
+      console.log('Preventing loose links');
+      state.dragNewLink.config.allowLooseLinks = false;
+    }
     this.updateSelectedNode = this.updateSelectedNode.bind(this);
     this.addNode = this.addNode.bind(this);
     this.compressModelToJson = this.compressModelToJson.bind(this);

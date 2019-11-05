@@ -11,21 +11,31 @@ export class QuestionPort extends DefaultPortModel{
         this.setMaximumLinks(1);
     }
     canLinkToPort(port: PortModel): boolean {
-        if(Object.keys(this.links).length > 0) return false;
-		if (port instanceof DefaultPortModel) {
-			return this.options.in !== port.getOptions().in;
+		if (port instanceof InputPort) {
+			return true;
         }
         if(port instanceof QuestionPort) return false;
-		return true;
+		return false;
     }
     createLinkModel(): LinkModel{
-        // TODO
+        var vs = Object.values(this.links);
+        if (vs.length > 0) {
+            vs[0].remove();
+        }
         const lm = new DefaultLinkModel();
         return lm
     }
 }
 export class InputPort extends DefaultPortModel{
     canLinkToPort(port: PortModel): boolean{
+        console.log('Linking to InputPort');
+        if(port instanceof QuestionPort){
+            if(Object.values(port.links).length > 0) return false;
+            return true;
+        }
         return false;
+    }
+    createLinkModel(): LinkModel{
+        return new DefaultLinkModel();
     }
 }
