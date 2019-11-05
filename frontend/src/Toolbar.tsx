@@ -4,6 +4,7 @@ import { StoryNode } from './StoryNode';
 interface ToolbarProps{
     node: StoryNode;
     addNodeFunc: ()=> void;
+    setBeginning: (ns: StoryNode)=>void;
 }
 interface ToolbarState{
     fulltext: string;
@@ -19,7 +20,6 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
         };
     }
     recalculateState(ns: ToolbarState){
-        console.log(this.props.node)
         if(ns.fulltext){
             this.setState(ns);
         }else{
@@ -32,7 +32,8 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
     componentDidUpdate(prevProps: ToolbarProps, prevState: ToolbarState){
         if(prevProps.node !== this.props.node){
             this.setState({
-                fulltext: this.props.node ? this.props.node.getFullText() : ""
+                fulltext: this.props.node ? this.props.node.getFullText() : "",
+                isBeginning: this.props.node ? this.props.node.isBeginning : false
             })
         }
     }
@@ -41,6 +42,11 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
     }
     render(){
         const {isBeginning, fulltext} = this.state;
+        if(!this.props.node){
+            return (
+                <div className = 'toolbar'></div>
+            )
+        }
         return (
             <div className = 'toolbar'>
                 Toolbar
@@ -53,8 +59,10 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
                         <option value="2">2</option>
                         <option value="3">3</option>
                     </select>
-                    <input type='checkbox' name='beginning' defaultChecked={isBeginning}/>
+                    <input type='checkbox' name='beginning' checked={isBeginning} readOnly/>
                     Beginning Node
+                    <input type='button' name='make beginning' value='make beginning'
+                    onClick={()=>{this.props.setBeginning(this.props.node)}}/>
                     <input type='submit' value='Save Node'
                     onClick = {(event)=>{event.preventDefault(); this.saveNode(this.props.node);}}/>
                 </form>

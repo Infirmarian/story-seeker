@@ -35,7 +35,8 @@ export class TSCustomNodeWidget extends React.Component<TSCustomNodeWidgetProps,
 			inelement = null;
 		}
 		return (
-			<div className="story-node" onClick={() => (this.state.callback(this.props.node))}>
+			<div className={this.props.node.isBeginning ? 'story-header story-node' : 'story-node'}
+			 onClick={() => (this.state.callback(this.props.node))}>
 				{inelement}
 				<p>{this.props.node.getShortText()}</p>
 				{outputs}

@@ -1,5 +1,5 @@
-import { NodeModel, PortModel, DefaultPortModel } from '@projectstorm/react-diagrams';
-import { QuestionPort } from './QuestionPort';
+import { NodeModel } from '@projectstorm/react-diagrams';
+import { QuestionPort, InputPort } from './CustomPorts';
 import { BaseModelOptions } from '@projectstorm/react-canvas-core';
 
 export interface TSCustomNodeModelOptions extends BaseModelOptions {
@@ -14,7 +14,7 @@ export class StoryNode extends NodeModel {
     text: string;
     question: string;
     isBeginning: boolean;
-    inputPort: PortModel | null;
+    inputPort: InputPort | null;
 
 	constructor(options: TSCustomNodeModelOptions = {text:""}) {
 		super({
@@ -29,21 +29,14 @@ export class StoryNode extends NodeModel {
         // If not the beginning node, add an input port
         if(!this.isBeginning){
             this.inputPort = this.addPort(
-                new DefaultPortModel({
+                new InputPort({
                     in: true,
                     name: 'in'
                 })
-            );
+            ) as InputPort;
         }else{
             this.inputPort = null;
         }
-        this.addPort(
-            new QuestionPort({
-                in: false,
-                name: 'out',
-                question: 'What do you do?'
-            })
-        );
 	}
 
 	serialize() {
@@ -57,6 +50,19 @@ export class StoryNode extends NodeModel {
 		super.deserialize(event);
 		this.color = event.data.color;
     }
+    addOutputPort(option: string): boolean{
+        if(this.getOutputPorts().length >= 3) return false;
+        this.addPort(
+            new QuestionPort({
+                question: option,
+                in: false,
+                name: 'qport'
+            })
+        );
+        console.log('Added new port with option '+option);
+        return true;
+    }
+
     getShortText(): string{
         return this.text.substring(0, MIN_TEXT_LENGTH)+' ...';
     }
@@ -69,15 +75,21 @@ export class StoryNode extends NodeModel {
     getQuestion(): string{
         return this.question;
     }
-    getOutputPorts(): PortModel[]{
-        var result: PortModel[] = [];
+    getOutputPorts(): QuestionPort[]{
+        var result: QuestionPort[] = [];
         for(var k in this.ports){
             if(this.ports[k] instanceof QuestionPort)
-                result.push(this.ports[k]);
+                result.push(this.ports[k] as QuestionPort);
         }
         return result;
     }
-    getInputPort(): PortModel | null{
+    getInputPort(): InputPort | null{
         return this.inputPort;
+    }
+    setBeginning(): void{
+        this.isBeginning = true;
+    }
+    clearBeginning(): void{
+        this.isBeginning = false;
     }
 }
