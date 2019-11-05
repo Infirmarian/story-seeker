@@ -32,3 +32,15 @@
 .App-link {
   color: #09d3ac;
 }
+
+.story-node{
+  background: dodgerblue;
+  border: solid 2px gray;
+	border-radius: 5px;
+	width: 100px;
+	height: 100px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	position: relative;
+}

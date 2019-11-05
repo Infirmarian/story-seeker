@@ -5,19 +5,21 @@ import { StoryNode } from './StoryNode';
 export interface TSCustomNodeWidgetProps {
 	node: StoryNode;
 	engine: DiagramEngine;
+	callback: (node: StoryNode) => void
 }
 
-export interface TSCustomNodeWidgetState {}
+export interface TSCustomNodeWidgetState {
+	callback: (node: StoryNode) => void
+}
 
 export class TSCustomNodeWidget extends React.Component<TSCustomNodeWidgetProps, TSCustomNodeWidgetState> {
 	constructor(props: TSCustomNodeWidgetProps) {
 		super(props);
-		this.state = {};
+		this.state = {callback: props.callback};
 	}
 
 	render() {
 		var outputPorts = this.props.node.getOutputPorts();
-		console.log(outputPorts);
 		const outputs = outputPorts.map((value) => 
 			<PortWidget engine={this.props.engine} port={value} key={value.getID()}>
 				<div className="circle-port"/>
@@ -33,7 +35,7 @@ export class TSCustomNodeWidget extends React.Component<TSCustomNodeWidgetProps,
 			inelement = null;
 		}
 		return (
-			<div className="custom-node">
+			<div className="story-node" onClick={() => (this.state.callback(this.props.node))}>
 				{inelement}
 				<p>{this.props.node.getShortText()}</p>
 				{outputs}

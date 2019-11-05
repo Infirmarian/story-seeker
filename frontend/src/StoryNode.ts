@@ -37,6 +37,13 @@ export class StoryNode extends NodeModel {
         }else{
             this.inputPort = null;
         }
+        this.addPort(
+            new QuestionPort({
+                in: false,
+                name: 'out',
+                question: 'What do you do?'
+            })
+        );
 	}
 
 	serialize() {
@@ -55,6 +62,9 @@ export class StoryNode extends NodeModel {
     }
     getFullText(): string{
         return this.text;
+    }
+    setFullText(nt: string): void{
+        this.text = nt;
     }
     getQuestion(): string{
         return this.question;

@@ -5,8 +5,10 @@ import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
 import { DiagramEngine } from '@projectstorm/react-diagrams-core';
 
 export class TSCustomNodeFactory extends AbstractReactFactory<StoryNode, DiagramEngine> {
-	constructor() {
+	callback: (node: StoryNode) => void;
+	constructor(focusFunc: (node: StoryNode) => void) {
 		super('ts-custom-node');
+		this.callback = focusFunc;
 	}
 
 	generateModel(initialConfig: any) {
@@ -14,6 +16,6 @@ export class TSCustomNodeFactory extends AbstractReactFactory<StoryNode, Diagram
 	}
 
 	generateReactWidget(event: any): JSX.Element {
-		return <TSCustomNodeWidget engine={this.engine as DiagramEngine} node={event.model} />;
+		return <TSCustomNodeWidget engine={this.engine as DiagramEngine} node={event.model} callback={this.callback}/>;
 	}
 }
