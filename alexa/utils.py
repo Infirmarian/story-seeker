@@ -1,3 +1,4 @@
+# Copyright Robert Geil 2019
 import logging
 import os
 import boto3
@@ -23,6 +24,25 @@ def create_presigned_url(object_name):
 
     # The response contains the presigned URL
     return response
+def select_option(attr, option):
+    story = attr['STORY']
+    index = attr['INDEX']
+    if option >= len(story['content'][index]['options']):
+        return 'Please choose an option between 1 and %d' % len(story['content'][index]['options'])
+    attr['INDEX'] = story['content'][index]['options'][option][1]
+    return get_main(attr) + ' ' + get_question(attr)
+
+def get_initial(attr):
+    return 'Ok, lets start %s. %s %s' % (attr['STORY']['title'], get_main(attr), get_question(attr))
+def get_main(attr):
+    return attr['STORY']['content'][attr['INDEX']]['main']
+def get_question(attr):
+    options = [n[0] for n in attr['STORY']['content'][attr['INDEX']]['options']]
+    result ='%s %s %s' % (attr['STORY']['content'][attr['INDEX']]['question'],
+                    '\n'.join('%s: %s,' % (i+1, options[i]) for i in range(len(options)-1)),
+                    ' or \n%s: %s' % (len(options), options[-1]))
+    return result
+
 stories = {"":[{
     "main":'''Once upon a time, there were 3 little pigs, who lived in 3 huts. The first pig lived in a hut of straw, the second
 lived in a house of sticks, while the third lived in a fortified bunker of depleted uranium. Our protagonist, a wolfish inspector named
@@ -65,4 +85,3 @@ def fetch_story_by_id(story_id):
 def user_has_reviewed_product(userid, storyid):
     # TODO: Connect to the database and run a query
     return False
-    
