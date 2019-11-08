@@ -30,6 +30,7 @@ STORY_ENDED = 2
 REVIEW_PENDING = 3
 REDEEM_TOKEN = 4
 PURCHASE_TOKEN = 5
+LISTING = 6
 
 
 class LaunchRequestHandler(AbstractRequestHandler):
@@ -159,8 +160,20 @@ class LibraryListingIntentHandler(AbstractRequestHandler):
         if lib is None:
             lib = database.get_user_library(uid)
             attr['LIBRARY'] = lib
-        output = 'You own %s.' % ', '.join(lib[0:3])
-        return handler_input.response_builder.speak(output).response
+        output = 'You own %s. ' % ', '.join(lib[0:3])
+        if len(lib) > 3:
+            output += 'Do you want to list more?'
+            attr['STATE'] = LISTING
+            attr['LIST'] = {'list': lib, 'pos': 3}
+            return handler_input.response_builder.speak(output).ask('Do you want to list more?').response
+        else:
+            return handler_input.response_builder.speak(output).ask('What do you want to do now?').response
+
+class ContinueListIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name('AMAZON.YesIntent')(handler_input) and attr.get('STATE') == LISTING
+    def handle(self, handler_input):
+        pass # TODO
 
 class CreditSummaryIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
@@ -174,7 +187,7 @@ class CreditSummaryIntentHandler(AbstractRequestHandler):
             result = 'You don\'t have any credits. Would you like to purchase some?'
             attr['STATE'] = PURCHASE_TOKEN
         else:
-            result = 'You have %d credits' % num_credits
+            result = 'You have %d credit%s. To get a story, say \'Get [Story Title]\'' % (num_credits, '' if num_credits == 1 else 's')
         return handler_input.response_builder.speak(result).ask(result).response
 
 class PurchaseInitiationIntentHandler(AbstractRequestHandler):
@@ -222,14 +235,79 @@ class BuyReturnFromPurchaseIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         return (is_request_type("Connections.Response")(handler_input) and handler_input.request_envelope.request.name == "Buy")
     def handle(self, handler_input):
-        return handler_input.response_builder.speak('thanks for buying!').response
-    
-# TODO:
+        uid = handler_input.request_envelope.context.system.user.user_id
+        in_skill_response = utils.in_skill_product_response(handler_input)
+        product_id = handler_input.request_envelope.request.payload.get("productId")
+        if in_skill_response:
+            product = [l for l in in_skill_response.in_skill_products
+                       if l.product_id == product_id]
+            if handler_input.request_envelope.request.status.code == "200":
+                purchase_result = handler_input.request_envelope.request.payload.get("purchaseResult")
+                result = ''
+                if purchase_result == PurchaseResult.ACCEPTED.value:
+                    add_tokens = 0
+                    if product[0].reference_name == 'story_token_1':
+                        database.add_user_balance(uid, 1)
+                    elif product[0].reference_name == 'story_token_5':
+                        database.add_user_balance(uid, 1)
+                    new_balance = database.get_user_balance(uid)
+                    if new_balance:
+                        result = 'You now have %d token%s. To get a story, say \'Get [Story Title]\'' % (new_balance, '' if new_balance == 1 else 's')
+                elif purchase_result in (PurchaseResult.DECLINED.value,
+                        PurchaseResult.ERROR.value,
+                        PurchaseResult.NOT_ENTITLED.value):
+                    result = 'Thank you for your interest in %s.' % product[0].name
+                return handler_input.response_builder.speak(result).response
+            else:
+                return handler_input.response_builder.speak('There was an issue with your purchase request. Please try again or contact us for help').response
+
 class ProductDescriptionIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         return ask_utils.is_intent_name('ProductSummary')(handler_input)
     def handle(self, handler_input):
-        return handler_input.response_builder.speak('hi').response
+        in_skill_response = utils.in_skill_product_response(handler_input)
+        if in_skill_response:
+            product_id = utils.get_resolved_id(handler_input, 'product')
+            if product_id is None:
+                return handler_input.response_builder.speak('I couldn\'t find that product.').ask('I didn\'t get that, can you try again?').response
+            products = [l for l in in_skill_response.in_skill_products if l.reference_name == product_id]
+            speech = ("%s.  To buy it, say Buy %s" % (products[0].summary, products[0].name))
+            reprompt = "I didn't catch that. To buy %s, say Buy %s" % (products[0].name, products[0].name)
+            return handler_input.response_builder.speak(speech).ask(reprompt).response
+        return handler_input.response_builder.speak('I couldn\'t find that product. To list products, say \'What can I buy?\'').response
+# TODO:
+class GetStoryIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name('GetStory')(handler_input)
+    def handle(self, handler_input):
+        uid = handler_input.request_envelope.context.system.user.user_id
+        title = utils.get_resolved_value(handler_input, 'story')
+        storyid = utils.get_resolved_id(handler_input, 'story')
+        result = database.purchase_book(uid, storyid)
+        if result == 'Insufficient Funds':
+            return handler_input.response_builder.speak('''You don't have any tokens in your account. 
+            To see what token packs you can buy, say 'What can I buy?'. ''').response
+        elif result == 'Already Owned':
+            return handler_input.response_builder.speak(
+                'You already own %s. To listen to %s, say \'Tell me %s\'. To find another story, say \'Search For Stories\'. You can specify a genre, rating and author.' % 
+                (title, title, title)).response
+        else:
+            return handler_input.response_builder.speak('%s has been added to your library! To listen to it, say \'Tell me %s\'' % (title, title)).response
+
+# TODO:
+class SearchStoriesIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name('SearchStories')(handler_input)
+    def handle(self, handler_input):
+        uid = handler_input.request_envelope.context.system.user.user_id
+        author = utils.get_resolved_id(handler_input, 'author')
+        genre = utils.get_resolved_id(handler_input, 'genre')
+        rating = utils.get_resolved_id(handler_input, 'rating')
+        stories = database.search(uid, author, genre, rating)
+        if len(stories) == 0:
+            response = "I couldn't find any stories matching those criteria that you don't already own. Try some less specific options"
+        
+        return handler_input.response_builder.speak(response).response
 
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
@@ -336,6 +414,7 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(StartStoryIntentHandler())
 sb.add_request_handler(SelectPathInStoryIntentHandler())
 sb.add_request_handler(LibraryListingIntentHandler())
+sb.add_request_handler(ContinueListIntentHandler())
 sb.add_request_handler(RepeatQuestionIntentHandler())
 sb.add_request_handler(StoryRepeatIntentHandler())
 sb.add_request_handler(StoryDontRepeatIntentHandler())
@@ -347,6 +426,8 @@ sb.add_request_handler(PurchaseInitiationIntentHandler())
 sb.add_request_handler(BuyRequestIntentHandler())
 sb.add_request_handler(BuyReturnFromPurchaseIntentHandler())
 sb.add_request_handler(ProductDescriptionIntentHandler())
+sb.add_request_handler(GetStoryIntentHandler())
+sb.add_request_handler(SearchStoriesIntentHandler())
 
 
 sb.add_request_handler(HelpIntentHandler())
