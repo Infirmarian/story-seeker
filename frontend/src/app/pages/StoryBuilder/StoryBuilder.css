@@ -1,0 +1,43 @@
+.StoryBuilder {
+	display: flex;
+	flex-direction: row;
+}
+
+.story-node {
+	background: dodgerblue;
+	border: solid 2px gray;
+	border-radius: 5px;
+	width: 100px;
+	height: 100px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	position: relative;
+}
+.story-header {
+	background: darkred;
+}
+
+.story-node > p {
+	color: aliceblue;
+	font-size: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+
+.append-button {
+	background: #76b3fa;
+	color: #fff;
+	border-radius: 100px;
+	padding: 10px 20px;
+	text-decoration: none;
+	border-color: azure;
+	border-width: 2px;
+}
+.append-button:focus {
+	outline: none;
+}
+.append-button-enabled:hover {
+	background: rgb(154, 199, 252);
+	color: rgb(124, 124, 124);
+}

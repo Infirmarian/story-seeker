@@ -1,7 +1,57 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-function WorkspaceComponent() {
-	return <div></div>;
+import createEngine, {
+	DefaultLinkModel,
+	DiagramModel,
+	DiagramEngine,
+	DefaultDiagramState,
+} from "@projectstorm/react-diagrams";
+import { TSCustomNodeFactory } from "../StoryNodeFactory";
+import { StoryNode } from "../StoryNode";
+
+import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
+import "./Workspace.css";
+
+interface WorkspaceProps {
+	engine: DiagramEngine;
+	model: DiagramModel;
+	selectedNode: StoryNode;
+}
+function WorkspaceComponent(props: any) {
+	const { engine, model, selectedNode } = props;
+	const {
+		updateSelectedNode,
+		setEngineModel,
+		registerFactory,
+		initializeModel,
+	} = props;
+	console.log(engine, model, selectedNode);
+
+	useEffect(() => {
+		initializeModel();
+		registerFactory(new TSCustomNodeFactory(updateSelectedNode));
+	}, []);
+
+	const state = engine.getStateMachine().getCurrentState();
+	if (state instanceof DefaultDiagramState) {
+		console.log("Preventing loose links");
+		state.dragNewLink.config.allowLooseLinks = false;
+	}
+
+	const actions = engine
+		.getActionEventBus()
+		.getActionsForType(InputType.KEY_DOWN);
+	engine.getActionEventBus().deregisterAction(actions[0]);
+
+	// registerFactory(new TSCustomNodeFactory(updateSelectedNode));
+
+	setEngineModel(model);
+
+	return (
+		<div>
+			<CanvasWidget className="Graph" engine={engine} />
+		</div>
+	);
 }
 
 export default WorkspaceComponent;
