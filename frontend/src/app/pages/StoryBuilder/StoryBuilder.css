@@ -41,3 +41,16 @@
 	background: rgb(154, 199, 252);
 	color: rgb(124, 124, 124);
 }
+
+.circle-port {
+	width: 12px;
+	height: 12px;
+	margin: 2px;
+	border-radius: 4px;
+	background: darkgray;
+	cursor: pointer;
+}
+
+.circle-port:hover {
+	background: mediumpurple;
+}
