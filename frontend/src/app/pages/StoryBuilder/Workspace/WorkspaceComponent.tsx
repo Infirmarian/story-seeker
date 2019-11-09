@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
-import createEngine, {
-	DefaultLinkModel,
+import {
 	DiagramModel,
 	DiagramEngine,
 	DefaultDiagramState,
@@ -23,14 +22,21 @@ function WorkspaceComponent(props: any) {
 		updateSelectedNode,
 		setEngineModel,
 		registerFactory,
+		initializeSelectedNode,
 		initializeModel,
 	} = props;
 	console.log(engine, model, selectedNode);
 
 	useEffect(() => {
+		initializeSelectedNode();
 		initializeModel();
 		registerFactory(new TSCustomNodeFactory(updateSelectedNode));
-	}, []);
+	}, [
+		initializeSelectedNode,
+		initializeModel,
+		registerFactory,
+		updateSelectedNode,
+	]);
 
 	const state = engine.getStateMachine().getCurrentState();
 	if (state instanceof DefaultDiagramState) {

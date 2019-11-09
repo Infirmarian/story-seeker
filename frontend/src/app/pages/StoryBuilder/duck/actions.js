@@ -4,7 +4,10 @@
 export const ADD_NODE = "ADD_NODE";
 export const REMOVE_NODE = "REMOVE_NODE";
 export const UPDATE_START_NODE = "UPDATE_START_NODE";
+
+export const INITIALIZE_SELECTED_NODE = "INITIALIZED_SELECTED_NODE";
 export const UPDATE_SELECTED_NODE = "UPDATE_SELECTED_NODE";
+export const UPDATE_NODE_CONTENT = "UPDATE_NODE_CONTENT";
 
 // ENGINE ACTIONS
 export const SET_ENGINE_MODEL = "SET_ENGINE_MODEL";
@@ -72,5 +75,20 @@ export const registerFactory = (factory) => {
 export const initializeModel = () => {
 	return {
 		type: INITIALIZE_MODEL,
+	};
+};
+
+export const initializeSelectedNode = () => {
+	return {
+		type: INITIALIZE_SELECTED_NODE,
+	};
+};
+
+export const updateNodeContent = (text) => {
+	return {
+		type: UPDATE_NODE_CONTENT,
+		payload: {
+			text,
+		},
 	};
 };

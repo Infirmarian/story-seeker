@@ -10,11 +10,27 @@ interface ToolbarProps {
 }
 
 function ToolbarComponent(props: any) {
-	const { selectedNode } = props;
-	const { addNode, removeNode, updateStartNode } = props;
+	const { selectedNode, nodeContent } = props;
+	console.log(selectedNode);
+	const { addNode, removeNode, updateStartNode, updateNodeContent } = props;
+
+	const handleTextEditorChange = (event: any) => {
+		if (selectedNode != null) {
+			// console.log("change", event.target.value);
+			updateNodeContent(event.target.value);
+		}
+	};
 
 	return (
 		<div className="Toolbar">
+			<form action="">
+				<textarea
+					name=""
+					id=""
+					value={selectedNode ? nodeContent : ""}
+					onChange={(event) => handleTextEditorChange(event)}
+				></textarea>
+			</form>
 			<button onClick={() => addNode()}>Add Node</button>
 			<button onClick={() => removeNode(selectedNode)}>
 				Remove Current Node

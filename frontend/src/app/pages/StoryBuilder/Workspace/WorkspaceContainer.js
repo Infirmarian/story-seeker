@@ -4,6 +4,7 @@ import {
 	updateSelectedNode,
 	setEngineModel,
 	registerFactory,
+	initializeSelectedNode,
 	initializeModel,
 } from "../duck/actions";
 
@@ -22,6 +23,9 @@ const mapDispatchToProps = (dispatch) => ({
 	},
 	registerFactory: (factory) => {
 		dispatch(registerFactory(factory));
+	},
+	initializeSelectedNode: () => {
+		dispatch(initializeSelectedNode());
 	},
 	initializeModel: () => {
 		dispatch(initializeModel());

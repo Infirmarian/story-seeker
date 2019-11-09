@@ -13,7 +13,9 @@ import {
 	ADD_NODE,
 	REMOVE_NODE,
 	UPDATE_START_NODE,
+	INITIALIZE_SELECTED_NODE,
 	UPDATE_SELECTED_NODE,
+	UPDATE_NODE_CONTENT,
 	SET_ENGINE_MODEL,
 	REGISTER_FACTORY,
 	INITIALIZE_MODEL,
@@ -26,6 +28,7 @@ import reduceReducers from "reduce-reducers";
 const initialEngine = createEngine();
 var initialModel = new DiagramModel();
 const initialNode = null;
+const initialNodeContent = "You are walking down a dark path...";
 
 export const engine = (state = initialEngine, action) => {
 	switch (action.type) {
@@ -44,17 +47,6 @@ export const engine = (state = initialEngine, action) => {
 
 export const model = (state = initialModel, action) => {
 	switch (action.type) {
-		case INITIALIZE_MODEL:
-			const node1 = new StoryNode({
-				text: "You are walking down a dark path...",
-				beginning: true,
-				engine,
-			});
-			node1.setPosition(100, 100);
-			node1.addOutputPort("blue");
-			node1.addOutputPort("red");
-			state.addAll(node1);
-			return state;
 		default:
 			return state;
 	}
@@ -64,6 +56,25 @@ export const selectedNode = (state = initialNode, action) => {
 	switch (action.type) {
 		case UPDATE_SELECTED_NODE:
 			return action.payload.selectedNode;
+		case UPDATE_NODE_CONTENT:
+			// console.log(state);
+
+			if (state != null) {
+				// console.log(action.payload.text);
+				state.setFullText(action.payload.text);
+			}
+			return state;
+		default:
+			return state;
+	}
+};
+
+export const nodeContent = (state = initialNodeContent, action) => {
+	switch (action.type) {
+		case UPDATE_NODE_CONTENT:
+			return action.payload.text;
+		case UPDATE_SELECTED_NODE:
+			return action.payload.selectedNode.getFullText();
 		default:
 			return state;
 	}
@@ -74,10 +85,32 @@ export const reducer = reduceReducers(
 		engine,
 		model,
 		selectedNode,
+		nodeContent,
 	}),
 	(state, action) => {
 		const { engine, model, selectedNode } = state;
 		switch (action.type) {
+			case INITIALIZE_SELECTED_NODE:
+				const node = new StoryNode({
+					text: initialNodeContent,
+					beginning: true,
+					engine,
+				});
+				node.setPosition(100, 100);
+				node.addOutputPort("blue");
+				node.addOutputPort("red");
+				return {
+					engine,
+					model,
+					selectedNode: node,
+				};
+			case INITIALIZE_MODEL:
+				model.addAll(selectedNode);
+				return {
+					engine,
+					model,
+					selectedNode,
+				};
 			case ADD_NODE:
 				console.log(
 					model.addNode(

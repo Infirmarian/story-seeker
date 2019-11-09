@@ -1,9 +1,15 @@
 import { connect } from "react-redux";
-import { addNode, removeNode, updateStartNode } from "../duck/actions";
+import {
+	addNode,
+	removeNode,
+	updateStartNode,
+	updateNodeContent,
+} from "../duck/actions";
 import ToolbarComponent from "./ToolbarComponent";
 
 const mapStateToProps = (state) => ({
 	selectedNode: state.story.selectedNode,
+	nodeContent: state.story.nodeContent,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -15,6 +21,9 @@ const mapDispatchToProps = (dispatch) => ({
 	},
 	updateStartNode: (node) => {
 		dispatch(updateStartNode(node));
+	},
+	updateNodeContent: (text) => {
+		dispatch(updateNodeContent(text));
 	},
 });
 
