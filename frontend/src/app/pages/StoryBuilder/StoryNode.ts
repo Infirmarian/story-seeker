@@ -1,6 +1,7 @@
 import { NodeModel, DiagramEngine } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
+import { thisExpression } from "@babel/types";
 const uuid = require("uuid/v4");
 export interface StoryNodeOptions extends BaseModelOptions {
 	color?: string;
@@ -71,16 +72,24 @@ export class StoryNode extends NodeModel {
 	setQuestion(q: string): void {
 		this.question = q;
 	}
-	addOutputPort(option: string): boolean {
+	addOutputPort(option: string): AnswerPort | boolean {
 		if (this.getOutputPorts().length >= 3) return false;
-		this.addPort(
+		var addedPort = this.addPort(
 			new AnswerPort({
 				answer: option,
 				in: false,
 				name: String(uuid()),
 			})
 		);
-		return true;
+		return addedPort as AnswerPort;
+	}
+	removeOutputPort(portID: any): boolean {
+		var portToRemove = this.getPortFromID(portID);
+		if (portToRemove != null) {
+			this.removePort(portToRemove);
+			return true;
+		}
+		return false;
 	}
 	getOutputPorts(): AnswerPort[] {
 		var result: AnswerPort[] = [];
