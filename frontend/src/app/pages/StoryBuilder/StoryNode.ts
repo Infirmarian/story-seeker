@@ -72,7 +72,7 @@ export class StoryNode extends NodeModel {
 	setQuestion(q: string): void {
 		this.question = q;
 	}
-	addOutputPort(option: string): AnswerPort | boolean {
+	addOutputPort(option: string): any {
 		if (this.getOutputPorts().length >= 3) return false;
 		var addedPort = this.addPort(
 			new AnswerPort({
@@ -81,12 +81,20 @@ export class StoryNode extends NodeModel {
 				name: String(uuid()),
 			})
 		);
-		return addedPort as AnswerPort;
+		return addedPort.getOptions().id;
 	}
 	removeOutputPort(portID: any): boolean {
 		var portToRemove = this.getPortFromID(portID);
 		if (portToRemove != null) {
 			this.removePort(portToRemove);
+			return true;
+		}
+		return false;
+	}
+	updateOutputPort(portID: any, message: string): boolean {
+		var portToUpdate = this.getPortFromID(portID);
+		if (portToUpdate instanceof AnswerPort) {
+			portToUpdate.answer = message;
 			return true;
 		}
 		return false;
@@ -98,14 +106,6 @@ export class StoryNode extends NodeModel {
 				result.push(this.ports[k] as AnswerPort);
 		}
 		return result;
-	}
-	updateOutputPort(portNumber: number, message: string): boolean {
-		var portToUpdate = this.ports[portNumber];
-		if (portToUpdate instanceof AnswerPort) {
-			portToUpdate.answer = message;
-			return true;
-		}
-		return false;
 	}
 	getInputPort(): InputPort | null {
 		return this.inputPort;

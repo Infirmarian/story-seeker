@@ -2,7 +2,7 @@ import React from "react";
 import "./PathGroup.css";
 
 function PathGroup(props) {
-	const { label, content, removePath } = props;
+	const { label, content, removePath, updatePath } = props;
 	return (
 		<div className="path-group">
 			<label className="path-label" htmlFor="path-1">
@@ -13,7 +13,10 @@ function PathGroup(props) {
 				name="path-1"
 				id="path-1"
 				value={content}
-				onChange={null}
+				onChange={(event) => {
+					console.log(event.target.value);
+					updatePath(event.target.value, label - 1);
+				}}
 			></input>
 			{/* <div className="delete-btn btn">x</div> */}
 			<span

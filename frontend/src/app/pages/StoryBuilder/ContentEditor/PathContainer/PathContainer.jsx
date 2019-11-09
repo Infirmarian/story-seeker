@@ -27,20 +27,22 @@ function PathContainer(props) {
 	}, [selectedNode]);
 	const handleAddPath = () => {
 		const addedPort = selectedNode.addOutputPort("");
-		setPaths((prev) => {
-			return [
-				...prev,
-				{
-					id: addedPort.options.id,
-					answer: addedPort.answer,
-				},
-			];
-		});
+		if (addedPort != false) {
+			setPaths((prev) => {
+				return [
+					...prev,
+					{
+						id: addedPort,
+						answer: "",
+					},
+				];
+			});
+		}
 	};
 	const handleRemovePath = (path) => {
-		console.log(path, paths);
+		// console.log(path, paths);
 		const port = paths[path];
-		console.log(port);
+		// console.log(port);
 		console.log(selectedNode.removeOutputPort(port.id));
 		setPaths((prev) => {
 			const newState = prev.filter((el, index) => {
@@ -49,6 +51,21 @@ function PathContainer(props) {
 			console.log(newState);
 			return newState;
 		});
+	};
+
+	const handleUpdatePath = (message, path) => {
+		console.log(message);
+		const port = paths[path];
+		if (selectedNode.updateOutputPort(port.id, message)) {
+			setPaths((prev) => {
+				var newState = [...prev];
+				newState[path] = {
+					id: prev[path].id,
+					answer: message,
+				};
+				return newState;
+			});
+		}
 	};
 
 	return (
@@ -61,6 +78,7 @@ function PathContainer(props) {
 								label={index + 1}
 								content={path.answer}
 								removePath={handleRemovePath}
+								updatePath={handleUpdatePath}
 							/>
 						);
 				  })
