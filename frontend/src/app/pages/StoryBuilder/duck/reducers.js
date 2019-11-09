@@ -15,7 +15,6 @@ import {
 	UPDATE_START_NODE,
 	INITIALIZE_SELECTED_NODE,
 	UPDATE_SELECTED_NODE,
-	UPDATE_NODE_CONTENT,
 	SET_ENGINE_MODEL,
 	REGISTER_FACTORY,
 	INITIALIZE_MODEL,
@@ -27,8 +26,12 @@ import reduceReducers from "reduce-reducers";
 
 const initialEngine = createEngine();
 var initialModel = new DiagramModel();
-const initialNode = null;
 const initialNodeContent = "You are walking down a dark path...";
+const initialNode = new StoryNode({
+	text: initialNodeContent,
+	beginning: true,
+	engine: initialEngine,
+});
 
 export const engine = (state = initialEngine, action) => {
 	switch (action.type) {
@@ -56,25 +59,6 @@ export const selectedNode = (state = initialNode, action) => {
 	switch (action.type) {
 		case UPDATE_SELECTED_NODE:
 			return action.payload.selectedNode;
-		case UPDATE_NODE_CONTENT:
-			// console.log(state);
-
-			if (state != null) {
-				// console.log(action.payload.text);
-				state.setFullText(action.payload.text);
-			}
-			return state;
-		default:
-			return state;
-	}
-};
-
-export const nodeContent = (state = initialNodeContent, action) => {
-	switch (action.type) {
-		case UPDATE_NODE_CONTENT:
-			return action.payload.text;
-		case UPDATE_SELECTED_NODE:
-			return action.payload.selectedNode.getFullText();
 		default:
 			return state;
 	}
@@ -85,24 +69,18 @@ export const reducer = reduceReducers(
 		engine,
 		model,
 		selectedNode,
-		nodeContent,
 	}),
 	(state, action) => {
 		const { engine, model, selectedNode } = state;
 		switch (action.type) {
 			case INITIALIZE_SELECTED_NODE:
-				const node = new StoryNode({
-					text: initialNodeContent,
-					beginning: true,
-					engine,
-				});
-				node.setPosition(100, 100);
-				node.addOutputPort("blue");
-				node.addOutputPort("red");
+				selectedNode.setPosition(100, 100);
+				selectedNode.addOutputPort("blue");
+				selectedNode.addOutputPort("red");
 				return {
 					engine,
 					model,
-					selectedNode: node,
+					selectedNode,
 				};
 			case INITIALIZE_MODEL:
 				model.addAll(selectedNode);

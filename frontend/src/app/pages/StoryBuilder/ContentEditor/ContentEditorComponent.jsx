@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { StoryNode } from "../StoryNode";
+import React, { useState, useEffect } from "react";
 import "./ContentEditor.css";
-import PathGroup from "./PathContainer/PathGroup/PathGroup";
 import PathContainer from "./PathContainer/PathContainer";
-
+import { useInput } from "../utils/custom-hooks.js";
 // interface EditorProps {
 // 	selectedNode: StoryNode;
 // 	nodeContent: string;
@@ -16,17 +14,39 @@ import PathContainer from "./PathContainer/PathContainer";
 // 	paths: Array<any>;
 // 	setPaths: SetStateAction<Array<any>>;
 // }
-function ContentEditorComponent(props) {
-	const { selectedNode, nodeContent } = props;
-	console.log(selectedNode);
-	const { removeNode, updateStartNode, updateNodeContent } = props;
 
-	const handleTextEditorChange = (event) => {
-		if (selectedNode != null) {
-			// console.log("change", event.target.value);
-			updateNodeContent(event.target.value);
-		}
-	};
+function ContentEditorComponent(props) {
+	const { selectedNode } = props;
+	const { removeNode, updateStartNode } = props;
+	const {
+		value: nodeContent,
+		setValue: setNodeContent,
+		reset: resetNodeContent,
+		bind: bindNodeContent,
+	} = useInput(
+		selectedNode.getFullText(),
+		selectedNode.setFullText,
+		selectedNode
+	);
+
+	const {
+		value: question,
+		setValue: setQuestion,
+		reset: resetQuestion,
+		bind: bindQuestion,
+	} = useInput(
+		selectedNode.getQuestion(),
+		selectedNode.setQuestion,
+		selectedNode
+	);
+	useEffect(() => {
+		setQuestion(selectedNode.getQuestion());
+		setNodeContent(selectedNode.getFullText());
+		return () => {
+			setQuestion("");
+			setNodeContent("");
+		};
+	}, [selectedNode]);
 
 	return (
 		<div className="Content-Editor">
@@ -39,8 +59,7 @@ function ContentEditorComponent(props) {
 					className=" input-fields"
 					name="content"
 					id="content"
-					value={selectedNode ? nodeContent : ""}
-					onChange={(event) => handleTextEditorChange(event)}
+					{...bindNodeContent}
 				></textarea>
 				<label className="input-labels" htmlFor="question">
 					Question
@@ -49,6 +68,7 @@ function ContentEditorComponent(props) {
 					className=" input-fields"
 					name="question"
 					id="question"
+					{...bindQuestion}
 				></input>
 				<label className="input-labels" htmlFor="">
 					Paths

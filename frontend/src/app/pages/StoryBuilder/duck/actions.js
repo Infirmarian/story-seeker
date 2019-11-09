@@ -7,7 +7,6 @@ export const UPDATE_START_NODE = "UPDATE_START_NODE";
 
 export const INITIALIZE_SELECTED_NODE = "INITIALIZED_SELECTED_NODE";
 export const UPDATE_SELECTED_NODE = "UPDATE_SELECTED_NODE";
-export const UPDATE_NODE_CONTENT = "UPDATE_NODE_CONTENT";
 
 // ENGINE ACTIONS
 export const SET_ENGINE_MODEL = "SET_ENGINE_MODEL";
@@ -81,14 +80,5 @@ export const initializeModel = () => {
 export const initializeSelectedNode = () => {
 	return {
 		type: INITIALIZE_SELECTED_NODE,
-	};
-};
-
-export const updateNodeContent = (text) => {
-	return {
-		type: UPDATE_NODE_CONTENT,
-		payload: {
-			text,
-		},
 	};
 };
