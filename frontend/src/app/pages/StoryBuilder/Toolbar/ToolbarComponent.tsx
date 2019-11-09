@@ -23,17 +23,23 @@ function ToolbarComponent(props: any) {
 
 	return (
 		<div className="Toolbar">
-			<form action="">
-				<textarea
-					name=""
-					id=""
-					value={selectedNode ? nodeContent : ""}
-					onChange={(event) => handleTextEditorChange(event)}
-				></textarea>
-			</form>
+			<textarea
+				name=""
+				id=""
+				value={selectedNode ? nodeContent : ""}
+				onChange={(event) => handleTextEditorChange(event)}
+			></textarea>
 			<button onClick={() => addNode()}>Add Node</button>
 			<button onClick={() => removeNode(selectedNode)}>
 				Remove Current Node
+			</button>
+			<button
+				onClick={() => selectedNode.addOutputPort()}
+				disabled={
+					selectedNode ? selectedNode.getOutputPorts() >= 3 : false
+				}
+			>
+				Add Question
 			</button>
 		</div>
 	);
