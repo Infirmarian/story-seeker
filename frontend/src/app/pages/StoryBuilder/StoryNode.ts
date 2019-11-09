@@ -1,5 +1,5 @@
 import { NodeModel, DiagramEngine } from "@projectstorm/react-diagrams";
-import { QuestionPort, InputPort } from "./CustomPorts";
+import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
 const uuid = require("uuid/v4");
 export interface StoryNodeOptions extends BaseModelOptions {
@@ -55,17 +55,6 @@ export class StoryNode extends NodeModel {
 		super.deserialize(event);
 		this.color = event.data.color;
 	}
-	addOutputPort(option: string): boolean {
-		if (this.getOutputPorts().length >= 3) return false;
-		this.addPort(
-			new QuestionPort({
-				question: option,
-				in: false,
-				name: String(uuid()),
-			})
-		);
-		return true;
-	}
 	getShortText(): string {
 		return this.text.substring(0, MIN_TEXT_LENGTH) + " ...";
 	}
@@ -73,19 +62,41 @@ export class StoryNode extends NodeModel {
 		return this.text;
 	}
 	setFullText(nt: string): void {
-		console.log(nt);
+		// console.log(nt);
 		this.text = nt;
 	}
 	getQuestion(): string {
 		return this.question;
 	}
-	getOutputPorts(): QuestionPort[] {
-		var result: QuestionPort[] = [];
+	setQuestion(q: string): void {
+		this.question = q;
+	}
+	addOutputPort(option: string): boolean {
+		if (this.getOutputPorts().length >= 3) return false;
+		this.addPort(
+			new AnswerPort({
+				answer: option,
+				in: false,
+				name: String(uuid()),
+			})
+		);
+		return true;
+	}
+	getOutputPorts(): AnswerPort[] {
+		var result: AnswerPort[] = [];
 		for (var k in this.ports) {
-			if (this.ports[k] instanceof QuestionPort)
-				result.push(this.ports[k] as QuestionPort);
+			if (this.ports[k] instanceof AnswerPort)
+				result.push(this.ports[k] as AnswerPort);
 		}
 		return result;
+	}
+	updateOutputPort(portNumber: number, message: string): boolean {
+		var portToUpdate = this.ports[portNumber];
+		if (portToUpdate instanceof AnswerPort) {
+			portToUpdate.answer = message;
+			return true;
+		}
+		return false;
 	}
 	getInputPort(): InputPort | null {
 		return this.inputPort;

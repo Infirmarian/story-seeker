@@ -1,0 +1,9 @@
+.Editor {
+	width: 30vw;
+	min-height: 100vh;
+	background: gray;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}

@@ -1,6 +1,8 @@
 import React from "react";
 import { StoryNode } from "../StoryNode";
+import { AnswerPort } from "../CustomPorts";
 import "./Toolbar.css";
+import { DefaultLinkModel } from "@projectstorm/react-diagrams";
 
 interface ToolbarProps {
 	node: StoryNode;
@@ -10,37 +12,49 @@ interface ToolbarProps {
 }
 
 function ToolbarComponent(props: any) {
-	const { selectedNode, nodeContent } = props;
-	console.log(selectedNode);
-	const { addNode, removeNode, updateStartNode, updateNodeContent } = props;
+	const { model, addNode } = props;
 
-	const handleTextEditorChange = (event: any) => {
-		if (selectedNode != null) {
-			// console.log("change", event.target.value);
-			updateNodeContent(event.target.value);
-		}
+	const convertModelToJSON = () => {
+		var result: { content: Array<any> } = {
+			content: [],
+		};
+		const nodes = model.getNodes();
+		// console.log(nodes);
+		nodes.forEach((node: StoryNode) => {
+			const main = node.text;
+			const question = node.question;
+			var options: Array<Array<any>> = [];
+			// console.log(main, question);
+			node.getOutputPorts().forEach((port: AnswerPort) => {
+				const links = port.getLinks();
+				// console.log("current port:", port, "links:", links);
+				// console.log(links.getTargetPort().getNode());
+				for (var link in links) {
+					// console.logs(link, links[link]);
+					const linkedNode = links[link].getTargetPort().getNode();
+					options.push([port.answer, linkedNode.getOptions().id]);
+				}
+			});
+			result.content.push({
+				main,
+				question,
+				options,
+			});
+		});
+		// console.log(result);
+		// console.log(JSON.stringify(result));
+		return JSON.stringify(result);
+	};
+
+	const handleSubmit = () => {
+		const submission = convertModelToJSON();
+		console.log(submission);
 	};
 
 	return (
 		<div className="Toolbar">
-			<textarea
-				name=""
-				id=""
-				value={selectedNode ? nodeContent : ""}
-				onChange={(event) => handleTextEditorChange(event)}
-			></textarea>
 			<button onClick={() => addNode()}>Add Node</button>
-			<button onClick={() => removeNode(selectedNode)}>
-				Remove Current Node
-			</button>
-			<button
-				onClick={() => selectedNode.addOutputPort()}
-				disabled={
-					selectedNode ? selectedNode.getOutputPorts() >= 3 : false
-				}
-			>
-				Add Question
-			</button>
+			<button onClick={handleSubmit}>Submit</button>
 		</div>
 	);
 }

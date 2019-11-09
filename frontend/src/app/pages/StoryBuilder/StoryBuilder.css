@@ -3,6 +3,11 @@
 	flex-direction: row;
 }
 
+.Workspace {
+	display: flex;
+	flex-direction: column;
+}
+
 .story-node {
 	background: dodgerblue;
 	border: solid 2px gray;
