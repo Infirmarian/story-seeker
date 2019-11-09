@@ -21,6 +21,7 @@ function ToolbarComponent(props: any) {
 		const nodes = model.getNodes();
 		// console.log(nodes);
 		nodes.forEach((node: StoryNode) => {
+			const id = node.getOptions().id;
 			const main = node.text;
 			const question = node.question;
 			var options: Array<Array<any>> = [];
@@ -36,6 +37,7 @@ function ToolbarComponent(props: any) {
 				}
 			});
 			result.content.push({
+				id,
 				main,
 				question,
 				options,
