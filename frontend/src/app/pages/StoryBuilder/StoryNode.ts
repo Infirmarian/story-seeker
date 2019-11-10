@@ -57,7 +57,7 @@ export class StoryNode extends NodeModel {
 		this.color = event.data.color;
 	}
 	getShortText(): string {
-		return this.text.substring(0, MIN_TEXT_LENGTH) + " ...";
+		return this.text.substring(0, MIN_TEXT_LENGTH) + "...";
 	}
 	getFullText(): string {
 		return this.text;
@@ -65,6 +65,7 @@ export class StoryNode extends NodeModel {
 	setFullText(nt: string): void {
 		// console.log(nt);
 		this.text = nt;
+		this.engine.repaintCanvas();
 	}
 	getQuestion(): string {
 		return this.question;
@@ -77,16 +78,19 @@ export class StoryNode extends NodeModel {
 		var addedPort = this.addPort(
 			new AnswerPort({
 				answer: option,
+				engine: this.engine,
 				in: false,
 				name: String(uuid()),
 			})
 		);
+		this.engine.repaintCanvas();
 		return addedPort.getOptions().id;
 	}
 	removeOutputPort(portID: any): boolean {
 		var portToRemove = this.getPortFromID(portID);
 		if (portToRemove != null) {
 			this.removePort(portToRemove);
+			this.engine.repaintCanvas();
 			return true;
 		}
 		return false;
@@ -94,9 +98,12 @@ export class StoryNode extends NodeModel {
 	updateOutputPort(portID: any, message: string): boolean {
 		var portToUpdate = this.getPortFromID(portID);
 		if (portToUpdate instanceof AnswerPort) {
-			portToUpdate.answer = message;
+			console.log("node", message);
+			portToUpdate.setAnswer(message);
+			this.engine.repaintCanvas();
 			return true;
 		}
+		this.engine.repaintCanvas();
 		return false;
 	}
 	getOutputPorts(): AnswerPort[] {
@@ -123,6 +130,7 @@ export class StoryNode extends NodeModel {
 			this.inputPort = null;
 		}
 		this.isBeginning = true;
+		this.engine.repaintCanvas();
 	}
 	clearBeginning(): void {
 		this.inputPort = this.addPort(

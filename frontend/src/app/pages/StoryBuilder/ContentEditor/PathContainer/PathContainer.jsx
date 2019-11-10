@@ -3,7 +3,7 @@ import PathGroup from "./PathGroup/PathGroup";
 import "./PathContainer.css";
 
 function PathContainer(props) {
-	const { selectedNode } = props;
+	const { engine, selectedNode } = props;
 
 	const [paths, setPaths] = useState([]);
 	useEffect(() => {
@@ -66,6 +66,7 @@ function PathContainer(props) {
 				return newState;
 			});
 		}
+		engine.repaintCanvas();
 	};
 
 	return (

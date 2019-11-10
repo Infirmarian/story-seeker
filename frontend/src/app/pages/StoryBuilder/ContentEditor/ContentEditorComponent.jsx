@@ -16,7 +16,7 @@ import { useInput } from "../utils/custom-hooks.js";
 // }
 
 function ContentEditorComponent(props) {
-	const { selectedNode } = props;
+	const { engine, selectedNode } = props;
 	const { removeNode, updateStartNode } = props;
 	const {
 		value: nodeContent,
@@ -73,7 +73,7 @@ function ContentEditorComponent(props) {
 				<label className="input-labels" htmlFor="">
 					Paths
 				</label>
-				<PathContainer selectedNode={selectedNode} />
+				<PathContainer engine={engine} selectedNode={selectedNode} />
 			</div>
 			<div className="extra-section">
 				<p

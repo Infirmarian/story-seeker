@@ -24,15 +24,11 @@ export class TSCustomNodeWidget extends React.Component<
 	render() {
 		var outputPorts = this.props.node.getOutputPorts();
 		const outputs = outputPorts.map((value) => (
-			<div className="output-port">
-				<PortWidget
-					engine={this.props.engine}
-					port={value}
-					key={value.getID()}
-				>
+			<div className="output-port" key={value.getID()}>
+				<p className="port-answer">{value.answer}</p>
+				<PortWidget engine={this.props.engine} port={value}>
 					<div className="circle-port" />
 				</PortWidget>
-				<p className="port-answer">{value.answer}</p>
 			</div>
 		));
 		var input = this.props.node.getInputPort();

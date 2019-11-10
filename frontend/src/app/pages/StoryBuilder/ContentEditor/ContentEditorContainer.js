@@ -3,6 +3,7 @@ import { removeNode, updateStartNode } from "../duck/actions";
 import ContentEditorComponent from "./ContentEditorComponent";
 
 const mapStateToProps = (state) => ({
+	engine: state.story.engine,
 	selectedNode: state.story.selectedNode,
 });
 

@@ -12,13 +12,13 @@
 	background: rgb(54, 179, 252);
 	border: solid 1px white;
 	border-radius: 5px;
-	padding: 10px;
+	padding: 5px;
 	width: 120px;
 	height: 120px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	font-family: "Monsterrat", sans-serif;
 }
 .story-header {
@@ -29,7 +29,7 @@
 	width: 100%;
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	color: aliceblue;
 	font-size: 0.8em;
@@ -39,15 +39,16 @@
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center;
+	justify-content: center;
 }
 .output-port {
 	width: 100%;
-	min-height: 20px;
+	height: 20px;
 	display: flex;
 	flex-direction: row;
 	font-size: 0.6em;
-	justify-content: flex-start;
+	justify-content: flex-end;
 	align-items: center;
 }
 .port-answer {
