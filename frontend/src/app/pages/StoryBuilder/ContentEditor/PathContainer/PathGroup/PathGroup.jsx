@@ -5,13 +5,13 @@ function PathGroup(props) {
 	const { label, content, removePath, updatePath } = props;
 	return (
 		<div className="path-group">
-			<label className="path-label" htmlFor="path-1">
-				{label}
+			<label className="path-label" htmlFor={`path-${label}`}>
+				C{label}
 			</label>
 			<input
 				className="path-input input-fields"
-				name="path-1"
-				id="path-1"
+				name={`path-${label}`}
+				id={`path-${label}`}
 				value={content}
 				onChange={(event) => {
 					console.log(event.target.value);

@@ -12,6 +12,7 @@ export interface TSCustomNodeWidgetState {
 	callback: (node: StoryNode) => void;
 }
 
+const MIN_TEXT_LENGTH = 10;
 export class TSCustomNodeWidget extends React.Component<
 	TSCustomNodeWidgetProps,
 	TSCustomNodeWidgetState
@@ -25,7 +26,9 @@ export class TSCustomNodeWidget extends React.Component<
 		var outputPorts = this.props.node.getOutputPorts();
 		const outputs = outputPorts.map((value) => (
 			<div className="output-port" key={value.getID()}>
-				<p className="port-answer">{value.answer}</p>
+				<p className="port-answer">
+					{value.answer.substring(0, MIN_TEXT_LENGTH) + "..."}
+				</p>
 				<PortWidget engine={this.props.engine} port={value}>
 					<div className="circle-port" />
 				</PortWidget>

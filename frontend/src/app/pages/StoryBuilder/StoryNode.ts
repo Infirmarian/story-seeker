@@ -63,7 +63,6 @@ export class StoryNode extends NodeModel {
 		return this.text;
 	}
 	setFullText(nt: string): void {
-		// console.log(nt);
 		this.text = nt;
 		this.engine.repaintCanvas();
 	}
