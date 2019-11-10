@@ -33,6 +33,7 @@ function ToolbarComponent(props: any) {
 				for (var link in links) {
 					// console.logs(link, links[link]);
 					const linkedNode = links[link].getTargetPort().getNode();
+					console.log(linkedNode);
 					options.push([port.answer, linkedNode.getOptions().id]);
 				}
 			});

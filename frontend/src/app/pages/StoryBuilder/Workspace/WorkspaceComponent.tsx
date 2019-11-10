@@ -47,7 +47,9 @@ function WorkspaceComponent(props: any) {
 	const actions = engine
 		.getActionEventBus()
 		.getActionsForType(InputType.KEY_DOWN);
-	engine.getActionEventBus().deregisterAction(actions[0]);
+	if (actions[0]) {
+		engine.getActionEventBus().deregisterAction(actions[0]);
+	}
 
 	// registerFactory(new TSCustomNodeFactory(updateSelectedNode));
 

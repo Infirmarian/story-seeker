@@ -102,12 +102,41 @@ export const reducer = reduceReducers(
 					selectedNode,
 				};
 			case REMOVE_NODE:
+				const inputPort = action.payload.node.getInputPort();
+				if (inputPort) {
+					let incomingLinks = inputPort.getLinks();
+					for (let link in incomingLinks) {
+						incomingLinks[link].remove();
+					}
+				}
+				const outputPorts = action.payload.node.getOutputPorts();
+				var newNode = null;
+				if (outputPorts) {
+					if (action.payload.node.isBeginning) {
+						let outgoingLinks = outputPorts[0].getLinks();
+						newNode = outgoingLinks[Object.keys(outgoingLinks)[0]]
+							.getTargetPort()
+							.getNode();
+						newNode.setBeginning();
+						console.log(newNode);
+					}
+					outputPorts.forEach((port) => {
+						let outgoingLinks = port.getLinks();
+						for (let link in outgoingLinks) {
+							outgoingLinks[link].remove();
+						}
+					});
+				}
 				model.removeNode(action.payload.node);
+				console.log(model.getNodes()[0]);
+				if (newNode == null) {
+					newNode = model.getNodes()[0];
+				}
 				engine.repaintCanvas();
 				return {
 					engine,
 					model,
-					selectedNode,
+					selectedNode: newNode,
 				};
 			case UPDATE_START_NODE:
 				model.getNodes().forEach((element) => {
