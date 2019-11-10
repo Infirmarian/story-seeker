@@ -2,7 +2,6 @@ import React from "react";
 import { StoryNode } from "../StoryNode";
 import { AnswerPort } from "../CustomPorts";
 import "./Toolbar.css";
-import { DefaultLinkModel } from "@projectstorm/react-diagrams";
 
 interface ToolbarProps {
 	node: StoryNode;
@@ -56,8 +55,20 @@ function ToolbarComponent(props: any) {
 
 	return (
 		<div className="Toolbar">
-			<button onClick={() => addNode()}>Add Node</button>
-			<button onClick={handleSubmit}>Submit</button>
+			<span
+				id="Add-Btn"
+				className="toolbar-btn"
+				onClick={() => addNode()}
+			>
+				<i className="fas fa-plus-circle fa-4x"></i>
+			</span>
+			<span
+				id="Submit-Btn"
+				className="toolbar-btn"
+				onClick={handleSubmit}
+			>
+				Submit
+			</span>
 		</div>
 	);
 }
