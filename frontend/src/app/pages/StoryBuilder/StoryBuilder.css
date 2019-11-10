@@ -6,11 +6,10 @@
 .Workspace {
 	display: flex;
 	flex-direction: column;
-	font-family: "Monsterrat", sans-serif;
 }
 
 .story-node {
-	background: dodgerblue;
+	background: rgb(54, 179, 252);
 	border: solid 1px white;
 	border-radius: 5px;
 	padding: 10px;
@@ -20,18 +19,23 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	font-family: "Monsterrat", sans-serif;
 }
 .story-header {
 	background: darkred;
 }
 
-.story-node > p {
+.input-port-container {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 	color: aliceblue;
-	font-size: 10px;
+	font-size: 0.8em;
 	font-family: "Monsterrat", Arial, Helvetica, sans-serif;
 }
-
-.port-container {
+.output-port-container {
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -54,8 +58,8 @@
 .circle-port {
 	width: 12px;
 	height: 12px;
-	margin: 2px;
-	border-radius: 4px;
+	margin: 4px;
+	border-radius: 50%;
 	background: darkgray;
 	cursor: pointer;
 }

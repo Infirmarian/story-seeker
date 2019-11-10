@@ -59,9 +59,11 @@ export class TSCustomNodeWidget extends React.Component<
 				}
 				onClick={() => this.state.callback(this.props.node)}
 			>
-				<div className="port-container">{inelement}</div>
-				<p>{this.props.node.getShortText()}</p>
-				<div className="port-container">{outputs}</div>
+				<div className="input-port-container">
+					{inelement}
+					<p>{this.props.node.getShortText()}</p>
+				</div>
+				<div className="output-port-container">{outputs}</div>
 			</div>
 		);
 	}
