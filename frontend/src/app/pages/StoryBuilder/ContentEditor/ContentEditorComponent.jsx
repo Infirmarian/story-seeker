@@ -75,9 +75,20 @@ function ContentEditorComponent(props) {
 				</label>
 				<PathContainer selectedNode={selectedNode} />
 			</div>
-			<p className="btn" onClick={() => removeNode(selectedNode)}>
-				Remove Node
-			</p>
+			<div className="extra-section">
+				<p
+					className="btn extra-options"
+					onClick={() => updateStartNode(selectedNode)}
+				>
+					Make This The Beginning
+				</p>
+				<p
+					className="btn extra-options"
+					onClick={() => removeNode(selectedNode)}
+				>
+					Remove Node
+				</p>
+			</div>
 		</div>
 	);
 }
