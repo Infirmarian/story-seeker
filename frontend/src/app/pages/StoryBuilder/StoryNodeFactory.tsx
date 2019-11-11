@@ -12,6 +12,7 @@ export class TSCustomNodeFactory extends AbstractReactFactory<
 	constructor(focusFunc: (node: StoryNode) => void) {
 		super("ts-custom-node");
 		this.callback = focusFunc;
+		console.log(focusFunc);
 	}
 
 	generateModel(initialConfig: any) {

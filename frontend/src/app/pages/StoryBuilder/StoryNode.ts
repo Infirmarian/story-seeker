@@ -1,6 +1,7 @@
 import { NodeModel, DiagramEngine } from "@projectstorm/react-diagrams";
-import { QuestionPort, InputPort } from "./CustomPorts";
+import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
+import { thisExpression } from "@babel/types";
 const uuid = require("uuid/v4");
 export interface StoryNodeOptions extends BaseModelOptions {
 	color?: string;
@@ -40,6 +41,8 @@ export class StoryNode extends NodeModel {
 		} else {
 			this.inputPort = null;
 		}
+
+		console.log(this.engine);
 	}
 
 	serialize() {
@@ -53,34 +56,60 @@ export class StoryNode extends NodeModel {
 		super.deserialize(event);
 		this.color = event.data.color;
 	}
-	addOutputPort(option: string): boolean {
-		if (this.getOutputPorts().length >= 3) return false;
-		this.addPort(
-			new QuestionPort({
-				question: option,
-				in: false,
-				name: String(uuid()),
-			})
-		);
-		return true;
-	}
 	getShortText(): string {
-		return this.text.substring(0, MIN_TEXT_LENGTH) + " ...";
+		return this.text.substring(0, MIN_TEXT_LENGTH) + "...";
 	}
 	getFullText(): string {
 		return this.text;
 	}
 	setFullText(nt: string): void {
 		this.text = nt;
+		this.engine.repaintCanvas();
 	}
 	getQuestion(): string {
 		return this.question;
 	}
-	getOutputPorts(): QuestionPort[] {
-		var result: QuestionPort[] = [];
+	setQuestion(q: string): void {
+		this.question = q;
+	}
+	addOutputPort(option: string): any {
+		if (this.getOutputPorts().length >= 3) return false;
+		var addedPort = this.addPort(
+			new AnswerPort({
+				answer: option,
+				engine: this.engine,
+				in: false,
+				name: String(uuid()),
+			})
+		);
+		this.engine.repaintCanvas();
+		return addedPort.getOptions().id;
+	}
+	removeOutputPort(portID: any): boolean {
+		var portToRemove = this.getPortFromID(portID);
+		if (portToRemove != null) {
+			this.removePort(portToRemove);
+			this.engine.repaintCanvas();
+			return true;
+		}
+		return false;
+	}
+	updateOutputPort(portID: any, message: string): boolean {
+		var portToUpdate = this.getPortFromID(portID);
+		if (portToUpdate instanceof AnswerPort) {
+			console.log("node", message);
+			portToUpdate.setAnswer(message);
+			this.engine.repaintCanvas();
+			return true;
+		}
+		this.engine.repaintCanvas();
+		return false;
+	}
+	getOutputPorts(): AnswerPort[] {
+		var result: AnswerPort[] = [];
 		for (var k in this.ports) {
-			if (this.ports[k] instanceof QuestionPort)
-				result.push(this.ports[k] as QuestionPort);
+			if (this.ports[k] instanceof AnswerPort)
+				result.push(this.ports[k] as AnswerPort);
 		}
 		return result;
 	}
@@ -100,6 +129,7 @@ export class StoryNode extends NodeModel {
 			this.inputPort = null;
 		}
 		this.isBeginning = true;
+		this.engine.repaintCanvas();
 	}
 	clearBeginning(): void {
 		this.inputPort = this.addPort(

@@ -1,41 +1,42 @@
 .App {
-  text-align: center;
+	text-align: center;
+	font-family: "Monsterrat", sans-serif;
 }
-.Graph{
-  height: 100vh;
-  background: #282c34;
+.Graph {
+	height: 100vh;
+	background: #282c34;
 }
 
 .App-logo {
-  height: 40vmin;
+	height: 40vmin;
 }
-.toolbar{
-  background: gray;
-    position:fixed;
-    right:0px;
-    top:0px;
-    bottom:0px;
-    width:200px;
+.toolbar {
+	background: gray;
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	width: 200px;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
 }
 
 .App-link {
-  color: #09d3ac;
+	color: #09d3ac;
 }
 
-.story-node{
-  background: dodgerblue;
-  border: solid 2px gray;
+.story-node {
+	background: dodgerblue;
+	border: solid 2px gray;
 	border-radius: 5px;
 	width: 100px;
 	height: 100px;
@@ -44,31 +45,31 @@
 	justify-content: space-between;
 	position: relative;
 }
-.story-header{
-  background: darkred;
+.story-header {
+	background: darkred;
 }
 
-.story-node > p{
-  color: aliceblue;
-  font-size: 10px;
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
+.story-node > p {
+	color: aliceblue;
+	font-size: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
 }
 
-.append-button{
-  background: #76B3FA;
-  color: #FFF;
-  border-radius: 100px;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-color: azure;
-  border-width: 2px;
+.append-button {
+	background: #76b3fa;
+	color: #fff;
+	border-radius: 100px;
+	padding: 10px 20px;
+	text-decoration: none;
+	border-color: azure;
+	border-width: 2px;
 }
-.append-button:focus{
-  outline: none;
+.append-button:focus {
+	outline: none;
 }
-.append-button-enabled:hover{
-  background: rgb(154, 199, 252);
-  color: rgb(124, 124, 124);
+.append-button-enabled:hover {
+	background: rgb(154, 199, 252);
+	color: rgb(124, 124, 124);
 }
 /*TODO: Get Montserrat Font*/
