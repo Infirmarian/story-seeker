@@ -16,81 +16,85 @@ import { useInput } from "../utils/custom-hooks.js";
 // }
 
 function ContentEditorComponent(props) {
-	const { engine, selectedNode } = props;
-	const { removeNode, updateStartNode } = props;
-	const {
-		value: nodeContent,
-		setValue: setNodeContent,
-		reset: resetNodeContent,
-		bind: bindNodeContent,
-	} = useInput(
-		selectedNode.getFullText(),
-		selectedNode.setFullText,
-		selectedNode
-	);
+  const { model, engine, selectedNode } = props;
+  const { removeNode, updateStartNode } = props;
+  const {
+    value: nodeContent,
+    setValue: setNodeContent,
+    reset: resetNodeContent,
+    bind: bindNodeContent
+  } = useInput(
+    selectedNode.getFullText(),
+    selectedNode.setFullText,
+    selectedNode
+  );
 
-	const {
-		value: question,
-		setValue: setQuestion,
-		reset: resetQuestion,
-		bind: bindQuestion,
-	} = useInput(
-		selectedNode.getQuestion(),
-		selectedNode.setQuestion,
-		selectedNode
-	);
-	useEffect(() => {
-		setQuestion(selectedNode.getQuestion());
-		setNodeContent(selectedNode.getFullText());
-		return () => {
-			setQuestion("");
-			setNodeContent("");
-		};
-	}, [selectedNode]);
+  const {
+    value: question,
+    setValue: setQuestion,
+    reset: resetQuestion,
+    bind: bindQuestion
+  } = useInput(
+    selectedNode.getQuestion(),
+    selectedNode.setQuestion,
+    selectedNode
+  );
+  useEffect(() => {
+    setQuestion(selectedNode.getQuestion());
+    setNodeContent(selectedNode.getFullText());
+    return () => {
+      setQuestion("");
+      setNodeContent("");
+    };
+  }, [selectedNode]);
 
-	return (
-		<div className="Content-Editor">
-			<p id="node-title">Node Title</p>
-			<div className="editor-section">
-				<label className="input-labels" htmlFor="content">
-					Content
-				</label>
-				<textarea
-					className=" input-fields"
-					name="content"
-					id="content"
-					{...bindNodeContent}
-				></textarea>
-				<label className="input-labels" htmlFor="question">
-					Question
-				</label>
-				<input
-					className=" input-fields"
-					name="question"
-					id="question"
-					{...bindQuestion}
-				></input>
-				<label className="input-labels" htmlFor="">
-					Paths
-				</label>
-				<PathContainer engine={engine} selectedNode={selectedNode} />
-			</div>
-			<div className="extra-section">
-				<p
-					className="btn extra-options"
-					onClick={() => updateStartNode(selectedNode)}
-				>
-					Make This The Beginning
-				</p>
-				<p
-					className="btn extra-options"
-					onClick={() => removeNode(selectedNode)}
-				>
-					Remove Node
-				</p>
-			</div>
-		</div>
-	);
+  return (
+    <div className="Content-Editor">
+      <p id="node-title">Node Title</p>
+      <div className="editor-section">
+        <label className="input-labels" htmlFor="content">
+          Content
+        </label>
+        <textarea
+          className=" input-fields"
+          name="content"
+          id="content"
+          {...bindNodeContent}
+        ></textarea>
+        <label className="input-labels" htmlFor="question">
+          Question
+        </label>
+        <input
+          className=" input-fields"
+          name="question"
+          id="question"
+          {...bindQuestion}
+        ></input>
+        <label className="input-labels" htmlFor="">
+          Paths
+        </label>
+        <PathContainer engine={engine} selectedNode={selectedNode} />
+      </div>
+      <div className="extra-section">
+        {selectedNode.isBeginning ? null : (
+          <p
+            className="btn extra-options"
+            onClick={() => updateStartNode(selectedNode)}
+          >
+            Make This The Beginning
+          </p>
+        )}
+        {model.getNodes().length > 1 ? (
+          <p
+            className="btn extra-options"
+            onClick={() => removeNode(selectedNode)}
+          >
+            Remove Node
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 export default ContentEditorComponent;
