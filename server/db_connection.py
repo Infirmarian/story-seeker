@@ -4,14 +4,18 @@ DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DATABASE = os.environ['DB_NAME']
 HOST = os.environ['DB_HOST']
-conn = psycopg2.connect(
-    database=DATABASE,
-    user=DB_USER,
-    password=DB_PASSWORD,
-    host=HOST,
-    port='5432'
-)
-print("Successfully connected to database!")
+conn = None
+def connect_to_db():
+    global conn
+    if conn is None:
+        conn = psycopg2.connect(
+            database=DATABASE,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=HOST,
+            port='5432'
+        )
+
 def register_author(firstname, lastname):
     request = 'INSERT INTO ss.authors (firstname, lastname) VALUES (%s, %s);'
     with conn.cursor() as cur:
@@ -21,3 +25,13 @@ def register_author(firstname, lastname):
         except Exception as e:
             print("Failed to enter to the database... %s" % e)
             return 500
+def save_temporary_story(authorid, temp_id, content):
+    pass
+
+
+def get_():
+    connect_to_db()
+    with conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM ss.stories')
+        r1 = cursor.fetchone()
+        return r1

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS ss.stories(
     authorid SERIAL,
     content JSON NOT NULL,
     price SMALLINT NOT NULL, --Credits
+    summary TEXT NOT NULL,
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (authorid) REFERENCES ss.authors(id)
 );
@@ -41,7 +42,7 @@ CREATE TABLE IF NOT EXISTS ss.ratings(
 
 CREATE TABLE IF NOT EXISTS ss.libraries(
     userid VARCHAR(256),
-    storyid SERIAL,
+    storyid INT,
     acquire_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     been_read BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (userid) REFERENCES ss.users (id),
@@ -55,7 +56,16 @@ CREATE TABLE IF NOT EXISTS ss.saved_state(
     FOREIGN KEY (userid) REFERENCES ss.users(id)
 );
 
+CREATE TABLE IF NOT EXISTS ss.in_progress_stories(
+    authorid INT NOT NULL,
+    content JSON NOT NULL,
+    id SERIAL PRIMARY KEY,
+    storyid INT,
+    FOREIGN KEY (authorid) REFERENCES ss.authors (id),
+    FOREIGN KEY (storyid) REFERENCES ss.stories (id)
+);
 
+--CREATE USER lambda WITH PASSWORD '########';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM lambda;
 GRANT USAGE ON SCHEMA ss TO lambda;
 GRANT SELECT ON ss.saved_state TO lambda;
@@ -65,6 +75,12 @@ GRANT DELETE ON ss.saved_state TO lambda;
 GRANT SELECT ON ss.users TO lambda;
 GRANT UPDATE ON ss.users TO lambda;
 GRANT INSERT ON ss.users TO lambda;
-
 GRANT SELECT ON ss.libraries TO lambda;
+GRANT INSERT ON ss.libraries TO lambda;
 GRANT SELECT ON ss.stories TO lambda;
+
+--CREATE USER server WITH PASSWORD '########';
+REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM server;
+GRANT USAGE ON SCHEMA ss TO server;
+GRANT SELECT ON ss.stories TO server;
+GRANT INSERT ON ss.stories TO server;
