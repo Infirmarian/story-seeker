@@ -95,3 +95,4 @@ def get_credit_count(handler_input):
             number *= 5
         total += number
     return total
+

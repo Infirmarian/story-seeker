@@ -11,10 +11,13 @@ CREATE TABLE IF NOT EXISTS ss.authors(
 CREATE TABLE IF NOT EXISTS ss.stories(
     id SERIAL PRIMARY KEY,
     title VARCHAR(128),
-    authorid SERIAL,
+    authorid INT NOT NULL,
     content JSON NOT NULL,
-    price SMALLINT NOT NULL, --Credits
+    price SMALLINT NOT NULL, -- Credits
     summary TEXT NOT NULL,
+    rating ss.rating NOT NULL,
+    genre ss.category,
+    published BOOLEAN NOT NULL DEFAULT FALSE,
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (authorid) REFERENCES ss.authors(id)
 );

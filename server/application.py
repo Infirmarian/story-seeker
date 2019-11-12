@@ -10,7 +10,18 @@ application = Flask(__name__, static_folder='build')
 
 @application.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return '''<!DOCTYPE html>
+    <html>
+        <head></head>
+        <body>
+            <h1>Website in progress</h1>
+            <p>This website is being actively constructed. To see the main feature before its
+            integration:</p>
+            <a href = '/builder'>Check out the story builder module</a><br>
+            <a href = '/tos'>Terms of Service</a> <br>
+            <a href = '/privacy'>Privacy Policy</a>
+        </body>
+    </html>'''
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')

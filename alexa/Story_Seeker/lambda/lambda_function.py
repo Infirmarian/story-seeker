@@ -219,8 +219,7 @@ class CreditSummaryIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
         num_credits = database.get_user_balance(uid, utils.get_credit_count(handler_input))
         if num_credits == 0:
-            result = 'You don\'t have any credits. Would you like to purchase some?'
-            attr['STATE'] = PURCHASE_TOKEN
+            result = 'You don\'t have any credits. To purchase some, say "What can I buy?"'
         else:
             result = 'You have %d credit%s. To get a story, say \'Get [Story Title]\'' % (num_credits, '' if num_credits == 1 else 's')
         return handler_input.response_builder.speak(result).ask(result).response
@@ -278,7 +277,7 @@ class BuyReturnFromPurchaseIntentHandler(AbstractRequestHandler):
                 purchase_result = handler_input.request_envelope.request.payload.get("purchaseResult")
                 result = ''
                 if purchase_result == PurchaseResult.ACCEPTED.value:
-                    new_balance = database.get_user_balance(uid, utils.get_credit_count(handler))
+                    new_balance = database.get_user_balance(uid, utils.get_credit_count(handler_input))
                     if new_balance:
                         result = 'You now have %d token%s. To find available stories, say "Search for Stories"' % (new_balance, '' if new_balance == 1 else 's')
                         reprompt = 'What can I help you with?'
