@@ -1,7 +1,7 @@
 .Content-Editor {
 	width: 30vw;
 	min-height: 100vh;
-	background: #ddfff7;
+	background: rgb(49, 196, 243);
 	padding-left: 3%;
 	padding-right: 3%;
 	display: flex;
@@ -9,14 +9,26 @@
 	align-items: center;
 	flex-direction: column;
 	font-size: 1.3rem;
+	color: white;
+	font-family: sans-serif;
 }
 .btn {
 	cursor: pointer;
-	color: rgb(151, 150, 150);
+	color: white;
 	transition: 0.3s;
 }
-.btn:hover {
-	color: black;
+.editor-button {
+	background: rgb(47, 47, 47);
+	color: #fff;
+	border-radius: 100px;
+	padding: 10px 20px;
+	text-decoration: none;
+	border-color: azure;
+	border-width: 2px;
+}
+.editor-button:hover{
+	background: rgb(22, 22, 22);
+	color: white;
 }
 
 .input-fields {

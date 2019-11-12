@@ -14,7 +14,7 @@
 	border-radius: 5px;
 	padding: 5px;
 	width: 120px;
-	height: 120px;
+	height: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -23,6 +23,15 @@
 }
 .story-header {
 	background: darkred;
+}
+.story-node > p{
+	font-family: "Monsterrat", sans-serif;
+	color: white;
+	margin: 0;
+	font-size: 12px;
+}
+p.question{
+	color: gray;
 }
 
 .input-port-container {

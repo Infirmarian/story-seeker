@@ -9,7 +9,7 @@ export interface StoryNodeOptions extends BaseModelOptions {
 	beginning?: boolean;
 	engine: DiagramEngine;
 }
-const MIN_TEXT_LENGTH = 20;
+const MAX_TEXT_LENGTH = 50;
 
 export class StoryNode extends NodeModel {
 	color: string;
@@ -57,7 +57,7 @@ export class StoryNode extends NodeModel {
 		this.color = event.data.color;
 	}
 	getShortText(): string {
-		return this.text.substring(0, MIN_TEXT_LENGTH) + "...";
+		return this.text.substring(0, MAX_TEXT_LENGTH) + (this.text.length > MAX_TEXT_LENGTH ? "...":"");
 	}
 	getFullText(): string {
 		return this.text;

@@ -14,43 +14,49 @@ function ToolbarComponent(props: any) {
 	const { model, addNode } = props;
 
 	const convertModelToJSON = () => {
-		var result: { content: Array<any> } = {
-			content: [],
+		var result: { content: Array<any>, title: string} = {
+			content: Array(model.getNodes().length),
+			title: "title",
 		};
+		var mapping: {[index: string]: number} = {};
+		var counter = 1;
 		const nodes = model.getNodes();
-		// console.log(nodes);
 		nodes.forEach((node: StoryNode) => {
-			const id = node.getOptions().id;
+			const id = node.getID();// .getOptions().id;
+			if(node.isBeginning){
+				mapping[id] = 0;
+			}else{
+				mapping[id] = counter;
+				counter += 1;
+			}
+		})
+		nodes.forEach((node: StoryNode) => {
 			const main = node.text;
 			const question = node.question;
 			var options: Array<Array<any>> = [];
-			// console.log(main, question);
 			node.getOutputPorts().forEach((port: AnswerPort) => {
 				const links = port.getLinks();
-				// console.log("current port:", port, "links:", links);
-				// console.log(links.getTargetPort().getNode());
 				for (var link in links) {
-					// console.logs(link, links[link]);
-					const linkedNode = links[link].getTargetPort().getNode();
-					console.log(linkedNode);
-					options.push([port.answer, linkedNode.getOptions().id]);
+					const linkedNode = mapping[links[link].getTargetPort().getNode().getID()];
+					options.push([port.answer, linkedNode]);
 				}
 			});
-			result.content.push({
-				id,
-				main,
-				question,
-				options,
-			});
+			if(options.length > 0)
+				result.content[mapping[node.getID()]] = {
+					main,
+					question,
+					options
+				};
+			else
+				result.content[mapping[node.getID()]] = {main};
 		});
-		// console.log(result);
-		// console.log(JSON.stringify(result));
 		return JSON.stringify(result);
 	};
 
 	const handleSubmit = () => {
 		const submission = convertModelToJSON();
 		console.log(submission);
+		//fetch() TODO:
 	};
 
 	return (

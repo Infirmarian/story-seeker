@@ -50,7 +50,6 @@ function ContentEditorComponent(props) {
 
 	return (
 		<div className="Content-Editor">
-			<p id="node-title">Node Title</p>
 			<div className="editor-section">
 				<label className="input-labels" htmlFor="content">
 					Content
@@ -77,13 +76,13 @@ function ContentEditorComponent(props) {
 			</div>
 			<div className="extra-section">
 				<p
-					className="btn extra-options"
+					className="btn extra-options editor-button"
 					onClick={() => updateStartNode(selectedNode)}
 				>
 					Make This The Beginning
 				</p>
 				<p
-					className="btn extra-options"
+					className="btn extra-options editor-button"
 					onClick={() => removeNode(selectedNode)}
 				>
 					Remove Node
