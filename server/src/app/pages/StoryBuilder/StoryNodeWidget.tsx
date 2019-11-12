@@ -27,13 +27,13 @@ export class TSCustomNodeWidget extends React.Component<
     const question = this.props.node.getQuestion();
     var outputPorts = this.props.node.getOutputPorts();
     const outputs = outputPorts.map(value => (
-      <div className="output-port" key={value.getID()}>
+      <div className="output-port-wrapper" key={value.getID()}>
         <p className="port-answer">
-          {value.answer.substring(0, 5) +
-            `${value.answer.length > 5 ? "..." : ""}`}
+          {value.answer.substring(0, 2) +
+            `${value.answer.length > 2 ? "..." : ""}`}
         </p>
         <PortWidget engine={this.props.engine} port={value}>
-          <div className="circle-port" />
+          <div className="port output-port" />
         </PortWidget>
       </div>
     ));
@@ -42,7 +42,7 @@ export class TSCustomNodeWidget extends React.Component<
     if (input) {
       inelement = (
         <PortWidget engine={this.props.engine} port={input} key={input.getID()}>
-          <div className="circle-port" />
+          <div className="port" />
         </PortWidget>
       );
     } else {
@@ -59,20 +59,22 @@ export class TSCustomNodeWidget extends React.Component<
       >
         <div
           className={
-            "input-port-container" +
-            `${this.props.node.isBeginning ? " input-port-start" : ""}`
+            "node-header" +
+            `${this.props.node.isBeginning ? " start-node-header" : ""}`
           }
         >
-          {inelement ? <div className="input-ports">{inelement}</div> : null}
+          {inelement ? (
+            <div className="input-port-container">{inelement}</div>
+          ) : null}
           <p>{this.props.node.getShortText()}</p>
         </div>
         {question !== "" ? (
-          <div className="output-port-container">
+          <div className="node-footer">
             <p className="question">
               {question.substring(0, 15) +
                 `${question.length > 15 ? "..." : ""}`}
             </p>
-            <div className="output-ports">{outputs}</div>
+            <div className="output-port-container">{outputs}</div>
           </div>
         ) : null}
       </div>

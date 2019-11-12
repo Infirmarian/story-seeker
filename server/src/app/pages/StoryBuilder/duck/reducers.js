@@ -139,10 +139,11 @@ export const reducer = reduceReducers(
         if (outputPorts) {
           if (action.payload.node.isBeginning) {
             let outgoingLinks = outputPorts[0].getLinks();
-            newNode = outgoingLinks[Object.keys(outgoingLinks)[0]]
-              .getTargetPort()
-              .getNode();
-            newNode.setBeginning();
+            if (outgoingLinks.length > 0) {
+              newNode = outgoingLinks[Object.keys(outgoingLinks)[0]]
+                .getTargetPort()
+                .getNode();
+            }
           }
           outputPorts.forEach(port => {
             let outgoingLinks = port.getLinks();
@@ -155,6 +156,7 @@ export const reducer = reduceReducers(
         if (newNode == null) {
           newNode = model.getNodes()[0];
         }
+        newNode.setBeginning();
         engine.repaintCanvas();
         return {
           engine,
