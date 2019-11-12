@@ -1,70 +1,9 @@
 .StoryBuilder {
-	display: flex;
-	flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .Workspace {
-	display: flex;
-	flex-direction: column;
-}
-
-.story-node {
-	background: rgb(54, 179, 252);
-	border: solid 1px white;
-	border-radius: 5px;
-	padding: 5px;
-	width: 120px;
-	height: 120px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-	font-family: "Monsterrat", sans-serif;
-}
-.story-header {
-	background: darkred;
-}
-
-.input-port-container {
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-	color: aliceblue;
-	font-size: 0.8em;
-	font-family: "Monsterrat", Arial, Helvetica, sans-serif;
-}
-.output-port-container {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-}
-.output-port {
-	width: 100%;
-	height: 20px;
-	display: flex;
-	flex-direction: row;
-	font-size: 0.6em;
-	justify-content: flex-end;
-	align-items: center;
-}
-.port-answer {
-	color: white;
-	margin-left: 10px;
-}
-
-.circle-port {
-	width: 12px;
-	height: 12px;
-	margin: 4px;
-	border-radius: 50%;
-	background: darkgray;
-	cursor: pointer;
-}
-
-.circle-port:hover {
-	background: mediumpurple;
+  display: flex;
+  flex-direction: column;
 }

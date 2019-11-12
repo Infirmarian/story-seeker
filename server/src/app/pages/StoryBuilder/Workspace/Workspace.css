@@ -1,5 +1,5 @@
 .Graph {
-	min-height: 90vh;
-	width: 70vw;
-	background: #282c34;
+  height: 90vh;
+  width: 70vw;
+  background: hsl(0, 0%, 18%);
 }
