@@ -76,7 +76,7 @@ function ToolbarComponent(props: any) {
         id="Add-Btn"
         className="toolbar-btn"
         onClick={() => addNode()}
-        draggable={true}
+        // draggable={true}
         onDrop={event => handleDropToAdd(event)}
         onDragOver={event => event.preventDefault()}
       >

@@ -1,5 +1,5 @@
 .Toolbar {
-  min-height: 10vh;
+  height: 10vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,7 +14,7 @@
 }
 
 #Add-Btn {
-  color: #366be8;
+  color: #31c4f3;
   /* border-radius: 50%; */
   margin-left: 20px;
   /* width: 80px;
@@ -22,11 +22,11 @@
 }
 
 #Add-Btn:hover {
-  color: #242b68;
+  color: #19586d;
 }
 
 #Submit-Btn {
-  background-color: #366be8;
+  background-color: #31c4f3;
   color: white;
   margin-right: 20px;
   padding: 14px;
@@ -35,5 +35,5 @@
 }
 
 #Submit-Btn:hover {
-  background-color: #242b68;
+  background-color: #19586d;
 }

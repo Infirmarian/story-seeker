@@ -20,6 +20,7 @@ export class StoryNode extends NodeModel {
   text: string;
   question: string;
   isBeginning: boolean;
+  //   isEnd: boolean;
   inputPort: InputPort | null;
   engine: DiagramEngine;
 
@@ -32,6 +33,7 @@ export class StoryNode extends NodeModel {
     this.text = options.text;
     this.question = "...?";
     this.isBeginning = options.beginning || false;
+    // this.isEnd = false;
     this.engine = options.engine;
 
     // If not the beginning node, add an input port
@@ -129,6 +131,7 @@ export class StoryNode extends NodeModel {
         result.push(this.ports[k] as AnswerPort);
     }
     return result;
+    // this.engine.getCanvas().
   }
   getInputPort(): InputPort | null {
     return this.inputPort;

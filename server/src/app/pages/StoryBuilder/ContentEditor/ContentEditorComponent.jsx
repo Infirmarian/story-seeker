@@ -48,6 +48,21 @@ function ContentEditorComponent(props) {
     };
   }, [selectedNode]);
 
+  //   const [isEndNode, setIsEndNode] = useState(false);
+  //   useEffect(() => {
+  //     setIsEndNode(selectedNode.isEnd);
+  //   }, [selectedNode]);
+  //   const toggleEndNode = () => {
+  //     setIsEndNode(prev => {
+  //       return !prev;
+  //     });
+  //     selectedNode.isEnd = isEndNode;
+  //     if (isEndNode) {
+  //       selectedNode.setQuestion("");
+  //     } else {
+  //       selectedNode.setQuestion("...?");
+  //     }
+  //   };
   return (
     <div className="Content-Editor">
       <div className="editor-section">
@@ -75,18 +90,23 @@ function ContentEditorComponent(props) {
         <PathContainer engine={engine} selectedNode={selectedNode} />
       </div>
       <div className="extra-section">
-        <p
-          className="btn extra-options editor-button"
-          onClick={() => updateStartNode(selectedNode)}
-        >
-          Make This The Beginning
-        </p>
-        <p
-          className="btn extra-options editor-button"
-          onClick={() => removeNode(selectedNode)}
-        >
-          Remove Node
-        </p>
+        {!selectedNode.isBeginning ? (
+          <p
+            className="btn extra-options editor-button"
+            onClick={() => updateStartNode(selectedNode)}
+          >
+            Make This The Beginning
+          </p>
+        ) : null}
+
+        {model.getNodes().length > 1 ? (
+          <p
+            className="btn extra-options editor-button"
+            onClick={() => removeNode(selectedNode)}
+          >
+            Remove Node
+          </p>
+        ) : null}
       </div>
     </div>
   );
