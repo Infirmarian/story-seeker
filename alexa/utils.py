@@ -69,6 +69,15 @@ def get_resolved_id(handler_input, slot_name):
     except (AttributeError, ValueError, KeyError, IndexError):
         return None
 
+def format_list(items):
+    if len(items) == 0:
+        return ''
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return '%s and %s' %(items[0],items[1])
+    return '%s, and %s' % (', '.join(items[:-1]), items[-1])
+
 def product_format(products):
     product_names = [item.name for item in products]
     if len(product_names) == 1:
