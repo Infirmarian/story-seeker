@@ -2,6 +2,7 @@ import React from "react";
 import { StoryNode } from "../StoryNode";
 import { AnswerPort } from "../CustomPorts";
 import "./Toolbar.css";
+import { Link } from "react-router-dom";
 
 interface ToolbarProps {
   node: StoryNode;
@@ -72,6 +73,9 @@ function ToolbarComponent(props: any) {
 
   return (
     <div className="Toolbar">
+      <span id="" className="toolbar-btn Submit-Btn">
+        <Link to="/viewer">Back</Link>
+      </span>
       <span
         id="Add-Btn"
         className="toolbar-btn"
@@ -82,7 +86,7 @@ function ToolbarComponent(props: any) {
       >
         <i className="fas fa-plus-circle fa-4x"></i>
       </span>
-      <span id="Submit-Btn" className="toolbar-btn" onClick={handleSubmit}>
+      <span id="" className="toolbar-btn Submit-Btn" onClick={handleSubmit}>
         Submit
       </span>
     </div>
