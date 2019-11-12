@@ -2,6 +2,7 @@
 
 // NODE ACTIONS
 export const ADD_NODE = "ADD_NODE";
+export const ADD_NODE_ON_DROP = "ADD_NODE_ON_DROP";
 export const REMOVE_NODE = "REMOVE_NODE";
 export const UPDATE_START_NODE = "UPDATE_START_NODE";
 
@@ -17,68 +18,75 @@ export const INITIALIZE_MODEL = "INITIALIZE_MODEL";
 
 // Action Creators
 export const addNode = () => {
-	console.log("adding");
-	return {
-		type: ADD_NODE,
-		payload: {
-			text: "Default",
-		},
-	};
+  return {
+    type: ADD_NODE,
+    payload: {
+      text: "Default"
+    }
+  };
 };
 
-export const removeNode = (node) => {
-	return {
-		type: REMOVE_NODE,
-		payload: {
-			node,
-		},
-	};
+export const addNodeOnDrop = point => {
+  return {
+    type: ADD_NODE_ON_DROP,
+    payload: {
+      point
+    }
+  };
+};
+export const removeNode = node => {
+  return {
+    type: REMOVE_NODE,
+    payload: {
+      node
+    }
+  };
 };
 
-export const updateStartNode = (node) => {
-	return {
-		type: UPDATE_START_NODE,
-		payload: {
-			node,
-		},
-	};
+export const updateStartNode = node => {
+  return {
+    type: UPDATE_START_NODE,
+    payload: {
+      node
+    }
+  };
 };
 
-export const updateSelectedNode = (node) => {
-	return {
-		type: UPDATE_SELECTED_NODE,
-		payload: {
-			selectedNode: node,
-		},
-	};
+export const updateSelectedNode = node => {
+  return {
+    type: UPDATE_SELECTED_NODE,
+    payload: {
+      selectedNode: node
+    }
+  };
 };
 
-export const setEngineModel = (model) => {
-	return {
-		type: SET_ENGINE_MODEL,
-		payload: {
-			model,
-		},
-	};
+export const setEngineModel = model => {
+  return {
+    type: SET_ENGINE_MODEL,
+    payload: {
+      model
+    }
+  };
 };
 
-export const registerFactory = (factory) => {
-	return {
-		type: REGISTER_FACTORY,
-		payload: {
-			factory,
-		},
-	};
+export const registerFactory = factory => {
+  return {
+    type: REGISTER_FACTORY,
+    payload: {
+      factory
+    }
+  };
 };
 
 export const initializeModel = () => {
-	return {
-		type: INITIALIZE_MODEL,
-	};
+  return {
+    type: INITIALIZE_MODEL
+  };
 };
 
 export const initializeSelectedNode = () => {
-	return {
-		type: INITIALIZE_SELECTED_NODE,
-	};
+  return {
+    type: INITIALIZE_SELECTED_NODE
+  };
 };

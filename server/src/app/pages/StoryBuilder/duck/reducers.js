@@ -12,6 +12,7 @@ import { StoryNode } from "../StoryNode";
 //Action Types
 import {
   ADD_NODE,
+  ADD_NODE_ON_DROP,
   REMOVE_NODE,
   UPDATE_START_NODE,
   INITIALIZE_SELECTED_NODE,
@@ -84,22 +85,34 @@ export const reducer = reduceReducers(
           selectedNode
         };
       case INITIALIZE_MODEL:
-        var node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
+        /* var node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
         node1.setPosition(100, 100);
         node1.addOutPort("port1", false);
         setTimeout(() => {
           node1.addOutPort("port2", false);
-        }, 10000);
-        model.addAll(selectedNode, node1);
+        }, 10000); */
+        model.addAll(selectedNode);
         return {
           engine,
           model,
           selectedNode
         };
       case ADD_NODE:
-        console.log(
-          model.addNode(new StoryNode({ text: "Default", engine: engine }))
-        );
+        var nodeToAdd = new StoryNode({ text: "Default", engine: engine });
+        var x = Math.floor(engine.getCanvas().clientWidth / 2);
+        var y = Math.floor(engine.getCanvas().clientHeight / 2);
+        nodeToAdd.setPosition(x, y);
+        console.log(model.addNode(nodeToAdd));
+        engine.repaintCanvas();
+        return {
+          engine,
+          model,
+          selectedNode
+        };
+      case ADD_NODE_ON_DROP:
+        var nodeToAdd = new StoryNode({ text: "Default", engine: engine });
+        nodeToAdd.setPosition(action.payload.point);
+        console.log(model.addNode(nodeToAdd));
         engine.repaintCanvas();
         return {
           engine,
@@ -130,7 +143,6 @@ export const reducer = reduceReducers(
               .getTargetPort()
               .getNode();
             newNode.setBeginning();
-            console.log(newNode);
           }
           outputPorts.forEach(port => {
             let outgoingLinks = port.getLinks();
@@ -140,7 +152,6 @@ export const reducer = reduceReducers(
           });
         }
         model.removeNode(action.payload.node);
-        console.log(model.getNodes()[0]);
         if (newNode == null) {
           newNode = model.getNodes()[0];
         }
