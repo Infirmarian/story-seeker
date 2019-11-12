@@ -2,7 +2,8 @@ import createEngine, {
   DefaultLinkModel,
   DiagramModel,
   DiagramEngine,
-  DefaultDiagramState
+  DefaultDiagramState,
+  DefaultNodeModel
 } from "@projectstorm/react-diagrams";
 
 // Object Types
@@ -83,7 +84,13 @@ export const reducer = reduceReducers(
           selectedNode
         };
       case INITIALIZE_MODEL:
-        model.addAll(selectedNode);
+        var node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
+        node1.setPosition(100, 100);
+        node1.addOutPort("port1", false);
+        setTimeout(() => {
+          node1.addOutPort("port2", false);
+        }, 10000);
+        model.addAll(selectedNode, node1);
         return {
           engine,
           model,
