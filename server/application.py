@@ -1,5 +1,6 @@
 # Copyright Robert Geil 2019
 from flask import Flask, request, send_file, send_from_directory
+import requests
 
 import db_connection as db
 import utils
@@ -19,13 +20,18 @@ def privacy():
 def terms_of_service():
     return send_file('static/tos.pdf', mimetype='application/pdf')
 
-@application.route('/register/author', methods=['POST'])
-def register():
-    data = request.json
-    first = data['first_name']
-    last = data['last_name']
-    status = db.register_author(first, last)
-    return '', status
+# TODO:
+@application.route('/api/save_temp', methods=['POST'])
+def save_temp():
+    values = request.json
+    response = application.response_class(
+        status = 201
+    )
+    return response
+# TODO:
+@application.route('/api/delete_temp', methods=['POST'])
+def delete_temp():
+    return 'Goodbye temp'
 
 @application.route('/savejson', methods=['POST'])
 def save_json():
@@ -43,7 +49,18 @@ def save_json():
             mimetype = 'application/json'
         )
     return response
+@application.route('/login')
+def login():
+    return send_file('static/login.html')
 
+@application.route('/auth')
+def authorize():
+    code = request.args.get('code')
+    if code is None:
+        response = application.response_class(status=404)
+    else:
+        response = application.response_class(status = 200)
+    return response
 @application.route('/builder')
 def hello():
     return send_file(application.static_folder + '/index.html')

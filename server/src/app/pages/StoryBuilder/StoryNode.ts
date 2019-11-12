@@ -13,7 +13,7 @@ export interface StoryNodeOptions extends BaseModelOptions {
   beginning?: boolean;
   engine: DiagramEngine;
 }
-const MIN_TEXT_LENGTH = 20;
+const MAX_TEXT_LENGTH = 50;
 
 export class StoryNode extends NodeModel {
   color: string;
@@ -61,7 +61,10 @@ export class StoryNode extends NodeModel {
     this.color = event.data.color;
   }
   getShortText(): string {
-    return this.text.substring(0, MIN_TEXT_LENGTH) + "...";
+    return (
+      this.text.substring(0, MAX_TEXT_LENGTH) +
+      (this.text.length > MAX_TEXT_LENGTH ? "..." : "")
+    );
   }
   getFullText(): string {
     return this.text;
@@ -76,12 +79,6 @@ export class StoryNode extends NodeModel {
   setQuestion(q: string): void {
     this.question = q;
   }
-  refreshPortPositions(): void {
-    var ports = this.getPorts();
-    // for (let port in ports) {
-    //   ports[port].
-    // }
-  }
   addOutputPort(option: string): any {
     if (this.getOutputPorts().length >= 3) return false;
     var addedPort = this.addPort(
@@ -92,19 +89,13 @@ export class StoryNode extends NodeModel {
         name: String(uuid())
       })
     );
-    this.refreshPortPositions();
     this.engine.repaintCanvas();
     return addedPort.getOptions().id;
   }
   removeOutputPort(portID: any): boolean {
     var portToRemove = this.getPortFromID(portID);
     if (portToRemove != null) {
-      var links = portToRemove.getLinks();
-      for (let link in links) {
-        links[link].remove();
-      }
       this.removePort(portToRemove);
-      this.refreshPortPositions();
       this.engine.repaintCanvas();
       return true;
     }

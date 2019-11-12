@@ -48,6 +48,7 @@ function ContentEditorComponent(props) {
     };
   }, [selectedNode]);
 
+<<<<<<< HEAD
   return (
     <div className="Content-Editor">
       <p id="node-title">Node Title</p>
@@ -95,6 +96,50 @@ function ContentEditorComponent(props) {
       </div>
     </div>
   );
+=======
+	return (
+		<div className="Content-Editor">
+			<div className="editor-section">
+				<label className="input-labels" htmlFor="content">
+					Content
+				</label>
+				<textarea
+					className=" input-fields"
+					name="content"
+					id="content"
+					{...bindNodeContent}
+				></textarea>
+				<label className="input-labels" htmlFor="question">
+					Question
+				</label>
+				<input
+					className=" input-fields"
+					name="question"
+					id="question"
+					{...bindQuestion}
+				></input>
+				<label className="input-labels" htmlFor="">
+					Paths
+				</label>
+				<PathContainer engine={engine} selectedNode={selectedNode} />
+			</div>
+			<div className="extra-section">
+				<p
+					className="btn extra-options editor-button"
+					onClick={() => updateStartNode(selectedNode)}
+				>
+					Make This The Beginning
+				</p>
+				<p
+					className="btn extra-options editor-button"
+					onClick={() => removeNode(selectedNode)}
+				>
+					Remove Node
+				</p>
+			</div>
+		</div>
+	);
+>>>>>>> json-submission-format
 }
 
 export default ContentEditorComponent;

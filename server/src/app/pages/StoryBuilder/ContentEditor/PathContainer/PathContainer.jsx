@@ -7,7 +7,7 @@ function PathContainer(props) {
 
 	const [paths, setPaths] = useState([]);
 	useEffect(() => {
-		if (selectedNode != null) {
+		if (selectedNode !== null) {
 			const ports = selectedNode.getOutputPorts();
 			var result = [];
 			ports.forEach((port) => {
@@ -27,7 +27,7 @@ function PathContainer(props) {
 	}, [selectedNode]);
 	const handleAddPath = () => {
 		const addedPort = selectedNode.addOutputPort("");
-		if (addedPort != false) {
+		if (addedPort !== false) {
 			setPaths((prev) => {
 				return [
 					...prev,
@@ -46,7 +46,7 @@ function PathContainer(props) {
 		console.log(selectedNode.removeOutputPort(port.id));
 		setPaths((prev) => {
 			const newState = prev.filter((el, index) => {
-				return index != path;
+				return index !== path;
 			});
 			console.log(newState);
 			return newState;
@@ -85,7 +85,7 @@ function PathContainer(props) {
 				  })
 				: null}
 			<p
-				className="btn"
+				className="btn editor-button"
 				id="add-path-btn"
 				style={
 					paths.length < 3
