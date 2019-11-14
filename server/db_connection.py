@@ -35,3 +35,9 @@ def get_():
         cursor.execute('SELECT * FROM ss.stories')
         r1 = cursor.fetchone()
         return r1
+
+def store_user(userid, token):
+    connect_to_db()
+    with conn.cursor() as cursor:
+        cursor.execute('INSERT INTO a.tokens (userid, token) VALUES (%s, %s)', (userid, token))
+        conn.commit()

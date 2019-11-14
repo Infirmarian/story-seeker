@@ -1,13 +1,14 @@
 # Copyright Robert Geil 2019
 from flask import Flask, request, send_file, send_from_directory
 import requests
+import secrets
 
 import db_connection as db
 import utils
 import json
 import os
 application = Flask(__name__, static_folder='build')
-
+CLIENT_SECRET = os.environ['LWA_SECRET']
 @application.route('/')
 def hello_world():
     return '''<!DOCTYPE html>
@@ -64,14 +65,30 @@ def save_json():
 def login():
     return send_file('static/login.html')
 
-@application.route('/auth')
-def authorize():
-    code = request.args.get('code')
-    if code is None:
-        response = application.response_class(status=404)
-    else:
-        response = application.response_class(status = 200)
-    return response
+'''
+Accept {
+    code: string
+}
+Return {
+
+}
+'''
+@application.route('/api/login', methods=['POST'])
+def login_token():
+    code = request.json.get('code')
+    if code:
+        payload = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'client_id': 'amzn1.application-oa2-client.8497a1c842f24fd6b54cd7afef9ea32a',
+            'client_secret': CLIENT_SECRET
+        }
+        r = requests.post('https://api.amazon.com/auth/o2/token', data=payload)
+        if r.status_code == 200:
+            rand_int = secrets.token_hex(32)
+            return application.response_class(status=200, response=json.dumps({'token': rand_int, 'success':True}), mimetype='application/json')
+    return application.response_class(status=400, response=json.dumps({'success': False, 'error': 'No code was provided for authentication'}, mimetype='application/json'))
+
 @application.route('/builder')
 def hello():
     return send_file(application.static_folder + '/index.html')

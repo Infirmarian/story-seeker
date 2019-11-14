@@ -37,7 +37,23 @@
                         return;
                     }
                     console.log(response);
-                    fetch()
+                    const token = fetch('http://localhost:5000/api/login', {
+                        method: 'POST',
+                        mode: 'cors', 
+                        cache: 'no-cache',
+                        credentials: 'same-origin', // include, *same-origin, omit
+                        headers: {
+                            'Content-Type': 'application/json'
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        redirect: 'follow', // manual, *follow, error
+                        referrer: 'no-referrer', // no-referrer, *client
+                        body: JSON.stringify({code: response.code}) // body data type must match "Content-Type" header
+                    }).then((data) => {
+                        console.log(data);
+                    }).catch((error) => {
+                        console.log(error);
+                    });
                 });
                 return false;
             };
