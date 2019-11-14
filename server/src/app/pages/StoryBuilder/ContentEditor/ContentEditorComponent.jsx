@@ -48,21 +48,22 @@ function ContentEditorComponent(props) {
     };
   }, [selectedNode]);
 
-  //   const [isEndNode, setIsEndNode] = useState(false);
-  //   useEffect(() => {
-  //     setIsEndNode(selectedNode.isEnd);
-  //   }, [selectedNode]);
-  //   const toggleEndNode = () => {
-  //     setIsEndNode(prev => {
-  //       return !prev;
-  //     });
-  //     selectedNode.isEnd = isEndNode;
-  //     if (isEndNode) {
-  //       selectedNode.setQuestion("");
-  //     } else {
-  //       selectedNode.setQuestion("...?");
-  //     }
-  //   };
+  const [isEndNode, setIsEndNode] = useState(false);
+  useEffect(() => {
+    setIsEndNode(selectedNode.isEnd);
+  }, [selectedNode]);
+  const toggleEndNode = () => {
+    setIsEndNode(prev => {
+      if (!prev) {
+        selectedNode.setEnd();
+        setQuestion("");
+      } else {
+        selectedNode.resetEnd();
+        setQuestion(selectedNode.getQuestion());
+      }
+      return !prev;
+    });
+  };
   return (
     <div className="Content-Editor">
       <div className="editor-section">
@@ -75,19 +76,27 @@ function ContentEditorComponent(props) {
           id="content"
           {...bindNodeContent}
         ></textarea>
-        <label className="input-labels" htmlFor="question">
-          Question
-        </label>
-        <input
-          className=" input-fields"
-          name="question"
-          id="question"
-          {...bindQuestion}
-        ></input>
-        <label className="input-labels" htmlFor="">
-          Paths
-        </label>
-        <PathContainer engine={engine} selectedNode={selectedNode} />
+        {!isEndNode ? (
+          <label className="input-labels" htmlFor="question">
+            Question
+          </label>
+        ) : null}
+        {!isEndNode ? (
+          <input
+            className=" input-fields"
+            name="question"
+            id="question"
+            {...bindQuestion}
+          ></input>
+        ) : null}
+        {!isEndNode ? (
+          <label className="input-labels" htmlFor="">
+            Paths
+          </label>
+        ) : null}
+        {!isEndNode ? (
+          <PathContainer engine={engine} selectedNode={selectedNode} />
+        ) : null}
       </div>
       <div className="extra-section">
         {!selectedNode.isBeginning ? (
@@ -96,6 +105,14 @@ function ContentEditorComponent(props) {
             onClick={() => updateStartNode(selectedNode)}
           >
             Make This The Beginning
+          </p>
+        ) : null}
+        {!selectedNode.isBeginning ? (
+          <p
+            className="btn extra-options editor-button"
+            onClick={toggleEndNode}
+          >
+            Toggle End Node
           </p>
         ) : null}
 
