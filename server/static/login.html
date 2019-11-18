@@ -50,9 +50,10 @@
                         referrer: 'no-referrer', // no-referrer, *client
                         body: JSON.stringify({code: response.code}) // body data type must match "Content-Type" header
                     }).then((data) => {
+                        if(data.status != 200) console.error(data);
                         console.log(data);
                     }).catch((error) => {
-                        console.log(error);
+                        console.error(error);
                     });
                 });
                 return false;
