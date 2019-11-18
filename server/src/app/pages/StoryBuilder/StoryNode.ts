@@ -11,6 +11,7 @@ export interface StoryNodeOptions extends BaseModelOptions {
   color?: string;
   text: string;
   beginning?: boolean;
+  end?: boolean;
   engine: DiagramEngine;
 }
 const MAX_TEXT_LENGTH = 50;
@@ -20,7 +21,7 @@ export class StoryNode extends NodeModel {
   text: string;
   question: string;
   isBeginning: boolean;
-  //   isEnd: boolean;
+  isEnd: boolean;
   inputPort: InputPort | null;
   engine: DiagramEngine;
 
@@ -33,7 +34,7 @@ export class StoryNode extends NodeModel {
     this.text = options.text;
     this.question = "...?";
     this.isBeginning = options.beginning || false;
-    // this.isEnd = false;
+    this.isEnd = false;
     this.engine = options.engine;
 
     // If not the beginning node, add an input port
@@ -87,6 +88,17 @@ export class StoryNode extends NodeModel {
   setQuestion(q: string): void {
     this.question = q;
     this.repaint();
+  }
+  setEnd(): void {
+    this.isEnd = true;
+    this.setQuestion("");
+    this.getOutputPorts().forEach(port => {
+      this.removeOutputPort(port.getOptions().id);
+    });
+  }
+  resetEnd(): void {
+    this.isEnd = false;
+    this.setQuestion("...?");
   }
   addOutputPort(option: string): any {
     if (this.getOutputPorts().length >= 3) return false;

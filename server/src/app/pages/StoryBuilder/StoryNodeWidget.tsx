@@ -28,7 +28,7 @@ export class TSCustomNodeWidget extends React.Component<
     var outputPorts = this.props.node.getOutputPorts();
     const outputs = outputPorts.map(value => (
       <div className="output-port-wrapper" key={value.getID()}>
-        <p className="port-answer">
+        <p className="port-answer node-text">
           {value.answer.substring(0, 2) +
             `${value.answer.length > 2 ? "..." : ""}`}
         </p>
@@ -66,11 +66,11 @@ export class TSCustomNodeWidget extends React.Component<
           {inelement ? (
             <div className="input-port-container">{inelement}</div>
           ) : null}
-          <p>{this.props.node.getShortText()}</p>
+          <p className="node-text">{this.props.node.getShortText()}</p>
         </div>
         {question !== "" ? (
           <div className="node-footer">
-            <p className="question">
+            <p className="question node-text">
               {question.substring(0, 15) +
                 `${question.length > 15 ? "..." : ""}`}
             </p>

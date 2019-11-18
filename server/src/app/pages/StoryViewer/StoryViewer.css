@@ -1,0 +1,10 @@
+.Story-Viewer {
+  min-height: 100vh;
+  background: #2f2f2f;
+}
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 5vw;
+  background: rgb(243, 253, 253);
+}
