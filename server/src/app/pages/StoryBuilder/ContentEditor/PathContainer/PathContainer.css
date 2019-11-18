@@ -1,3 +1,10 @@
-#add-path-btn {
-	text-align: right;
+#add-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+}
+
+#add-btn {
+  margin-top: 10px;
 }

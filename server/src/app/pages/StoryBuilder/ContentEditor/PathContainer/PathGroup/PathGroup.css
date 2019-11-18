@@ -1,28 +1,28 @@
 .path-group {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .path-label {
-	padding-left: 5px;
-	padding-right: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .path-input {
-	width: 80%;
+  width: 80%;
 }
 
 #delete-btn {
-	color: #fb8080 !important;
-	background: white;
-	border-radius: 50%;
-	margin-left: 5px;
-	transition: 0.3s;
+  color: #fb8080 !important;
+  background: white;
+  border-radius: 50%;
+  margin-left: 5px;
+  transition: 0.3s;
 }
 #delete-btn:hover {
-	color: #744040 !important;
+  color: #744040 !important;
 }
 
 /* .delete-btn {

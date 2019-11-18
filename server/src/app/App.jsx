@@ -1,11 +1,12 @@
 import React from "react";
-import StoryBuilder from "./pages/StoryBuilder/StoryBuilder";
+import Routes from "./pages";
+
 function App() {
-	return (
-		<div className="App">
-			<StoryBuilder />
-		</div>
-	);
+  return (
+    <div className="App">
+      <Routes />
+    </div>
+  );
 }
 
 export default App;
