@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS a.in_progress_stories(
 );
 */
 CREATE TABLE IF NOT EXISTS a.tokens(
-    userid VARCHAR(256) NOT NULL PRIMARY KEY,
-    token VARCHAR(64) NOT NULL,
+    token VARCHAR(64) NOT NULL PRIMARY KEY,
+    userid VARCHAR(256) NOT NULL,
     expiration TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (userid) REFERENCES ss.authors(userid)
 );
@@ -101,5 +101,6 @@ GRANT INSERT ON ss.stories TO server;
 GRANT UPDATE ON ss.stories TO server;
 GRANT SELECT ON ss.authors TO server;
 GRANT INSERT ON ss.authors TO server;
+GRANT SELECT ON a.tokens TO server;
 GRANT UPDATE ON a.tokens TO server;
 GRANT INSERT ON a.tokens TO server;

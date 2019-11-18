@@ -1,9 +1,10 @@
 # Copyright Robert Geil 2019
 from flask import Flask, request, send_file, send_from_directory
+# TODO: Delete this before deployment
+from flask_cors import CORS
 from flask_api import status
 import requests
 import secrets
-import time
 
 import db_connection as db
 import utils
@@ -11,9 +12,14 @@ import json
 import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
+
+CORS(application)
+#application.config['CORS_HEADERS'] = 'Content-Type'
+
+'''
 @application.route('/')
 def hello_world():
-    return '''<!DOCTYPE html>
+    return \'''<!DOCTYPE html>
     <html>
         <head></head>
         <body>
@@ -24,8 +30,8 @@ def hello_world():
             <a href = '/tos'>Terms of Service</a> <br>
             <a href = '/privacy'>Privacy Policy</a>
         </body>
-    </html>'''
-
+    </html>\'''
+'''
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
 def privacy():
@@ -33,19 +39,6 @@ def privacy():
 @application.route('/tos')
 def terms_of_service():
     return send_file('static/tos.pdf', mimetype='application/pdf')
-
-# TODO:
-@application.route('/api/save_temp', methods=['POST'])
-def save_temp():
-    values = request.json
-    response = application.response_class(
-        status = 201
-    )
-    return response
-# TODO:
-@application.route('/api/delete_temp', methods=['POST'])
-def delete_temp():
-    return 'Goodbye temp'
 
 @application.route('/savejson', methods=['POST'])
 def save_json():
@@ -159,7 +152,7 @@ def save_story_content(storyid):
 
 @application.route('/api/save_story', methods=['POST'])
 def save_story_state():
-    token = request.cookies.get('token')
+    token: str = request.cookies.get('token')
     if token is None:
         return application.response_class(status = 403, response = json.dumps({'error': 'No authorization code was provided'}), mimetype='application/json')
     data = request.json
@@ -171,9 +164,15 @@ def save_story_state():
         return application.response_class(status = status.HTTP_406_NOT_ACCEPTABLE, response = json.dumps({'error': 'Improper JSON fields provided. Missing title or story content'}), mimetype='application/json')
     
     return application.response_class()
-
-@application.route('/builder')
+'''
+@application.route('/')
 def hello():
+    return send_file(application.static_folder + '/index.html')
+'''
+
+@application.route('/', defaults={'path': ''})
+@application.route('/<path:path>')
+def catch_all(path):
     return send_file(application.static_folder + '/index.html')
 
 if __name__ == '__main__':

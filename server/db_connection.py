@@ -6,7 +6,14 @@ DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DATABASE = os.environ['DB_NAME']
 HOST = os.environ['DB_HOST']
-conn = None
+conn = psycopg2.connect(
+            database=DATABASE,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=HOST,
+            port='5432'
+        )
+
 def connect_to_db():
     global conn
     if conn is None:
@@ -37,9 +44,7 @@ def cache_login(userid, name, email, token, ttl):
         # Add the user to the database if they don't already exist
         cursor.execute('''INSERT INTO ss.authors (name, email, userid) 
                         VALUES (%s, %s, %s) ON CONFLICT DO NOTHING''', (name, email, userid))
-        cursor.execute('''INSERT INTO a.tokens (userid, token, expiration) VALUES (%s, %s, NOW() + INTERVAL '%s SECOND')
-                            ON CONFLICT (userid) DO UPDATE 
-                            SET token = %s, expiration = NOW() + INTERVAL '%s SECOND';''', (userid, token, ttl, token, ttl))
+        cursor.execute("INSERT INTO a.tokens (userid, token, expiration) VALUES (%s, %s, NOW() + INTERVAL '%s SECOND');", (userid, token, ttl))
         conn.commit()
 
 def get_name_from_token(token):
@@ -125,7 +130,7 @@ def get_story_content(token, storyid):
             result = result[0]
         return result
 
-def save_story_content(token, storyid, content):
+def save_story_content(token: str, storyid: str, content: str) -> bool:
     connect_to_db()
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
