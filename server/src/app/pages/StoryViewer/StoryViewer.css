@@ -1,10 +1,13 @@
 .Story-Viewer {
-  min-height: 100vh;
-  background: #2f2f2f;
+	min-height: 100vh;
+	background: #2f2f2f;
+	display: flex;
+	justify-content: center;
 }
 .card-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 5vw;
-  background: rgb(243, 253, 253);
+	width: 75vw;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 5vw;
+	background: rgb(243, 253, 253);
 }
