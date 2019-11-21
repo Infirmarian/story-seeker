@@ -1,22 +1,28 @@
 -- Story Seeker
 CREATE SCHEMA IF NOT EXISTS ss;
+CREATE SCHEMA IF NOT EXISTS a;
 CREATE TYPE ss.category AS ENUM('horror', 'comedy', 'adventure');
+CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
-    id SERIAL PRIMARY KEY,
-    first_name VARCHAR(128) NOT NULL,
-    last_name VARCHAR(128) NOT NULL
+    userid VARCHAR(256) PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    email VARCHAR(320);
 );
 
 CREATE TABLE IF NOT EXISTS ss.stories(
     id SERIAL PRIMARY KEY,
     title VARCHAR(128),
-    authorid SERIAL,
+    authorid VARCHAR(256) NOT NULL,
     content JSON NOT NULL,
-    price SMALLINT NOT NULL, --Credits
+    serialized_story JSON NOT NULL,
+    price SMALLINT NOT NULL, -- Credits
     summary TEXT NOT NULL,
+    rating ss.rating NOT NULL,
+    genre ss.category,
+    published ss.publication_status NOT NULL DEFAULT 'not published',
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (authorid) REFERENCES ss.authors(id)
+    FOREIGN KEY (authorid) REFERENCES ss.authors(userid)
 );
 
 CREATE TABLE IF NOT EXISTS ss.users(
@@ -55,14 +61,21 @@ CREATE TABLE IF NOT EXISTS ss.saved_state(
     current_state JSON NOT NULL,
     FOREIGN KEY (userid) REFERENCES ss.users(id)
 );
-
-CREATE TABLE IF NOT EXISTS ss.in_progress_stories(
+/*
+CREATE TABLE IF NOT EXISTS a.in_progress_stories(
     authorid INT NOT NULL,
     content JSON NOT NULL,
     id SERIAL PRIMARY KEY,
     storyid INT,
     FOREIGN KEY (authorid) REFERENCES ss.authors (id),
     FOREIGN KEY (storyid) REFERENCES ss.stories (id)
+);
+*/
+CREATE TABLE IF NOT EXISTS a.tokens(
+    token VARCHAR(64) NOT NULL PRIMARY KEY,
+    userid VARCHAR(256) NOT NULL,
+    expiration TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (userid) REFERENCES ss.authors(userid)
 );
 
 --CREATE USER lambda WITH PASSWORD '########';
@@ -82,5 +95,20 @@ GRANT SELECT ON ss.stories TO lambda;
 --CREATE USER server WITH PASSWORD '########';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM server;
 GRANT USAGE ON SCHEMA ss TO server;
+GRANT USAGE ON SCHEMA a TO server;
 GRANT SELECT ON ss.stories TO server;
 GRANT INSERT ON ss.stories TO server;
+GRANT UPDATE ON ss.stories TO server;
+GRANT SELECT ON ss.authors TO server;
+GRANT INSERT ON ss.authors TO server;
+GRANT SELECT ON a.tokens TO server;
+GRANT UPDATE ON a.tokens TO server;
+GRANT INSERT ON a.tokens TO server;
+GRANT DELETE ON a.tokens TO server;
+
+--CREATE USER catalog WITH PASSWORD '#######';
+REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;
+GRANT USAGE ON SCHEMA ss TO catalog;
+GRANT SELECT ON ss.authors TO catalog;
+GRANT SELECT ON ss.stories TO catalog;
+
