@@ -7,3 +7,9 @@ __pycache__/
 # Frontend
 node_modules/
 build/
+
+# Database Server
+database/catalog/
+
+# Alexa
+alexa/Story_Seeker/
