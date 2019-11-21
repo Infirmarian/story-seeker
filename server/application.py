@@ -12,7 +12,7 @@ application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
 from flask_cors import CORS
-CORS(application)
+#CORS(application, resources={r"/api/*": {"origins": "*.storyseeker.fun", }})
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
