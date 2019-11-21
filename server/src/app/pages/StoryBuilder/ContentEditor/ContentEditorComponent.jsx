@@ -46,7 +46,7 @@ function ContentEditorComponent(props) {
       setQuestion("");
       setNodeContent("");
     };
-  }, [selectedNode]);
+  }, [selectedNode, setNodeContent, setQuestion]);
 
   const [isEndNode, setIsEndNode] = useState(false);
   useEffect(() => {

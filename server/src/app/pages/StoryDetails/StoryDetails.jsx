@@ -11,7 +11,7 @@ function StoryDetails(props) {
       })
       .then(data => {
         const userStory = data.filter(el => {
-          return el.userId === 1 && el.id == id;
+          return el.userId === 1 && el.id === id;
         })[0];
         console.log(userStory);
         const genre =
@@ -31,7 +31,7 @@ function StoryDetails(props) {
     return () => {
       setStoryDetails({});
     };
-  }, []);
+  }, [id]);
 
   const { title, description, genre, tags, publishDate } = storyDetails;
 

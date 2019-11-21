@@ -1,9 +1,5 @@
 import createEngine, {
-  DefaultLinkModel,
   DiagramModel,
-  DiagramEngine,
-  DefaultDiagramState,
-  DefaultNodeModel
 } from "@projectstorm/react-diagrams";
 
 // Object Types
@@ -12,7 +8,6 @@ import { StoryNode } from "../StoryNode";
 //Action Types
 import {
   ADD_NODE,
-  ADD_NODE_ON_DROP,
   REMOVE_NODE,
   UPDATE_START_NODE,
   INITIALIZE_SELECTED_NODE,
@@ -98,20 +93,10 @@ export const reducer = reduceReducers(
           selectedNode
         };
       case ADD_NODE:
-        var nodeToAdd = new StoryNode({ text: "Default", engine: engine });
+        let nodeToAdd = new StoryNode({ text: "Default", engine: engine });
         var x = Math.floor(engine.getCanvas().clientWidth / 2);
         var y = Math.floor(engine.getCanvas().clientHeight / 2);
         nodeToAdd.setPosition(x, y);
-        console.log(model.addNode(nodeToAdd));
-        engine.repaintCanvas();
-        return {
-          engine,
-          model,
-          selectedNode
-        };
-      case ADD_NODE_ON_DROP:
-        var nodeToAdd = new StoryNode({ text: "Default", engine: engine });
-        nodeToAdd.setPosition(action.payload.point);
         console.log(model.addNode(nodeToAdd));
         engine.repaintCanvas();
         return {

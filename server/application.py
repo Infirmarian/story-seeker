@@ -38,9 +38,6 @@ def save_json():
             mimetype = 'application/json'
         )
     return response
-@application.route('/login')
-def login():
-    return send_file('static/login.html')
 
 @application.route('/api/login', methods=['POST'])
 def login_token():
