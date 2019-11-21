@@ -1,7 +1,5 @@
 # Copyright Robert Geil 2019
 from flask import Flask, request, send_file, send_from_directory
-# TODO: Delete this before deployment
-from flask_cors import CORS
 from flask_api import status
 import requests
 import secrets
@@ -12,26 +10,10 @@ import json
 import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
-
+# TODO: Delete this before deployment
+from flask_cors import CORS
 CORS(application)
-#application.config['CORS_HEADERS'] = 'Content-Type'
 
-'''
-@application.route('/')
-def hello_world():
-    return \'''<!DOCTYPE html>
-    <html>
-        <head></head>
-        <body>
-            <h1>Website in progress</h1>
-            <p>This website is being actively constructed. To see the main feature before its
-            integration:</p>
-            <a href = '/builder'>Check out the story builder module</a><br>
-            <a href = '/tos'>Terms of Service</a> <br>
-            <a href = '/privacy'>Privacy Policy</a>
-        </body>
-    </html>\'''
-'''
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
 def privacy():
@@ -60,14 +42,6 @@ def save_json():
 def login():
     return send_file('static/login.html')
 
-'''
-Accept {
-    code: string
-}
-Return {
-
-}
-'''
 @application.route('/api/login', methods=['POST'])
 def login_token():
     code = request.json.get('code')
@@ -93,6 +67,16 @@ def login_token():
             else:
                 return application.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE, response=json.dumps({'error':' Unable to get user information from Amazon'}), mimetype='application/json')
     return application.response_class(status=400, response=json.dumps({'error': 'No code was provided for authentication'}), mimetype='application/json')
+
+@application.route('/api/logout', methods=['GET'])
+def logout():
+    token = request.cookies.get('token')
+    if token is None:
+        return application.response_class(status = status.HTTP_304_NOT_MODIFIED, response = json.dumps({'error': 'No user logged in'}), mimetype='application/json')
+    db.logout_user(token)
+    resp = application.response_class()
+    resp.set_cookie('token', '', expires=0)
+    return resp
 
 # Get the logged in user, based on their token
 @application.route('/api/get_loggedin_user', methods=['GET'])
@@ -164,11 +148,6 @@ def save_story_state():
         return application.response_class(status = status.HTTP_406_NOT_ACCEPTABLE, response = json.dumps({'error': 'Improper JSON fields provided. Missing title or story content'}), mimetype='application/json')
     
     return application.response_class()
-'''
-@application.route('/')
-def hello():
-    return send_file(application.static_folder + '/index.html')
-'''
 
 @application.route('/', defaults={'path': ''})
 @application.route('/<path:path>')

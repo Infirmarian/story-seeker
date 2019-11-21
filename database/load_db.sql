@@ -104,3 +104,11 @@ GRANT INSERT ON ss.authors TO server;
 GRANT SELECT ON a.tokens TO server;
 GRANT UPDATE ON a.tokens TO server;
 GRANT INSERT ON a.tokens TO server;
+GRANT DELETE ON a.tokens TO server;
+
+--CREATE USER catalog WITH PASSWORD '#######';
+REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;
+GRANT USAGE ON SCHEMA ss TO catalog;
+GRANT SELECT ON ss.authors TO catalog;
+GRANT SELECT ON ss.stories TO catalog;
+

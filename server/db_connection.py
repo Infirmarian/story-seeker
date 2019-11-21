@@ -1,6 +1,7 @@
 import os
 import psycopg2
 from datetime import datetime
+from typing import Union
 
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
@@ -34,9 +35,6 @@ def register_author(firstname, lastname):
         except Exception as e:
             print("Failed to enter to the database... %s" % e)
             return 500
-def save_temporary_story(authorid, temp_id, content):
-    pass
-
 
 def cache_login(userid, name, email, token, ttl):
     connect_to_db()
@@ -47,7 +45,23 @@ def cache_login(userid, name, email, token, ttl):
         cursor.execute("INSERT INTO a.tokens (userid, token, expiration) VALUES (%s, %s, NOW() + INTERVAL '%s SECOND');", (userid, token, ttl))
         conn.commit()
 
-def get_name_from_token(token):
+def logout_user(token) -> None:
+    connect_to_db()
+    with conn.cursor() as cursor:
+        cursor.execute('DELETE FROM a.tokens WHERE token = %s;', (token,))
+        conn.commit()
+
+def logout_all(token: str) -> bool:
+    connect_to_db()
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            return False
+        cursor.execute('DELETE FROM a.tokens WHERE userid = %s;', (userid,))
+        conn.commit()
+        return True
+
+def get_name_from_token(token: str) -> Union[None, str]:
     connect_to_db()
     with conn.cursor() as cursor:
         cursor.execute('''SELECT name FROM ss.authors a
@@ -57,8 +71,7 @@ def get_name_from_token(token):
             return None
         return value[0]
 
-def save_story(token, title, story):
-    # str, str, str -> int
+def save_story(token: str, title: str, story: str) -> int:
     connect_to_db()
     with conn.cursor() as cursor:
         cursor.execute('''SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW()''', (token,))
@@ -69,6 +82,7 @@ def save_story(token, title, story):
         cursor.execute('''UPDATE ss.stories SET serialized_story = %s WHERE title = %s AND authorid = %s;''', (title, story, userid))
         conn.commit()
         return 200
+
 def get_all_stories(token):
     # str -> Union[dict, None]
     connect_to_db()
