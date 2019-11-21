@@ -18,7 +18,7 @@ def compile_titles():
     with open('catalog/titles.json', 'w') as f:
         f.write('{"values": [')
         with conn.cursor() as cursor:
-            cursor.execute('SELECT title, id FROM ss.stories;')
+            cursor.execute("SELECT title, id FROM ss.stories WHERE published = 'published';")
             row = cursor.fetchone()
             comma = ''
             while row:
