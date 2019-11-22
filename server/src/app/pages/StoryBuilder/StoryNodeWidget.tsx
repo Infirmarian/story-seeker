@@ -13,7 +13,6 @@ export interface TSCustomNodeWidgetState {
   callback: (node: StoryNode) => void;
 }
 
-const MAX_TEXT_LENGTH = 30;
 export class TSCustomNodeWidget extends React.Component<
   TSCustomNodeWidgetProps,
   TSCustomNodeWidgetState

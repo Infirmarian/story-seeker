@@ -1,12 +1,9 @@
 import {
-	NodeModel,
-	DiagramEngine,
-	DefaultLinkModel,
-	DefaultPortModel,
+  NodeModel,
+  DiagramEngine,
 } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
-import { thisExpression } from "@babel/types";
 const uuid = require("uuid/v4");
 export interface StoryNodeOptions extends BaseModelOptions {
 	color?: string;
