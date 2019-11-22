@@ -1,7 +1,4 @@
-import {
-  NodeModel,
-  DiagramEngine,
-} from "@projectstorm/react-diagrams";
+import { NodeModel, DiagramEngine } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
 const uuid = require("uuid/v4");
@@ -68,7 +65,7 @@ export class StoryNode extends NodeModel {
 			isEnd,
 		} = event.data;
 		console.log(ports);
-		var formattedPorts: { [s: string]: DefaultPortModel } = {};
+		var formattedPorts: { [s: string]: AnswerPort } = {};
 		ports.forEach((port: any) => {
 			const id: string = port.id;
 			delete port.id;

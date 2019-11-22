@@ -1,20 +1,18 @@
-import createEngine, {
-  DiagramModel,
-} from "@projectstorm/react-diagrams";
+import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
 
 // Object Types
 import { StoryNode } from "../StoryNode";
 
 //Action Types
 import {
-  ADD_NODE,
-  REMOVE_NODE,
-  UPDATE_START_NODE,
-  INITIALIZE_SELECTED_NODE,
-  UPDATE_SELECTED_NODE,
-  SET_ENGINE_MODEL,
-  REGISTER_FACTORY,
-  INITIALIZE_MODEL
+	ADD_NODE,
+	REMOVE_NODE,
+	UPDATE_START_NODE,
+	INITIALIZE_SELECTED_NODE,
+	UPDATE_SELECTED_NODE,
+	SET_ENGINE_MODEL,
+	REGISTER_FACTORY,
+	INITIALIZE_MODEL,
 } from "./actions";
 
 // Redux
@@ -108,19 +106,7 @@ export const reducer = reduceReducers(
 					model,
 					selectedNode,
 				};
-			case ADD_NODE_ON_DROP:
-				var nodeToAdd = new StoryNode({
-					text: "Default",
-					engine: engine,
-				});
-				nodeToAdd.setPosition(action.payload.point);
-				console.log(model.addNode(nodeToAdd));
-				engine.repaintCanvas();
-				return {
-					engine,
-					model,
-					selectedNode,
-				};
+
 			case REMOVE_NODE:
 				if (model.getNodes().length <= 1) {
 					return {
