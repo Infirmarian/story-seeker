@@ -66,6 +66,7 @@ function StoryViewer() {
       </table>
     </div>
   );
+
 }
 
 export default StoryViewer;

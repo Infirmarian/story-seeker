@@ -1,4 +1,3 @@
-//AnswerPort
 import {
 	DefaultPortModel,
 	DefaultPortModelOptions,
@@ -11,6 +10,7 @@ interface AnswerPortOptions extends DefaultPortModelOptions {
 	answer: string;
 	engine: DiagramEngine;
 }
+
 export class AnswerPort extends DefaultPortModel {
 	answer: string;
 	engine: DiagramEngine;
@@ -20,8 +20,15 @@ export class AnswerPort extends DefaultPortModel {
 		this.engine = options.engine;
 		this.setMaximumLinks(1);
 	}
+
+	serialize() {
+		return {
+			...super.serialize(),
+			answer: this.answer,
+		};
+	}
+
 	setAnswer(answer: string): void {
-		console.log("port", answer);
 		this.answer = answer;
 		this.engine.repaintCanvas();
 	}
