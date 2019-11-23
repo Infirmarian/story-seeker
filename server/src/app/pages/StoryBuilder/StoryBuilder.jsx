@@ -7,10 +7,12 @@ import "./StoryBuilder.css";
 //Redux integration
 import store from "../../store";
 import { Provider } from "react-redux";
+import Navbar from "../../components/Navbar";
 
 function StoryBuilder() {
   return (
     <Provider store={store}>
+      <Navbar />
       <div className="StoryBuilder">
         <div className="Workspace">
           <Workspace />

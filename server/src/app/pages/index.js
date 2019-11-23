@@ -14,6 +14,7 @@ function Routes() {
       <Route path="/login" component={LoginPage} />
       <Route path="/builder/:id" component={StoryBuilder} />
       <Route exact path="/viewer" component={StoryViewer} />
+      <Route exact path="/viewer/new" component={StoryDetails} />
       <Route path="/viewer/details/:id" component={StoryDetails} />
     </Switch>
   );

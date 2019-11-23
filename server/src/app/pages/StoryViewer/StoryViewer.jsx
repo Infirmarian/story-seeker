@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { URL } from "../../../utils/constants";
 import { useHistory, Link } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 import "./StoryViewer.css";
 
 function StoryViewer() {
@@ -26,6 +27,7 @@ function StoryViewer() {
   }, [history]);
   return (
     <div className="Story-Viewer">
+      <Navbar />
       <table className="table">
         <thead className="thead-light">
           <tr>
@@ -51,7 +53,9 @@ function StoryViewer() {
                       : story.published}
                   </div>
                 </td>
-                <td>${0.99 + story.price - 1}</td>
+                <td>
+                  {story.price === 0 ? "free" : "$" + (story.price - 0.01)}
+                </td>
                 <td>
                   <Link to={`/viewer/${story.id}`}> Details </Link>
                 </td>
