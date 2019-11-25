@@ -12,7 +12,7 @@ import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-# CORS(application)
+CORS(application)
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
@@ -71,12 +71,15 @@ def login_token():
                     user_data['user_id'], user_data['name'], user_data['email'], token, 86400)
                 resp = application.response_class(status=200)
                 resp.set_cookie('token', value=token, max_age=86400,
-                                httponly=True, domain='www.storyseeker.fun')
-                resp.set_cookie(
-                    'name', value=user_data['name'], max_age=86400, httponly=True, domain='www.storyseeker.fun')
+                                httponly=True)  # , domain='www.storyseeker.fun')
+                resp.set_cookie('name', value=user_data['name'], max_age=86400,
+                                httponly=True)  # , domain='www.storyseeker.fun')
                 return resp
             else:
-                return application.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE, response=json.dumps({'error': ' Unable to get user information from Amazon'}), mimetype='application/json')
+                return application.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                                                  response=json.dumps(
+                                                      {'error': ' Unable to get user information from Amazon'}),
+                                                  mimetype='application/json')
     return application.response_class(status=400, response=json.dumps({'error': 'No code was provided for authentication'}), mimetype='application/json')
 
 
@@ -102,6 +105,7 @@ def get_loggedin_user():
 
 @application.route('/api/get_all_stories', methods=['GET'])
 def get_all_stories():
+    # '3ee288b14e96dbb82aa37c0c2e8dbddb8537adae9a824eb70b259410b30a4d0f'
     token = request.cookies.get('token')
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')

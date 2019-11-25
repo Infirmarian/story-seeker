@@ -18,7 +18,8 @@ function Navbar() {
             <div
               className="nav-link nav-text"
               onClick={() => {
-                fetch(URL + "/api/get_all_stories").then(() => {
+                console.log("logging out");
+                fetch(URL + "/api/logout").then(() => {
                   history.push("/");
                 });
               }}
