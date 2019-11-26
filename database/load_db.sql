@@ -1,7 +1,17 @@
 -- Story Seeker
 CREATE SCHEMA IF NOT EXISTS ss;
 CREATE SCHEMA IF NOT EXISTS a;
-CREATE TYPE ss.category AS ENUM('horror', 'comedy', 'adventure');
+CREATE TYPE ss.category AS ENUM(
+    'horror',
+    'comedy',
+    'adventure',
+    'fantasy',
+    'science fiction',
+    'western',
+    'romance',
+    'mystery',
+    'detective',
+    'dystopia');
 CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
@@ -53,6 +63,14 @@ CREATE TABLE IF NOT EXISTS ss.libraries(
     acquire_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     been_read BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (userid) REFERENCES ss.users (id),
+    FOREIGN KEY (storyid) REFERENCES ss.stories(id),
+    PRIMARY KEY (userid, storyid)
+);
+
+CREATE TABLE IF NOT EXISTS ss.favorites(
+    userid VARCHAR(256),
+    storyid INT,
+    FOREIGN KEY (userid) REFERENCES ss.users(id),
     FOREIGN KEY (storyid) REFERENCES ss.stories(id),
     PRIMARY KEY (userid, storyid)
 );
