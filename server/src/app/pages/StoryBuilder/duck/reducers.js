@@ -141,7 +141,7 @@ export const reducer = reduceReducers(
 						incomingLinks[link].remove();
 					}
 				}
-				const outputPorts = action.payload.node.getOutputPorts();
+				const outputPorts = action.payload.node.getOutPorts();
 				var newNode = null;
 				if (outputPorts) {
 					if (action.payload.node.isBeginning) {

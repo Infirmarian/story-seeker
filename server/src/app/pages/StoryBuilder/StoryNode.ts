@@ -3,21 +3,152 @@ import {
 	DiagramEngine,
 	DefaultLinkModel,
 	DefaultPortModel,
+	DefaultNodeModel,
+	PortModel,
 } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
 import { thisExpression } from "@babel/types";
 const uuid = require("uuid/v4");
 export interface StoryNodeOptions extends BaseModelOptions {
-	color?: string;
 	text: string;
 	beginning?: boolean;
-	end?: boolean;
 	engine: DiagramEngine;
 }
 const MAX_TEXT_LENGTH = 50;
 
-export class StoryNode extends NodeModel {
+export class StoryNode extends DefaultNodeModel {
+	text: string;
+	question: string;
+	isBeginning: boolean;
+	isEnd: boolean;
+	engine: DiagramEngine;
+
+	constructor(options: StoryNodeOptions) {
+		super({
+			type: "ts-custom-node",
+		});
+		this.text = options.text;
+		this.question = "...";
+		this.isBeginning = options.beginning || false;
+		this.isEnd = false;
+		this.engine = options.engine;
+
+		if (!this.isBeginning) {
+			this.addInPort("in");
+		}
+	}
+
+	// Add custom attributes to serialization process
+	serialize() {
+		return {
+			...super.serialize(),
+			text: this.text,
+			question: this.question,
+			beginning: this.isBeginning,
+		};
+	}
+
+	deserialize(event: any): void {
+		super.deserialize(event);
+		console.log(event);
+		const { text, question, beginning } = event.data;
+		this.text = text;
+		this.question = question;
+		this.isBeginning = beginning;
+	}
+
+	getShortText(): string {
+		return (
+			this.text.substring(0, MAX_TEXT_LENGTH) +
+			(this.text.length > MAX_TEXT_LENGTH ? "..." : "")
+		);
+	}
+	getFullText(): string {
+		return this.text;
+	}
+	setFullText(nt: string): void {
+		this.text = nt;
+	}
+	getQuestion(): string {
+		return this.question;
+	}
+	setQuestion(q: string): void {
+		this.question = q;
+	}
+	// setEnd(): void {
+	// 	this.setQuestion("");
+	// 	this.getOutPorts().forEach((port) => {
+	// 		this.removeOutputPort(port.getOptions().id);
+	// 	});
+	// }
+	resetEnd(): void {
+		this.isEnd = false;
+		this.setQuestion("...?");
+	}
+	addOutputPort(option: string): any {
+		if (this.getOutPorts().length >= 3) return false;
+		var addedPort = this.addOutPort(option);
+		this.engine.repaintCanvas();
+		return addedPort.getOptions().id;
+	}
+	removeOutputPort(portID: any): boolean {
+		var portToRemove = this.getPortFromID(portID);
+		if (portToRemove != null) {
+			var links = portToRemove.getLinks();
+			for (let link in links) {
+				links[link].remove();
+			}
+			portToRemove.remove();
+			// this.removePort(portToRemove);
+			this.engine.repaintCanvas();
+			return true;
+		}
+		return false;
+	}
+	// updateOutputPort(portID: any, message: string): boolean {
+	// 	var portToUpdate = this.getPortFromID(portID);
+	// 	if (portToUpdate instanceof AnswerPort) {
+	// 		console.log("node", message);
+	// 		portToUpdate.setAnswer(message);
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
+	getOutputPorts(): AnswerPort[] {
+		var result: AnswerPort[] = [];
+		for (var k in this.ports) {
+			if (this.ports[k] instanceof AnswerPort)
+				result.push(this.ports[k] as AnswerPort);
+		}
+		return result;
+		// this.engine.getCanvas().
+	}
+	getInputPort(): InputPort | null {
+		return this.getInPorts()[0];
+	}
+	setBeginning(): void {
+		var inputPort = this.getInputPort();
+		if (inputPort) {
+			var incomingLinks = [];
+			for (var v in inputPort.getLinks()) {
+				incomingLinks.push(inputPort.getLinks()[v]);
+			}
+			incomingLinks.forEach((element) => {
+				element.remove();
+			});
+			inputPort.remove();
+			inputPort = null;
+		}
+		this.isBeginning = true;
+	}
+	clearBeginning(): void {
+		this.addInPort("in");
+		this.isBeginning = false;
+	}
+}
+
+/* export class StoryNode extends NodeModel {
 	text: string;
 	question: string;
 	isBeginning: boolean;
@@ -194,3 +325,4 @@ export class StoryNode extends NodeModel {
 		this.isBeginning = false;
 	}
 }
+ */
