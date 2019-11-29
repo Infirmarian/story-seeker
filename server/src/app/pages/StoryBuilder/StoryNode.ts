@@ -46,16 +46,42 @@ export class StoryNode extends DefaultNodeModel {
 			text: this.text,
 			question: this.question,
 			beginning: this.isBeginning,
+			portsInOrder: this.portsIn.map((port) => {
+				return port.getID();
+			}),
+			portsOutOrder: this.portsOut.map((port) => {
+				return port.getID();
+			}),
+			outputPortAnswers: this.portsOut.map((port) => {
+				const p = port as AnswerPort;
+				return p.answer;
+			}),
 		};
 	}
 
 	deserialize(event: any): void {
 		super.deserialize(event);
 		console.log(event);
-		const { text, question, beginning } = event.data;
+		const {
+			text,
+			question,
+			beginning,
+			portsInOrder,
+			portsOutOrder,
+			outputPortAnswers,
+		} = event.data;
 		this.text = text;
 		this.question = question;
 		this.isBeginning = beginning;
+		this.portsIn = portsInOrder.map((id: string) => {
+			return this.getPortFromID(id);
+		});
+		var outPorts = portsOutOrder.map((id: string, index: number) => {
+			var p = this.getPortFromID(id) as AnswerPort;
+			p.answer = outputPortAnswers[index];
+			return p;
+		});
+		this.portsOut = outPorts;
 	}
 
 	getShortText(): string {
@@ -69,60 +95,73 @@ export class StoryNode extends DefaultNodeModel {
 	}
 	setFullText(nt: string): void {
 		this.text = nt;
+		this.engine.repaintCanvas();
 	}
 	getQuestion(): string {
 		return this.question;
 	}
 	setQuestion(q: string): void {
 		this.question = q;
+		this.engine.repaintCanvas();
 	}
-	// setEnd(): void {
-	// 	this.setQuestion("");
-	// 	this.getOutPorts().forEach((port) => {
-	// 		this.removeOutputPort(port.getOptions().id);
-	// 	});
-	// }
+	setEnd(): void {
+		this.setQuestion("");
+		this.getOutPorts().forEach((port) => {
+			this.removeOutputPort(port.getOptions().id);
+		});
+		this.isEnd = true;
+	}
 	resetEnd(): void {
 		this.isEnd = false;
-		this.setQuestion("...?");
+		this.setQuestion("...");
 	}
 	addOutputPort(option: string): any {
 		if (this.getOutPorts().length >= 3) return false;
-		var addedPort = this.addOutPort(option);
+		const addedPort = new AnswerPort({
+			answer: option,
+			engine: this.engine,
+			in: false,
+			name: String(uuid()),
+			label: String(uuid()),
+		});
+		this.addPort(addedPort);
+		// var addedPort = this.addOutPort(option);
 		this.engine.repaintCanvas();
 		return addedPort.getOptions().id;
 	}
+	removePort(port: DefaultPortModel): void {
+		if (port.getOptions().in) {
+			this.portsIn.splice(this.portsIn.indexOf(port));
+		} else {
+			console.log(this.portsOut);
+			this.portsOut.splice(this.portsOut.indexOf(port), 1);
+		}
+		console.log("final", this.getPorts());
+	}
 	removeOutputPort(portID: any): boolean {
 		var portToRemove = this.getPortFromID(portID);
-		if (portToRemove != null) {
+		console.log(portToRemove);
+		if (portToRemove instanceof AnswerPort) {
 			var links = portToRemove.getLinks();
 			for (let link in links) {
 				links[link].remove();
 			}
-			portToRemove.remove();
-			// this.removePort(portToRemove);
+			console.log("before", this.getPorts(), this.getOutPorts());
+			this.removePort(portToRemove);
+			console.log("after", this.getPorts(), this.getOutPorts());
 			this.engine.repaintCanvas();
 			return true;
 		}
 		return false;
 	}
-	// updateOutputPort(portID: any, message: string): boolean {
-	// 	var portToUpdate = this.getPortFromID(portID);
-	// 	if (portToUpdate instanceof AnswerPort) {
-	// 		console.log("node", message);
-	// 		portToUpdate.setAnswer(message);
-	// 		return true;
-	// 	}
-	// 	return false;
-	// }
-	getOutputPorts(): AnswerPort[] {
-		var result: AnswerPort[] = [];
-		for (var k in this.ports) {
-			if (this.ports[k] instanceof AnswerPort)
-				result.push(this.ports[k] as AnswerPort);
+	updateOutputPort(portID: any, message: string): boolean {
+		var portToUpdate = this.getPortFromID(portID);
+		if (portToUpdate instanceof AnswerPort) {
+			// console.log("node", message);
+			portToUpdate.setAnswer(message);
+			return true;
 		}
-		return result;
-		// this.engine.getCanvas().
+		return false;
 	}
 	getInputPort(): InputPort | null {
 		return this.getInPorts()[0];
@@ -137,10 +176,11 @@ export class StoryNode extends DefaultNodeModel {
 			incomingLinks.forEach((element) => {
 				element.remove();
 			});
-			inputPort.remove();
+			this.removePort(inputPort);
 			inputPort = null;
 		}
 		this.isBeginning = true;
+		this.isEnd = false;
 	}
 	clearBeginning(): void {
 		this.addInPort("in");

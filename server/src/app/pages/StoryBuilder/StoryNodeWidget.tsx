@@ -1,6 +1,7 @@
 import * as React from "react";
 import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
 import { StoryNode } from "./StoryNode";
+import { AnswerPort } from "./CustomPorts";
 import "./StoryNodeWidget.css";
 
 export interface TSCustomNodeWidgetProps {
@@ -26,19 +27,22 @@ export class TSCustomNodeWidget extends React.Component<
 	render() {
 		const question = this.props.node.getQuestion();
 		var outputPorts = this.props.node.getOutPorts();
-		const outputs = outputPorts.map((port) => (
-			<div className="output-port-wrapper" key={port.getID()}>
-				<p className="port-answer node-text">
-					{port.getOptions().name
-						? port.getOptions().name.substring(0, 2) +
-						  `${port.getOptions().name.length > 2 ? "..." : ""}`
-						: ""}
-				</p>
-				<PortWidget engine={this.props.engine} port={port}>
-					<div className="port output-port" />
-				</PortWidget>
-			</div>
-		));
+		const outputs = outputPorts.map((port) => {
+			const ansPort = port as AnswerPort;
+			return (
+				<div className="output-port-wrapper" key={ansPort.getID()}>
+					<p className="port-answer node-text">
+						{ansPort.answer
+							? ansPort.answer.substring(0, 2) +
+							  `${ansPort.answer.length > 2 ? "..." : ""}`
+							: ""}
+					</p>
+					<PortWidget engine={this.props.engine} port={ansPort}>
+						<div className="port output-port" />
+					</PortWidget>
+				</div>
+			);
+		});
 		var input = this.props.node.getInputPort();
 		let inelement;
 		if (input) {
