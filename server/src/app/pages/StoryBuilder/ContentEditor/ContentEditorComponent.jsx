@@ -96,10 +96,7 @@ function ContentEditorComponent(props) {
 					</label>
 				) : null}
 				{!isEndNode ? (
-					<PathContainer
-						engine={engine}
-						selectedNode={selectedNode}
-					/>
+					<PathContainer selectedNode={selectedNode} />
 				) : null}
 			</div>
 			<div className="extra-section">
@@ -131,6 +128,7 @@ function ContentEditorComponent(props) {
 				<button onClick={() => console.log(model)}>Check Model</button>
 				<button
 					onClick={() => {
+						console.log(selectedNode.portsOut);
 						console.log("serialize", model.serialize());
 						var str = JSON.stringify(model.serialize());
 						console.log(str);
