@@ -88,7 +88,8 @@ def get_name_from_token(token: str, repeat=False) -> Union[None, str]:
         connect_to_db()
         return get_name_from_token(str, True)
 
-def save_story(token: str, title: str, story: str, repeat = False) -> int:
+
+def save_story(token: str, title: str, story: str, repeat=False) -> int:
     try:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -136,7 +137,6 @@ def get_all_stories(token: str, repeat=False):
         return get_all_stories(token, True)
 
 
-
 def get_story_overview(token, storyid, repeat=False):
     # str, str -> Union[dict, None]
     try:
@@ -156,7 +156,7 @@ def get_story_overview(token, storyid, repeat=False):
                 return None
             return {
                 'title': result[0],
-                'price': result[1],
+                'price': str(result[1]),
                 'genre': result[2],
                 'published': result[3],
                 'summary': result[4],
@@ -192,7 +192,35 @@ def get_story_content(token: str, storyid: str, repeat=False) -> Dict:
         return get_story_content(token, storyid, True)
 
 
-def save_story_content(token: str, storyid: str, content: str, result=True) -> bool:
+def save_story_overview(token: str, repeat=False) -> bool:
+    # TODO
+    try:
+        with conn.cursor() as cursor:
+            userid = get_userid_from_token(token, cursor)
+            if userid is None:
+                return False
+    except OperationalError as e:
+        if repeat:
+            raise e
+        connect_to_db()
+        return save_story_overview(token, True)
+
+
+def create_story(token: str, title: str, repeat=False) -> Union(None, int):
+    # TODO
+    try:
+        with conn.cursor() as cursor:
+            userid = get_userid_from_token(token, cursor)
+            if userid is None:
+                return None
+    except OperationalError as e:
+        if repeat:
+            raise e
+        connect_to_db()
+        return create_story(token, title, True)
+
+
+def save_story_content(token: str, storyid: str, content: str, repeat=False) -> bool:
     try:
         with conn.cursor() as cursor:
             userid = get_userid_from_token(token, cursor)

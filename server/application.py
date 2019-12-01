@@ -105,8 +105,8 @@ def get_loggedin_user():
 
 @application.route('/api/get_all_stories', methods=['GET'])
 def get_all_stories():
-    # '3ee288b14e96dbb82aa37c0c2e8dbddb8537adae9a824eb70b259410b30a4d0f'
-    token = request.cookies.get('token')
+    # request.cookies.get('token')
+    token = 'sj391d034j19sbfwj201jrignwgq'
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     all_stories = db.get_all_stories(token)
@@ -117,7 +117,8 @@ def get_all_stories():
 
 @application.route('/api/get_story_overview/<storyid>', methods=['GET'])
 def get_individual_story(storyid):
-    token = request.cookies.get('token')
+    # request.cookies.get('token')
+    token = 'sj391d034j19sbfwj201jrignwgq'
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
@@ -126,6 +127,26 @@ def get_individual_story(storyid):
     if story_overview is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'Token was either invalid or expired'}), mimetype='application/json')
     return application.response_class(response=json.dumps(story_overview), mimetype='application/json')
+
+
+@application.route('/api/save_story_overview/<storyid>', methods=['POST'])
+def save_individual_story(storyid):
+    # request.cookies.get('token')
+    token = 'sj391d034j19sbfwj201jrignwgq'
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    values = request.json
+
+
+@application.route('/api/create_story', methods=['POST'])
+def create_story():
+    # request.cookies.get('token')
+    token = 'sj391d034j19sbfwj201jrignwgq'
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    values = request.json
+    resp = db.create_story(token, values['title'])
+    return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': resp}), mimetype='application/json')
 
 
 @application.route('/api/get_story_content/<storyid>', methods=['GET'])
