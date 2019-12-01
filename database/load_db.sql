@@ -7,7 +7,8 @@ CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
-    email VARCHAR(320);
+    email VARCHAR(320),
+    joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS ss.stories(
