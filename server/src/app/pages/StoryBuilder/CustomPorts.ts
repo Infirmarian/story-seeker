@@ -27,17 +27,18 @@ export class AnswerPort extends DefaultPortModel {
 			answer: this.answer,
 		};
 	}
+	deserialize(event: any) {
+		super.deserialize(event);
+		this.answer = event.data.answer;
+	}
 
 	setAnswer(answer: string): void {
 		this.answer = answer;
 		this.engine.repaintCanvas();
 	}
 	canLinkToPort(port: PortModel): boolean {
-		if (port instanceof InputPort) {
-			return true;
-		}
 		if (port instanceof AnswerPort) return false;
-		return false;
+		return true;
 	}
 	createLinkModel(): LinkModel {
 		var vs = Object.values(this.links);
