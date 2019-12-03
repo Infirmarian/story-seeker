@@ -1,5 +1,8 @@
 # Copyright Robert Geil 2019
 # utils.py
+import re
+pattern = re.compile(r'\s+')
+
 
 def validate_json(story):
     result = {}
@@ -15,7 +18,7 @@ def validate_json(story):
     result['author'] = story['author']
     story = story['content']
     if len(story) == 0:
-        return None # Empty story
+        return None  # Empty story
     unvisited = set()
     for i in range(len(story)):
         unvisited.add(i)
@@ -55,13 +58,17 @@ def validate_json(story):
         return None
     return result
 
-{"content": [
-    {"main": "Once upon a time, there were 3 little pigs, who lived in 3 huts. The first pig lived in a hut of straw, the second\\nlived in a house of sticks, while the third lived in a fortified bunker of depleted uranium. Our protagonist, a wolfish inspector named\\nFred has been tasked to investigate potential building code violations.", 
-    "question": "Which building should he investigate first?", 
-    "options": [["The straw hut", 2], ["the stick house", 1], ["the uranium bunker", 1]]}, 
-    {"main": "Alas the fortress had Air Missiles defending itself, so Fred died a tragic death"}, 
-    {"main": "Upon careful inspection, the straw hut seems to be failing fire code standards!", 
-    "question": "Should Fred arrest the violating pig?", 
-    "options": [["yes", 3], ["no", 4]]}, 
-    {"main": "Another successful arrest to maintain building standards!"}, 
-    {"main": "Unfortunately the higher ups in the department of civil engineering arent happy with the lax enforcement, and our hero gets the axe "}]}
+
+def validate_title(title: str) -> bool:
+    title = clean_title(title)
+    if len(title) < 3:
+        return "Title must be at least 3 characters long"
+    for char in title:
+        if not char.isalpha() and not char in {"'", " ", ":"}:
+            return "%s is not allowed in a title" % char
+    return None
+
+
+def clean_title(title: str) -> str:
+    title = pattern.sub(' ', title).strip()
+    return title

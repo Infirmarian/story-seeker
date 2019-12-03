@@ -103,7 +103,7 @@ def get_loggedin_user():
     return application.response_class(response=json.dumps({'user': user}), mimetype='application/json')
 
 
-@application.route('/api/get_all_stories', methods=['GET'])
+@application.route('/api/list', methods=['GET'])
 def get_all_stories():
     # request.cookies.get('token')
     token = 'sj391d034j19sbfwj201jrignwgq'
@@ -115,7 +115,7 @@ def get_all_stories():
     return application.response_class(status=status.HTTP_200_OK, response=json.dumps(all_stories), mimetype='application/json')
 
 
-@application.route('/api/get_story_overview/<storyid>', methods=['GET'])
+@application.route('/api/overview/<storyid>', methods=['GET'])
 def get_individual_story(storyid):
     # request.cookies.get('token')
     token = 'sj391d034j19sbfwj201jrignwgq'
@@ -129,27 +129,42 @@ def get_individual_story(storyid):
     return application.response_class(response=json.dumps(story_overview), mimetype='application/json')
 
 
-@application.route('/api/save_story_overview/<storyid>', methods=['POST'])
+@application.route('/api/overview/<storyid>', methods=['PUT'])
 def save_individual_story(storyid):
     # request.cookies.get('token')
     token = 'sj391d034j19sbfwj201jrignwgq'
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     values = request.json
+    resp = db.update_story(token, storyid, values)
+    return application.response_class(status=resp)
 
 
-@application.route('/api/create_story', methods=['POST'])
+@application.route('/api/overview', methods=['POST'])
 def create_story():
     # request.cookies.get('token')
     token = 'sj391d034j19sbfwj201jrignwgq'
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     values = request.json
-    resp = db.create_story(token, values['title'])
-    return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': resp}), mimetype='application/json')
+    a = utils.validate_title(values['title'])
+    if a:
+        return application.response_class(status=status.HTTP_400_BAD_REQUEST, response=json.dumps({'error': a}), mimetype='application/json')
+    return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': 1}), mimetype='application/json')
 
 
-@application.route('/api/get_story_content/<storyid>', methods=['GET'])
+@application.route('/api/overview/<storyid>/title', methods=['GET'])
+def check_title_value(storyid):
+    title = request.args.get('title')
+    if title is None:
+        return application.response_class(status=status.HTTP_204_NO_CONTENT)
+    if db.check_title_ok(title, storyid):
+        return application.response_class(status=status.HTTP_200_OK)
+    else:
+        return application.response_class(status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+@application.route('/api/builder/<storyid>', methods=['GET'])
 def get_story_content(storyid):
     token = request.cookies.get('token')
     if token is None:
@@ -162,7 +177,7 @@ def get_story_content(storyid):
     return application.response_class(response=json.dumps(story_content), mimetype='application/json')
 
 
-@application.route('/api/save_story_content/<storyid>', methods=['POST'])
+@application.route('/api/builder/<storyid>', methods=['PUT'])
 def save_story_content(storyid):
     token = request.cookies.get('token')
     if token is None:
@@ -174,22 +189,6 @@ def save_story_content(storyid):
         return application.response_class()
     else:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
-
-
-@application.route('/api/save_story', methods=['POST'])
-def save_story_state():
-    token: str = request.cookies.get('token')
-    if token is None:
-        return application.response_class(status=403, response=json.dumps({'error': 'No authorization code was provided'}), mimetype='application/json')
-    data = request.json
-    if data is None:
-        return application.response_class(status=status.HTTP_406_NOT_ACCEPTABLE, response=json.dumps({'error': 'No JSON provided to save'}), mimetype='application/json')
-    story = data.get('story')
-    title = data.get('title')
-    if story is None or title is None:
-        return application.response_class(status=status.HTTP_406_NOT_ACCEPTABLE, response=json.dumps({'error': 'Improper JSON fields provided. Missing title or story content'}), mimetype='application/json')
-
-    return application.response_class()
 
 
 @application.route('/', defaults={'path': ''})

@@ -170,6 +170,29 @@ def get_story_overview(token, storyid, repeat=False):
         return get_story_overview(token, storyid, True)
 
 
+def update_story(token: str, storyid: str, values: dict, repeat=False) -> int:
+    try:
+        with conn.cursor() as cursor:
+            uid = get_userid_from_token(token, cursor)
+            if uid is None:
+                return 403
+                # TODO: Maybe don't allow for updates if the story is published?
+            cursor.execute(
+                '''UPDATE ss.stories 
+                SET title = %s, 
+                summary = %s, 
+                genre = %s,
+                last_modified = NOW() WHERE id = %s AND authorid = %s''',
+                (values['title'], values['summary'], values['genre'], storyid, uid))
+            conn.commit()
+            return 200
+    except OperationalError as e:
+        if repeat:
+            raise e
+        connect_to_db()
+        return update_story(token, storyid, values, True)
+
+
 def get_story_content(token: str, storyid: str, repeat=False) -> Dict:
     try:
         with conn.cursor() as cursor:
@@ -206,7 +229,7 @@ def save_story_overview(token: str, repeat=False) -> bool:
         return save_story_overview(token, True)
 
 
-def create_story(token: str, title: str, repeat=False) -> Union(None, int):
+def create_story(token: str, title: str, repeat=False):
     # TODO
     try:
         with conn.cursor() as cursor:
@@ -218,6 +241,20 @@ def create_story(token: str, title: str, repeat=False) -> Union(None, int):
             raise e
         connect_to_db()
         return create_story(token, title, True)
+
+
+def check_title_ok(title: str, storyid: str, repeat: bool = False) -> bool:
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'SELECT title FROM ss.stories WHERE title = %s AND id != %s;',
+                (title, storyid))
+            return cursor.fetchone() is not None
+    except OperationalError as e:
+        if repeat:
+            raise e
+        connect_to_db()
+        return check_title_ok(title, storyid, True)
 
 
 def save_story_content(token: str, storyid: str, content: str, repeat=False) -> bool:
@@ -239,7 +276,7 @@ def save_story_content(token: str, storyid: str, content: str, repeat=False) -> 
 
 def get_userid_from_token(token, cursor):
     cursor.execute(
-        'SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW();', (token))
+        'SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW();', (token,))
     userid = cursor.fetchone()
     if userid:
         userid = userid[0]

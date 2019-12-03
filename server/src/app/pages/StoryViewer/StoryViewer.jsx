@@ -9,7 +9,7 @@ function StoryViewer() {
   let history = useHistory();
   useEffect(() => {
     // fetch user data
-    fetch(URL + "/api/get_all_stories")
+    fetch(URL + "/api/list")
       .then(response => {
         if (response.status === 403) {
           history.push("/login");

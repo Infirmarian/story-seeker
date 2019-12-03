@@ -7,14 +7,14 @@ function Navbar() {
   let history = useHistory();
   return (
     <nav className="navbar navbar-expand-lg">
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
+      <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul className="navbar-nav mr-auto">
+          <li className="nav-item active">
             <Link className="nav-link nav-text" to="/">
               Home
             </Link>
           </li>
-          <li class="nav-item">
+          <li className="nav-item">
             <div
               className="nav-link nav-text"
               onClick={() => {
@@ -27,7 +27,7 @@ function Navbar() {
               Logout
             </div>
           </li>
-          <li class="nav-item">
+          <li className="nav-item">
             <Link className="nav-link nav-text" to="/viewer/new">
               New Story
             </Link>
