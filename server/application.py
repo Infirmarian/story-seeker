@@ -140,6 +140,18 @@ def save_individual_story(storyid):
     return application.response_class(status=resp)
 
 
+@application.route('/api/overview/<storyid>', methods=['DELETE'])
+def delete_story(storyid):
+    # request.cookies.get('token')
+    token = 'sj391d034j19sbfwj201jrignwgq'
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authorization token was provided'}), mimetype='application/json')
+    res = db.delete_story(token, storyid)
+    if res:
+        return application.response_class(status=status.HTTP_400_BAD_REQUEST, response=json.dumps({'error': res}), mimetype='application/json')
+    return application.response_class(status=status.HTTP_200_OK)
+
+
 @application.route('/api/overview', methods=['POST'])
 def create_story():
     # request.cookies.get('token')
@@ -150,7 +162,12 @@ def create_story():
     a = utils.validate_title(values['title'])
     if a:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST, response=json.dumps({'error': a}), mimetype='application/json')
-    return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': 1}), mimetype='application/json')
+    title = utils.clean_title(values['title'])
+    index = db.create_story(token, title)
+    if index:
+        return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': index}), mimetype='application/json')
+    else:
+        return application.response_class(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @application.route('/api/overview/<storyid>/title', methods=['GET'])

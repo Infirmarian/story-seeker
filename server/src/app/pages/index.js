@@ -6,6 +6,7 @@ import StoryDetails from "./StoryDetails/StoryDetails";
 import Home from "./HomePage/Home";
 
 import React from "react";
+import Page404 from "./Page404/Page404";
 
 function Routes() {
   return (
@@ -16,6 +17,7 @@ function Routes() {
       <Route exact path="/viewer" component={StoryViewer} />
       <Route exact path="/viewer/new" component={StoryDetails} />
       <Route path="/viewer/details/:id" component={StoryDetails} />
+      <Route component={Page404} />
     </Switch>
   );
 }

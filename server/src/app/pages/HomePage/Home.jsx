@@ -26,7 +26,10 @@ function Home() {
           <h3 className="mb-5">
             <em>A Choose Your Own Adventure Style Skill for Alexa</em>
           </h3>
-          <a className="btn btn-primary btn-xl" href="https://alexa.amazon.com">
+          <a
+            className="btn btn-primary btn-xl"
+            href="https://www.amazon.com/dp/B0828V3DD9/"
+          >
             Get it on Alexa
           </a>
           <Link

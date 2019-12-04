@@ -1,6 +1,9 @@
 # Copyright Robert Geil 2019
 # utils.py
 import re
+
+import db_connection as db
+
 pattern = re.compile(r'\s+')
 
 
@@ -66,6 +69,8 @@ def validate_title(title: str) -> bool:
     for char in title:
         if not char.isalpha() and not char in {"'", " ", ":"}:
             return "%s is not allowed in a title" % char
+    if(db.title_exists(title)):
+        return "A story called %s already exists" % title
     return None
 
 

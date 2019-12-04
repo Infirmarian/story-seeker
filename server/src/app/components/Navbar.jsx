@@ -6,12 +6,17 @@ import "./Navbar.css";
 function Navbar() {
   let history = useHistory();
   return (
-    <nav className="navbar navbar-expand-lg">
+    <nav className="navbar navbar-expand-lg bg-primary">
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item active">
             <Link className="nav-link nav-text" to="/">
               Home
+            </Link>
+          </li>
+          <li className="nav-item active">
+            <Link className="nav-link nav-text" to="/viewer">
+              All Stories
             </Link>
           </li>
           <li className="nav-item">

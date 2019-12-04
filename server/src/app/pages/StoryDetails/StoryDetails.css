@@ -1,8 +1,7 @@
-.form {
+.Story-Details {
   width: 80vw;
-  background: #31c4f3;
-  color: white;
-  padding: 0 30px;
+  padding: 30px;
+  align-content: center;
 }
 
 .input-group {
@@ -33,4 +32,9 @@
 }
 .options {
   margin: 20px 0;
+}
+
+.btn-alert {
+  background-color: rgb(199, 25, 25) !important;
+  margin: 15px;
 }

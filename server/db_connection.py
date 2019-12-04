@@ -215,27 +215,19 @@ def get_story_content(token: str, storyid: str, repeat=False) -> Dict:
         return get_story_content(token, storyid, True)
 
 
-def save_story_overview(token: str, repeat=False) -> bool:
-    # TODO
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                return False
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return save_story_overview(token, True)
-
-
 def create_story(token: str, title: str, repeat=False):
-    # TODO
     try:
         with conn.cursor() as cursor:
             userid = get_userid_from_token(token, cursor)
             if userid is None:
                 return None
+            cursor.execute(
+                '''INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);''',
+                (title, userid,))
+            conn.commit()
+            cursor.execute(
+                'SELECT id FROM ss.stories WHERE title = %s;', (title,))
+            return cursor.fetchone()[0]
     except OperationalError as e:
         if repeat:
             raise e
@@ -243,18 +235,40 @@ def create_story(token: str, title: str, repeat=False):
         return create_story(token, title, True)
 
 
-def check_title_ok(title: str, storyid: str, repeat: bool = False) -> bool:
+def delete_story(token: str, storyid: str, repeat=False) -> str:
+    try:
+        with conn.cursor() as cursor:
+            userid = get_userid_from_token(token, cursor)
+            if userid is None:
+                return 'Invalid token provided'
+            cursor.execute(
+                'SELECT published FROM ss.stories WHERE authorid = %s AND id = %s;', (userid, storyid))
+            v = cursor.fetchone()
+            if v is None:
+                return 'Authorized user is not permitted to delete the given story'
+            status = v[0]
+            if status == 'published':
+                return 'Published stories may not be deleted'
+            cursor.execute('DELETE FROM ss.stories WHERE id = %s;', (storyid,))
+            conn.commit()
+    except OperationalError as e:
+        if repeat:
+            raise e
+        connect_to_db()
+        return delete_story(token, storyid, True)
+
+
+def title_exists(title: str, repeat=False) -> bool:
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                'SELECT title FROM ss.stories WHERE title = %s AND id != %s;',
-                (title, storyid))
+                'SELECT title FROM ss.stories WHERE title ~ %s;', (title,))
             return cursor.fetchone() is not None
     except OperationalError as e:
         if repeat:
             raise e
         connect_to_db()
-        return check_title_ok(title, storyid, True)
+        return title_exists(title, True)
 
 
 def save_story_content(token: str, storyid: str, content: str, repeat=False) -> bool:
