@@ -4,19 +4,12 @@ import { URL } from "../../../utils/constants";
 function Home() {
   const [username, setUsername] = useState("");
   useEffect(() => {
-    fetch(URL + "/api/get_loggedin_user")
-      .then(response => {
-        response
-          .json()
-          .then(value => {
-            console.log(value);
-            setUsername(value.user);
-          })
-          .catch(error => console.error(error));
-      })
-      .catch(error => {
-        console.error(error);
+    fetch(URL + "/api/get_loggedin_user").then(response => {
+      response.json().then(value => {
+        console.log(value.user);
+        setUsername(value.user);
       });
+    });
   }, []);
   return (
     <div>

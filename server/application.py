@@ -14,6 +14,11 @@ CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
 CORS(application)
 
+
+def get_token(request) -> str:
+    return 'sj391d034j19sbfwj201jrignwgq'
+#    return request.cookies.get('token')
+
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
 def privacy():
@@ -85,7 +90,7 @@ def login_token():
 
 @application.route('/api/logout', methods=['GET'])
 def logout():
-    token = request.cookies.get('token')
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_304_NOT_MODIFIED, response=json.dumps({'error': 'No user logged in'}), mimetype='application/json')
     db.logout_user(token)
@@ -96,7 +101,7 @@ def logout():
 # Get the logged in user, based on their token
 @application.route('/api/get_loggedin_user', methods=['GET'])
 def get_loggedin_user():
-    token = request.cookies.get('token')
+    token = get_token(request)
     if token is None:
         return application.response_class(response=json.dumps({'user': None}), mimetype='application/json')
     user = db.get_name_from_token(token)
@@ -105,8 +110,7 @@ def get_loggedin_user():
 
 @application.route('/api/list', methods=['GET'])
 def get_all_stories():
-    # request.cookies.get('token')
-    token = 'sj391d034j19sbfwj201jrignwgq'
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     all_stories = db.get_all_stories(token)
@@ -117,8 +121,7 @@ def get_all_stories():
 
 @application.route('/api/overview/<storyid>', methods=['GET'])
 def get_individual_story(storyid):
-    # request.cookies.get('token')
-    token = 'sj391d034j19sbfwj201jrignwgq'
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
@@ -131,8 +134,7 @@ def get_individual_story(storyid):
 
 @application.route('/api/overview/<storyid>', methods=['PUT'])
 def save_individual_story(storyid):
-    # request.cookies.get('token')
-    token = 'sj391d034j19sbfwj201jrignwgq'
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     values = request.json
@@ -142,8 +144,7 @@ def save_individual_story(storyid):
 
 @application.route('/api/overview/<storyid>', methods=['DELETE'])
 def delete_story(storyid):
-    # request.cookies.get('token')
-    token = 'sj391d034j19sbfwj201jrignwgq'
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authorization token was provided'}), mimetype='application/json')
     res = db.delete_story(token, storyid)
@@ -154,8 +155,7 @@ def delete_story(storyid):
 
 @application.route('/api/overview', methods=['POST'])
 def create_story():
-    # request.cookies.get('token')
-    token = 'sj391d034j19sbfwj201jrignwgq'
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     values = request.json
@@ -175,7 +175,7 @@ def check_title_value(storyid):
     title = request.args.get('title')
     if title is None:
         return application.response_class(status=status.HTTP_204_NO_CONTENT)
-    if db.check_title_ok(title, storyid):
+    if utils.validate_title(title):
         return application.response_class(status=status.HTTP_200_OK)
     else:
         return application.response_class(status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -183,7 +183,7 @@ def check_title_value(storyid):
 
 @application.route('/api/builder/<storyid>', methods=['GET'])
 def get_story_content(storyid):
-    token = request.cookies.get('token')
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
@@ -196,7 +196,7 @@ def get_story_content(storyid):
 
 @application.route('/api/builder/<storyid>', methods=['PUT'])
 def save_story_content(storyid):
-    token = request.cookies.get('token')
+    token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
