@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 function Port(props) {
+  const { nodeID } = props;
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [originalPos, setOriginalPos] = useState({ x: 0, y: 0 });
   return (
@@ -10,6 +11,7 @@ function Port(props) {
         draggable
         onDragStart={e => {
           setOriginalPos({ x: e.pageX, y: e.pageY });
+          e.dataTransfer.setData("node-id", nodeID);
         }}
         onDrag={e => {
           if (

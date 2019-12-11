@@ -12,12 +12,12 @@ import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-CORS(application)
+# CORS(application)
 
 
 def get_token(request) -> str:
-    return 'sj391d034j19sbfwj201jrignwgq'
-#    return request.cookies.get('token')
+    #    return 'sj391d034j19sbfwj201jrignwgq'
+    return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')

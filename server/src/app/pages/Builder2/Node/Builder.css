@@ -20,3 +20,7 @@
 svg {
   overflow: visible;
 }
+
+.input-port-selected {
+  background-color: blue;
+}
