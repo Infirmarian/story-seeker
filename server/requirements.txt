@@ -37,7 +37,7 @@ pyre-check==0.0.32
 pyre-extensions==0.0.16
 python-dateutil==2.8.1
 pywatchman==1.4.1
-PyYAML==3.13
+PyYAML==5.1
 requests==2.20.1
 semantic-version==2.5.0
 six==1.11.0
