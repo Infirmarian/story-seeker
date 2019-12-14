@@ -13,6 +13,7 @@ import {
 	SET_ENGINE_MODEL,
 	REGISTER_FACTORY,
 	INITIALIZE_MODEL,
+	ADD_NODE_ON_DROP,
 } from "./actions";
 
 // Redux
@@ -31,11 +32,9 @@ const initialNode = new StoryNode({
 export const engine = (state = initialEngine, action) => {
 	switch (action.type) {
 		case SET_ENGINE_MODEL:
-			console.log("model", action.payload);
 			state.setModel(action.payload.model);
 			return state;
 		case REGISTER_FACTORY:
-			console.log("factory", action.payload);
 			state.getNodeFactories().registerFactory(action.payload.factory);
 			return state;
 		default:
@@ -106,7 +105,19 @@ export const reducer = reduceReducers(
 					model,
 					selectedNode,
 				};
-
+			case ADD_NODE_ON_DROP:
+				var nodeToAdd = new StoryNode({
+					text: "Default",
+					engine: engine,
+				});
+				nodeToAdd.setPosition(action.payload.point);
+				console.log(model.addNode(nodeToAdd));
+				engine.repaintCanvas();
+				return {
+					engine,
+					model,
+					selectedNode,
+				};
 			case REMOVE_NODE:
 				if (model.getNodes().length <= 1) {
 					return {
@@ -122,10 +133,12 @@ export const reducer = reduceReducers(
 						incomingLinks[link].remove();
 					}
 				}
-				const outputPorts = action.payload.node.getOutputPorts();
+				const outputPorts = action.payload.node.getOutPorts();
+				console.log(outputPorts);
 				var newNode = null;
-				if (outputPorts) {
+				if (outputPorts.length > 0) {
 					if (action.payload.node.isBeginning) {
+						console.log(outputPorts);
 						let outgoingLinks = outputPorts[0].getLinks();
 						if (outgoingLinks.length > 0) {
 							newNode = outgoingLinks[

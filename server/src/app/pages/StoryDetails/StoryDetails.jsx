@@ -1,117 +1,169 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { URL } from "../../../utils/constants";
 import "./StoryDetails.css";
+import Navbar from "../../components/Navbar";
+import { useHistory } from "react-router-dom";
 
+function SaveStoryContent(content, id, history) {
+  if (id) {
+    fetch(URL + "/api/overview/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: content
+    });
+  } else {
+    fetch(URL + "/api/overview", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: content
+    }).then(response => {
+      response.json().then(json => {
+        if (response.status === 201) {
+          console.log("Successfully created");
+          const id = json.id;
+          history.push("/viewer/details/" + id);
+        } else {
+          console.log(json.error);
+        }
+      });
+    });
+  }
+}
+function DeleteStory(id, history) {
+  if (
+    window.confirm(
+      "Are you sure you want to delete this story? This cannot be undone!"
+    )
+  ) {
+    fetch(URL + "/api/overview/" + id, {
+      method: "DELETE"
+    }).then(response => {
+      if (response.status === 200) {
+        history.push("/viewer");
+      } else {
+        response.json().then(json => {
+          console.error(json);
+        });
+      }
+    });
+  }
+}
 function StoryDetails(props) {
-	const { id } = props.match.params;
-	const [storyDetails, setStoryDetails] = useState({});
-	useEffect(() => {
-		fetch("https://jsonplaceholder.typicode.com/posts")
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				const userStory = data.filter((el) => {
-					return el.userId === 1 && el.id == id;
-				})[0];
-				console.log(userStory);
-				const genre =
-					Math.floor(Math.random() * 2) === 0
-						? "action"
-						: "adventure";
-				const publishDate =
-					Math.floor(Math.random() * 2) === 0
-						? new Date()
-						: "Not Yet Published";
-				setStoryDetails({
-					title: userStory.title,
-					description: userStory.body,
-					genre,
-					tags: [
-						"action",
-						"adventure",
-						"horror",
-						"tragedy",
-						"comedy",
-					],
-					publishDate,
-					creationDate: "11/18/2019",
-					lastModified: "11/18/2019",
-				});
-			});
-		return () => {
-			setStoryDetails({});
-		};
-	}, []);
+  let history = useHistory();
+  const { id } = props.match.params;
+  const [storyDetails, setStoryDetails] = useState({});
+  useEffect(() => {
+    if (id) {
+      fetch(URL + "/api/overview/" + id).then(response => {
+        response.json().then(json => {
+          setStoryDetails({
+            title: json.title,
+            summary: json.summary,
+            genre: json.genre,
+            published: json.published,
+            last_modified: json.last_modified
+          });
+        });
+      });
+    }
+  }, [id]);
 
-	const {
-		title,
-		description,
-		genre,
-		tags,
-		publishDate,
-		creationDate,
-		lastModified,
-	} = storyDetails;
-
-	return (
-		<div className="Story-Details">
-			<div className="form">
-				<div className="input-group">
-					<label htmlFor="title">Title</label>
-					<input type="text" name="title" id="title" value={title} />
-				</div>
-				<div className="input-group">
-					<label htmlFor="description">Description</label>
-					<textarea
-						name="description"
-						id="description"
-						value={description}
-					></textarea>
-				</div>
-
-				<div className="input-group">
-					<label htmlFor="genre">Genre</label>
-					<input type="text" name="genre" id="genre" value={genre} />
-				</div>
-				<div className="input-group">
-					<label htmlFor="tags">Tags</label>
-					<input type="text" name="tags" id="tags" value={tags} />
-				</div>
-				<div className="uneditable-info">
-					<p className="info">
-						Publish Date:
-						{publishDate instanceof Date
-							? `${publishDate.getMonth() +
-									1}/${publishDate.getDate()}/${publishDate.getYear() +
-									1900}`
-							: publishDate}
-					</p>
-					<p className="info">Created: {creationDate}</p>
-					<p className="info">Last modified: {lastModified}</p>
-				</div>
-				<div className="options">
-					<button
-						className="option-btn"
-						style={{ backgroundColor: "#2f2f2f" }}
-					>
-						Save
-					</button>
-					<button
-						className="option-btn"
-						style={{ backgroundColor: "#2f2f2f" }}
-					>
-						Build
-					</button>
-					<button
-						className="option-btn"
-						style={{ backgroundColor: "#2f2f2f" }}
-					>
-						Publish
-					</button>
-				</div>
-			</div>
-		</div>
-	);
+  const { title, summary, genre, published, last_modified } = storyDetails;
+  return (
+    <div>
+      <Navbar />
+      <form
+        className="Story-Details"
+        onSubmit={event => {
+          event.preventDefault();
+          SaveStoryContent(
+            JSON.stringify({
+              title: event.target.title.value,
+              summary: event.target.summary.value,
+              genre: event.target.genre.value
+            }),
+            id,
+            history
+          );
+          return false;
+        }}
+      >
+        <label htmlFor="title">Title</label>
+        <input
+          className="form-control"
+          id="title"
+          type="text"
+          name="title"
+          defaultValue={title}
+        />
+        <label htmlFor="summary">Summary</label>
+        <textarea
+          className="form-control"
+          id="summary"
+          type="text"
+          defaultValue={summary}
+        />
+        <label htmlFor="genre">Genre</label>
+        <select
+          id="genre"
+          className="form-control form-control-sm"
+          value={genre}
+          onChange={event => {
+            console.log(event.target.value);
+            setStoryDetails({ title, summary, genre: event.target.value });
+          }}
+        >
+          <option value="adventure">Adventure</option>
+          <option value="comedy">Comedy</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="science fiction">Science Fiction</option>
+          <option value="western">Western</option>
+          <option value="romance">Romance</option>
+          <option value="mystery">Mystery</option>
+          <option value="detective">Detective</option>
+          <option value="dystopia">Dystopia</option>
+        </select>
+        <div
+          className={
+            published
+              ? `publish-status publish-status-${published}`
+              : "publish-status"
+          }
+        >
+          {published
+            ? published === "not published"
+              ? "not\u00a0published"
+              : published
+            : "not\u00a0published"}
+        </div>
+        <div>Last Modified: {last_modified}</div>
+        <button type="submit" className="btn btn-primary">
+          Save
+        </button>
+        <Link
+          to={"/builder/" + id}
+          className={"btn btn-primary " + (id ? "" : "btn-primary-disabled")}
+        >
+          Edit Story
+        </Link>
+        <button
+          className="btn btn-alert"
+          onClick={event => {
+            event.preventDefault();
+            DeleteStory(id, history);
+            return false;
+          }}
+        >
+          Delete
+        </button>
+      </form>
+    </div>
+  );
 }
 
 export default StoryDetails;

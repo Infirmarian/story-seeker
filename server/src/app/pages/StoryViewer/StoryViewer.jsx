@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { URL } from "../../../utils/constants";
 import { useHistory, Link } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 import "./StoryViewer.css";
 
 function StoryViewer() {
@@ -8,7 +9,7 @@ function StoryViewer() {
   let history = useHistory();
   useEffect(() => {
     // fetch user data
-    fetch(URL + "/api/get_all_stories")
+    fetch(URL + "/api/list")
       .then(response => {
         if (response.status === 403) {
           history.push("/login");
@@ -26,6 +27,7 @@ function StoryViewer() {
   }, [history]);
   return (
     <div className="Story-Viewer">
+      <Navbar />
       <table className="table">
         <thead className="thead-light">
           <tr>
@@ -51,9 +53,11 @@ function StoryViewer() {
                       : story.published}
                   </div>
                 </td>
-                <td>${0.99 + story.price - 1}</td>
                 <td>
-                  <Link to={`/viewer/${story.id}`}> Details </Link>
+                  {story.price === 0 ? "free" : "$" + (story.price - 0.01)}
+                </td>
+                <td>
+                  <Link to={`/viewer/details/${story.id}`}> Details </Link>
                 </td>
               </tr>
             );
@@ -62,7 +66,6 @@ function StoryViewer() {
       </table>
     </div>
   );
-
 }
 
 export default StoryViewer;
