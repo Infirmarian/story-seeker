@@ -53,9 +53,10 @@ function PathContainer(props) {
 	};
 
 	const handleUpdatePath = (message, path) => {
-		// console.log(message);
+		console.log(message);
 		const port = paths[path];
 		if (selectedNode.updateOutputPort(port.id, message)) {
+			console.log("update");
 			setPaths((prev) => {
 				var newState = [...prev];
 				newState[path] = {

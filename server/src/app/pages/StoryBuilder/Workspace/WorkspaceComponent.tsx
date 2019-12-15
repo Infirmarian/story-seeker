@@ -6,10 +6,12 @@ import {
 	DefaultDiagramState,
 } from "@projectstorm/react-diagrams";
 import { TSCustomNodeFactory } from "../StoryNodeFactory";
+import { AnswerPortFactory } from "../AnswerPortFactory";
 import { StoryNode } from "../StoryNode";
 
 import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
 import "./Workspace.css";
+import { CustomLinkFactory } from "../CustomLinks";
 
 interface WorkspaceProps {
 	engine: DiagramEngine;
@@ -27,10 +29,19 @@ function WorkspaceComponent(props: any) {
 	} = props;
 	console.log(engine, model, selectedNode);
 
+	const { id } = props;
 	useEffect(() => {
 		initializeSelectedNode();
-		initializeModel();
-		registerFactory(new TSCustomNodeFactory(updateSelectedNode));
+		registerFactory(
+			new TSCustomNodeFactory(updateSelectedNode),
+			new AnswerPortFactory(),
+			new CustomLinkFactory()
+		);
+		if (id > 0) {
+			initializeModel(id);
+		} else {
+			initializeModel(1);
+		}
 	}, [
 		initializeSelectedNode,
 		initializeModel,
@@ -54,6 +65,12 @@ function WorkspaceComponent(props: any) {
 	// registerFactory(new TSCustomNodeFactory(updateSelectedNode));
 
 	setEngineModel(model);
+	// useEffect(() => {
+	// 	var newModel = new DiagramModel();
+	// 	newModel.deserializeModel(JSON.parse(modelString), engine);
+	// 	setEngineModel(newModel);
+	// 	console.log("new model set");
+	// }, [setEngineModel]);
 
 	return (
 		<div>

@@ -8,18 +8,19 @@ import "./StoryBuilder.css";
 import store from "../../store";
 import { Provider } from "react-redux";
 
-function StoryBuilder() {
-  return (
-    <Provider store={store}>
-      <div className="StoryBuilder">
-        <div className="Workspace">
-          <Workspace />
-          <Toolbar />
-        </div>
-        <ContentEditor />
-      </div>
-    </Provider>
-  );
+function StoryBuilder(props) {
+	const { id } = props.match.params;
+	return (
+		<Provider store={store}>
+			<div className="StoryBuilder">
+				<div className="Workspace">
+					<Workspace id={id} />
+					<Toolbar />
+				</div>
+				<ContentEditor />
+			</div>
+		</Provider>
+	);
 }
 
 export default StoryBuilder;
