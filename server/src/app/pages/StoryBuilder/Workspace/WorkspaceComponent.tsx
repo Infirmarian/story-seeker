@@ -37,6 +37,9 @@ function WorkspaceComponent(props: any) {
 			new AnswerPortFactory(),
 			new CustomLinkFactory()
 		);
+
+		//this makes a call to line 96 of reducers.js
+		//TODO: edit functionality to make a fetch request
 		if (id > 0) {
 			initializeModel(id);
 		} else {
