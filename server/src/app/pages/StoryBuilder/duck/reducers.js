@@ -12,14 +12,14 @@ import { StoryNode } from "../StoryNode";
 //Action Types
 import {
   ADD_NODE,
-  ADD_NODE_ON_DROP,
   REMOVE_NODE,
   UPDATE_START_NODE,
   INITIALIZE_SELECTED_NODE,
   UPDATE_SELECTED_NODE,
   SET_ENGINE_MODEL,
   REGISTER_FACTORY,
-  INITIALIZE_MODEL
+  INITIALIZE_MODEL,
+  ADD_NODE_ON_DROP
 } from "./actions";
 
 // Redux

@@ -7,20 +7,21 @@ import "./StoryBuilder.css";
 //Redux integration
 import store from "../../store";
 import { Provider } from "react-redux";
+import Navbar from "../../components/Navbar";
 
 function StoryBuilder(props) {
-	const { id } = props.match.params;
-	return (
-		<Provider store={store}>
-			<div className="StoryBuilder">
-				<div className="Workspace">
-					<Workspace id={id} />
-					<Toolbar />
-				</div>
-				<ContentEditor />
-			</div>
-		</Provider>
-	);
+  const { id } = props.match.params;
+  return (
+    <Provider store={store}>
+      <div className="StoryBuilder">
+        <div className="Workspace">
+          <Workspace id={id} />
+          <Toolbar />
+        </div>
+        <ContentEditor />
+      </div>
+    </Provider>
+  );
 }
 
 export default StoryBuilder;

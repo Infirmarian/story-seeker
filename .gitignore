@@ -9,7 +9,7 @@ node_modules/
 build/
 
 # Database Server
-database/catalog/
+database/catalog/*.json
 
 # Alexa
 alexa/Story_Seeker/

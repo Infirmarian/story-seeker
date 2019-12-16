@@ -1,24 +1,36 @@
 -- Story Seeker
 CREATE SCHEMA IF NOT EXISTS ss;
 CREATE SCHEMA IF NOT EXISTS a;
-CREATE TYPE ss.category AS ENUM('horror', 'comedy', 'adventure');
+CREATE TYPE ss.category AS ENUM(
+    'horror',
+    'comedy',
+    'adventure',
+    'fantasy',
+    'science fiction',
+    'western',
+    'romance',
+    'mystery',
+    'detective',
+    'dystopia');
+CREATE TYPE ss.rating AS ENUM('G', 'PG', 'PG-13', 'R', 'NR');
 CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
-    email VARCHAR(320);
+    email VARCHAR(320),
+    joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS ss.stories(
     id SERIAL PRIMARY KEY,
     title VARCHAR(128),
     authorid VARCHAR(256) NOT NULL,
-    content JSON NOT NULL,
-    serialized_story JSON NOT NULL,
-    price SMALLINT NOT NULL, -- Credits
-    summary TEXT NOT NULL,
-    rating ss.rating NOT NULL,
+    content JSON,
+    serialized_story JSON,
+    price SMALLINT NOT NULL DEFAULT 0, -- Credits
+    summary TEXT,
+    rating ss.rating NOT NULL DEFAULT 'NR',
     genre ss.category,
     published ss.publication_status NOT NULL DEFAULT 'not published',
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -52,6 +64,14 @@ CREATE TABLE IF NOT EXISTS ss.libraries(
     acquire_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     been_read BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (userid) REFERENCES ss.users (id),
+    FOREIGN KEY (storyid) REFERENCES ss.stories(id),
+    PRIMARY KEY (userid, storyid)
+);
+
+CREATE TABLE IF NOT EXISTS ss.favorites(
+    userid VARCHAR(256),
+    storyid INT,
+    FOREIGN KEY (userid) REFERENCES ss.users(id),
     FOREIGN KEY (storyid) REFERENCES ss.stories(id),
     PRIMARY KEY (userid, storyid)
 );
@@ -99,6 +119,8 @@ GRANT USAGE ON SCHEMA a TO server;
 GRANT SELECT ON ss.stories TO server;
 GRANT INSERT ON ss.stories TO server;
 GRANT UPDATE ON ss.stories TO server;
+GRANT DELETE ON ss.stories TO server;
+GRANT USAGE, SELECT ON SEQUENCE ss.stories_id_seq TO server; -- Needed to update sequencing
 GRANT SELECT ON ss.authors TO server;
 GRANT INSERT ON ss.authors TO server;
 GRANT SELECT ON a.tokens TO server;
