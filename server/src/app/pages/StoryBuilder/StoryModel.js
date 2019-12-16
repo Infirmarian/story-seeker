@@ -6,6 +6,7 @@ import {
 import { StoryNode } from "./StoryNode";
 
 class StoryModel extends DiagramModel {
+  storyID;
   serialize() {
     let result = {
       zoom: this.getZoomLevel(),
@@ -54,8 +55,10 @@ class StoryModel extends DiagramModel {
       let sink = nodes[l.sink].getInputPort();
       ln.setTargetPort(sink);
       let source = nodes[l.sourceID].getOutPorts()[l.sourceIndex];
-      ln.setSourcePort(source);
-      this.addLink(ln);
+      if (source) {
+        ln.setSourcePort(source);
+        this.addLink(ln);
+      }
     });
   }
 }

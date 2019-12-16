@@ -15,6 +15,7 @@ function StoryBuilder(props) {
     <Provider store={store}>
       <div className="StoryBuilder">
         <div className="Workspace">
+          <Navbar />
           <Workspace id={id} />
           <Toolbar />
         </div>
