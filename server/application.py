@@ -12,12 +12,12 @@ import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-# CORS(application)
+CORS(application)
 
 
 def get_token(request) -> str:
-    #    return 'sj391d034j19sbfwj201jrignwgq'
-    return request.cookies.get('token')
+    return 'sj391d034j19sbfwj201jrignwgq'
+#    return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
@@ -206,6 +206,19 @@ def save_story_content(storyid):
         return application.response_class()
     else:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
+
+
+@application.route('/api/submit/<storyid>', methods=['POST'])
+def submit_story_for_review(storyid):
+    token = get_token(request)
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    if storyid is None:
+        return application.response_class(status=status.HTTP_400_BAD_REQUEST)
+    error = db.submit_for_approval(token, storyid)
+    if error:
+        return application.response_class(status=status.HTTP_400_BAD_REQUEST)
+    return application.response_class()
 
 
 @application.route('/', defaults={'path': ''})

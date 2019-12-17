@@ -288,6 +288,10 @@ def save_story_content(token: str, storyid: str, content: str, repeat=False) -> 
         return save_story_content(token, storyid, content, True)
 
 
+def submit_for_approval(token: str, storyid: str):
+    pass
+
+
 def get_userid_from_token(token, cursor):
     cursor.execute(
         'SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW();', (token,))
