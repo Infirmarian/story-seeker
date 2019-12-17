@@ -6,6 +6,7 @@ import {
 	DefaultLinkModel,
 	DiagramEngine,
 } from "@projectstorm/react-diagrams";
+import { CustomLinkModel } from "./CustomLinks";
 interface AnswerPortOptions extends DefaultPortModelOptions {
 	answer: string;
 	engine: DiagramEngine;
@@ -45,7 +46,7 @@ export class AnswerPort extends DefaultPortModel {
 		if (vs.length > 0) {
 			vs[0].remove();
 		}
-		const lm = new DefaultLinkModel();
+		const lm = new CustomLinkModel();
 		return lm;
 	}
 }

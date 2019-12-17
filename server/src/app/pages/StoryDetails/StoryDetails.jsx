@@ -28,7 +28,7 @@ function SaveStoryContent(content, id, history) {
           const id = json.id;
           history.push("/viewer/details/" + id);
         } else {
-          console.log(json.error);
+          window.alert(json.error);
         }
       });
     });
@@ -74,6 +74,45 @@ function StoryDetails(props) {
   }, [id]);
 
   const { title, summary, genre, published, last_modified } = storyDetails;
+  const editStoryButton = id ? (
+    <Link to={"/builder/" + id} className={"btn btn-primary "}>
+      Edit Story
+    </Link>
+  ) : null;
+  const deleteStoryButton = id ? (
+    <button
+      className="btn btn-alert"
+      onClick={event => {
+        event.preventDefault();
+        DeleteStory(id, history);
+        return false;
+      }}
+    >
+      Delete
+    </button>
+  ) : null;
+  const submitStoryButton = id ? (
+    <button
+      className="btn btn-primary"
+      onClick={event => {
+        event.preventDefault();
+        const s = window.confirm(
+          "Are you sure you want to submit? You cannot make any more changes once the story has been submitted for approval"
+        );
+        if (!s) return false;
+        fetch(URL + `/api/submit/${id}`, {
+          method: "POST"
+        }).then(response => {
+          if (response.status !== 200) {
+            window.alert("Failed to submit for approval");
+          }
+        });
+        return false;
+      }}
+    >
+      Submit for Approval
+    </button>
+  ) : null;
   return (
     <div>
       <Navbar />
@@ -145,22 +184,9 @@ function StoryDetails(props) {
         <button type="submit" className="btn btn-primary">
           Save
         </button>
-        <Link
-          to={"/builder/" + id}
-          className={"btn btn-primary " + (id ? "" : "btn-primary-disabled")}
-        >
-          Edit Story
-        </Link>
-        <button
-          className="btn btn-alert"
-          onClick={event => {
-            event.preventDefault();
-            DeleteStory(id, history);
-            return false;
-          }}
-        >
-          Delete
-        </button>
+        {editStoryButton}
+        {submitStoryButton}
+        {deleteStoryButton}
       </form>
     </div>
   );

@@ -21,18 +21,15 @@ const mapDispatchToProps = (dispatch) => ({
 	setEngineModel: (model) => {
 		dispatch(setEngineModel(model));
 	},
-	registerFactory: (factory) => {
-		dispatch(registerFactory(factory));
+	registerFactory: (nodeFactory, portFactory, linkFactory) => {
+		dispatch(registerFactory(nodeFactory, portFactory, linkFactory));
 	},
 	initializeSelectedNode: () => {
 		dispatch(initializeSelectedNode());
 	},
-	initializeModel: () => {
-		dispatch(initializeModel());
+	initializeModel: (id) => {
+		dispatch(initializeModel(id));
 	},
 });
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(WorkspaceComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceComponent);
