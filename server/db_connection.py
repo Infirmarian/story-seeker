@@ -328,7 +328,7 @@ def get_story_preview(token, storyid, repeat=False):
             if result[1] < result[2]:
                 nc = utils.compile_to_alexa(result[4], result[5], author)
                 cursor.execute(
-                    'UPDATE ss.stories SET content = %s, last_compiled = NOW() WHERE id = %s AND authorid = %s', (nc, storyid, userid))
+                    'UPDATE ss.stories SET content = %s, last_compiled = NOW() WHERE id = %s AND authorid = %s', (json.dumps(nc), storyid, userid))
                 conn.commit()
                 return nc
             return result[3]

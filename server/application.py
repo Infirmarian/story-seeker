@@ -243,7 +243,7 @@ def get_preview(storyid):
         return application.response_class(status=status.HTTP_400_BAD_REQUEST)
     try:
         story = db.get_story_preview(token, storyid)
-        return application.response_class(response=story, mimetype='application/json')
+        return application.response_class(response=json.dumps(story), mimetype='application/json')
     except DBError as e:
         return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 

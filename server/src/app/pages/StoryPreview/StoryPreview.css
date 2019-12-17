@@ -1,0 +1,15 @@
+.question {
+  align-content: center;
+  margin: auto;
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
+.main-text {
+  text-align: left;
+  font-family: "Montserrat";
+}
+
+.title-text {
+  font-family: "Montserrat";
+}

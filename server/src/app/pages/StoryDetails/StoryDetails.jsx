@@ -10,19 +10,19 @@ function SaveStoryContent(content, id, history) {
     fetch(URL + "/api/overview/" + id, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: content
+      body: content,
     });
   } else {
     fetch(URL + "/api/overview", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: content
-    }).then(response => {
-      response.json().then(json => {
+      body: content,
+    }).then((response) => {
+      response.json().then((json) => {
         if (response.status === 201) {
           console.log("Successfully created");
           const id = json.id;
@@ -41,12 +41,12 @@ function DeleteStory(id, history) {
     )
   ) {
     fetch(URL + "/api/overview/" + id, {
-      method: "DELETE"
-    }).then(response => {
+      method: "DELETE",
+    }).then((response) => {
       if (response.status === 200) {
         history.push("/viewer");
       } else {
-        response.json().then(json => {
+        response.json().then((json) => {
           console.error(json);
         });
       }
@@ -59,14 +59,14 @@ function StoryDetails(props) {
   const [storyDetails, setStoryDetails] = useState({});
   useEffect(() => {
     if (id) {
-      fetch(URL + "/api/overview/" + id).then(response => {
-        response.json().then(json => {
+      fetch(URL + "/api/overview/" + id).then((response) => {
+        response.json().then((json) => {
           setStoryDetails({
             title: json.title,
             summary: json.summary,
             genre: json.genre,
             published: json.published,
-            last_modified: json.last_modified
+            last_modified: json.last_modified,
           });
         });
       });
@@ -82,7 +82,7 @@ function StoryDetails(props) {
   const deleteStoryButton = id ? (
     <button
       className="btn btn-alert"
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
         DeleteStory(id, history);
         return false;
@@ -94,15 +94,15 @@ function StoryDetails(props) {
   const submitStoryButton = id ? (
     <button
       className="btn btn-primary"
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
         const s = window.confirm(
           "Are you sure you want to submit? You cannot make any more changes once the story has been submitted for approval"
         );
         if (!s) return false;
         fetch(URL + `/api/submit/${id}`, {
-          method: "POST"
-        }).then(response => {
+          method: "POST",
+        }).then((response) => {
           if (response.status !== 200) {
             window.alert("Failed to submit for approval");
           }
@@ -113,18 +113,23 @@ function StoryDetails(props) {
       Submit for Approval
     </button>
   ) : null;
+  const previewStoryButton = id ? (
+    <Link to={"/preview/" + id} className={"btn btn-primary"}>
+      Preview Story
+    </Link>
+  ) : null;
   return (
     <div>
       <Navbar />
       <form
         className="Story-Details"
-        onSubmit={event => {
+        onSubmit={(event) => {
           event.preventDefault();
           SaveStoryContent(
             JSON.stringify({
               title: event.target.title.value,
               summary: event.target.summary.value,
-              genre: event.target.genre.value
+              genre: event.target.genre.value,
             }),
             id,
             history
@@ -152,7 +157,7 @@ function StoryDetails(props) {
           id="genre"
           className="form-control form-control-sm"
           value={genre}
-          onChange={event => {
+          onChange={(event) => {
             console.log(event.target.value);
             setStoryDetails({ title, summary, genre: event.target.value });
           }}
@@ -185,6 +190,7 @@ function StoryDetails(props) {
           Save
         </button>
         {editStoryButton}
+        {previewStoryButton}
         {submitStoryButton}
         {deleteStoryButton}
       </form>
