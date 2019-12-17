@@ -6,6 +6,7 @@ import requests
 import secrets
 
 import db_connection as db
+from db_connection import DBError
 import utils
 import json
 import os
@@ -16,7 +17,8 @@ CORS(application)
 
 
 def get_token(request) -> str:
-    return 'sj391d034j19sbfwj201jrignwgq'
+    return 'b9634e96d47e2b62f3bb3e4193b72cc5e98d8a0133a69cebee5919c3d7a10c2b'
+#    return 'sj391d034j19sbfwj201jrignwgq'
 #    return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements
@@ -215,10 +217,24 @@ def submit_story_for_review(storyid):
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     if storyid is None:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST)
-    error = db.submit_for_approval(token, storyid)
+    error = db.compile_story(token, storyid)
     if error:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST)
     return application.response_class()
+
+
+@application.route('/api/preview/<storyid>', methods=['GET'])
+def get_preview(storyid):
+    token = get_token(request)
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    if storyid is None:
+        return application.response_class(status=status.HTTP_400_BAD_REQUEST)
+    try:
+        story = db.get_story_preview(token, storyid)
+        return application.response_class(response=story, mimetype='application/json')
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.body, mimetype='application/json')
 
 
 @application.route('/', defaults={'path': ''})

@@ -62,6 +62,27 @@ def validate_json(story):
     return result
 
 
+# Takes the given serialized_story, and converts it to an alexa format
+def compile_to_alexa(serialized, title):
+    content = [{} for _ in serialized['nodes']]
+    mapping = {}
+    count = 1
+    for node in serialized['nodes']:
+        if node['beginning']:
+            mapping[node['id']] = 0
+        else:
+            mapping[node['id']] = count
+            count += 1
+        content[mapping[node['id']]]['main'] = node['text']
+        content[mapping[node['id']]]['question'] = node['question']
+        content[mapping[node['id']]]['options'] = [[a['text'], a['id']]
+                                                   for a in node['outputPortAnswers']]
+    for link in serialized['links']:
+        content[mapping[link['sourceID']]
+                ]['options'][link['sourceIndex']][1] = mapping[link['sink']]
+    return {"content": content, "title": title}
+
+
 def validate_title(title: str) -> bool:
     title = clean_title(title)
     if len(title) < 3:
