@@ -14,7 +14,7 @@ function PathGroup(props) {
 				id={`path-${label}`}
 				value={content}
 				onChange={(event) => {
-					// console.log(event.target.value);
+					console.log(event.target.value);
 					updatePath(event.target.value, label - 1);
 				}}
 			></input>
