@@ -32,7 +32,7 @@ const modelString = `{"zoom":90.38333333333338,"offsetX":25.868833333333207,"off
 
 const initialEngine = createEngine();
 var initialModel = new StoryModel();
-const initialNodeContent = "You are walking down a dark path...";
+const initialNodeContent = "This is the beginning...";
 const initialNode = new StoryNode({
   text: initialNodeContent,
   beginning: true,
@@ -82,8 +82,8 @@ export const reducer = reduceReducers(
     switch (action.type) {
       case INITIALIZE_SELECTED_NODE:
         selectedNode.setPosition(100, 100);
-        selectedNode.addOutputPort("blue");
-        selectedNode.addOutputPort("red");
+        selectedNode.addOutputPort("option 1");
+        selectedNode.addOutputPort("option 2");
         return {
           engine,
           model,
@@ -100,13 +100,18 @@ export const reducer = reduceReducers(
           //creates a default model
           model.addAll(selectedNode);
         } else {
-          fetch(URL + `/api/builder/${id}`).then((response) => {
-            response.json().then((json) => {
-              model.deserializeModel(json, engine);
-              model.StoryID = id;
-              engine.repaintCanvas();
+          fetch(URL + `/api/builder/${id}`)
+            .then((response) => {
+              response.json().then((json) => {
+                model.deserializeModel(json, engine);
+                model.StoryID = id;
+                engine.repaintCanvas();
+              });
+            })
+            .catch((error) => {
+              console.warn(error);
+              model.addAll(selectedNode);
             });
-          });
         }
 
         //selects arbitrary node as selected node
