@@ -62,6 +62,7 @@ function ContentEditorComponent(props) {
           className=" input-fields"
           name="content"
           id="content"
+          placeholder="Create your story..."
           {...bindNodeContent}
         ></textarea>
         {!isEndNode ? (
@@ -73,6 +74,7 @@ function ContentEditorComponent(props) {
               className=" input-fields"
               name="question"
               id="question"
+              placeholder="...?"
               {...bindQuestion}
             ></input>
             <label className="input-labels" htmlFor="">

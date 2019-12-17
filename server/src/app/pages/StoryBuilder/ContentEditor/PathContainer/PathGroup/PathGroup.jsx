@@ -12,6 +12,7 @@ function PathGroup(props) {
         className="path-input input-fields path-fields"
         name={`path-${label}`}
         id={`path-${label}`}
+        placeholder={`choice ${label}`}
         value={content}
         onChange={(event) => {
           console.log(event.target.value);
@@ -26,7 +27,7 @@ function PathGroup(props) {
         }}
       >
         {/* <span className="delete-btn">x</span> */}
-        <i class="fas fa-times delete-btn"></i>
+        <i className="fas fa-times delete-btn"></i>
         {/* <i className="fas fa-times-circle delete-btn"></i> */}
       </span>
     </div>

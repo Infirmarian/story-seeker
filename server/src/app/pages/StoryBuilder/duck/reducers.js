@@ -48,7 +48,6 @@ export const engine = (state = initialEngine, action) => {
       state.getNodeFactories().registerFactory(action.payload.nodeFactory);
       state.getPortFactories().registerFactory(action.payload.portFactory);
       state.getLinkFactories().registerFactory(action.payload.linkFactory);
-      console.log(state.getPortFactories());
       return state;
     default:
       return state;
@@ -81,9 +80,13 @@ export const reducer = reduceReducers(
     const { engine, model, selectedNode } = state;
     switch (action.type) {
       case INITIALIZE_SELECTED_NODE:
+        // console.log("initial Node", selectedNode);
+
         selectedNode.setPosition(100, 100);
-        selectedNode.addOutputPort("option 1");
-        selectedNode.addOutputPort("option 2");
+        if (selectedNode.getOutPorts().length === 0) {
+          selectedNode.addOutputPort("choice 1");
+          selectedNode.addOutputPort("choice 2");
+        }
         return {
           engine,
           model,
@@ -95,9 +98,9 @@ export const reducer = reduceReducers(
         const id = action.payload.id;
 
         // MAKE FETCH REQUEST BASED ON ID for a JSON model string
-        // dummy data modelString is currently declared on line 29
-        if (id === -1) {
+        if (id == -1) {
           //creates a default model
+          console.log(selectedNode);
           model.addAll(selectedNode);
         } else {
           fetch(URL + `/api/builder/${id}`)
@@ -126,12 +129,13 @@ export const reducer = reduceReducers(
         };
       case ADD_NODE:
         var nodeToAdd = new StoryNode({
-          text: "Default",
+          text: "",
           engine: engine,
         });
         var x = Math.floor(engine.getCanvas().clientWidth / 2);
         var y = Math.floor(engine.getCanvas().clientHeight / 2);
         nodeToAdd.setPosition(x, y);
+        nodeToAdd.addOutputPort("");
         console.log(model.addNode(nodeToAdd));
         engine.repaintCanvas();
         return {

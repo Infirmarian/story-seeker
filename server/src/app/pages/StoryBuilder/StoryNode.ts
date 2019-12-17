@@ -31,7 +31,7 @@ export class StoryNode extends DefaultNodeModel {
       type: "ts-custom-node",
     });
     this.text = options.text;
-    this.question = "...";
+    this.question = "";
     this.isBeginning = options.beginning || false;
     this.isEnd = false;
     this.engine = options.engine;
@@ -228,7 +228,8 @@ export class StoryNode extends DefaultNodeModel {
       inputPort = null;
     }
     if (this.getOutPorts().length == 0) {
-      this.addOutputPort("option 1");
+      console.log("beginning");
+      this.addOutputPort("choice 1");
     }
     this.isBeginning = true;
     this.isEnd = false;

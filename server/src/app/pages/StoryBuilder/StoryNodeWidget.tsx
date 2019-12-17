@@ -25,6 +25,8 @@ export class TSCustomNodeWidget extends React.Component<
 
   render() {
     const question = this.props.node.getShortQuestion();
+    const text = this.props.node.getShortText();
+    const isBeginning = this.props.node.isBeginning;
     var outputPorts = this.props.node.getOutPorts();
     const outputs = outputPorts.map((port) => {
       const ansPort = port as AnswerPort;
@@ -55,27 +57,26 @@ export class TSCustomNodeWidget extends React.Component<
     }
     return (
       <div
-        className={
-          this.props.node.isBeginning
-            ? "story-node-start story-node"
-            : "story-node"
-        }
+        className={isBeginning ? "story-node-start story-node" : "story-node"}
         onClick={() => this.state.callback(this.props.node)}
       >
         <div
           className={
-            "node-header" +
-            `${this.props.node.isBeginning ? " start-node-header" : ""}`
+            "node-header" + `${isBeginning ? " start-node-header" : ""}`
           }
         >
           {inelement ? (
             <div className="input-port-container">{inelement}</div>
           ) : null}
-          <p className="node-text">{this.props.node.getShortText()}</p>
+          <p className="node-text">
+            {text === "" ? "Create your story..." : text}
+          </p>
         </div>
         {question !== undefined ? (
           <div className="node-footer">
-            <p className="question node-text">{question}</p>
+            <p className="question node-text">
+              {question === "" ? "...?" : question}
+            </p>
             <div className="output-port-container">{outputs}</div>
           </div>
         ) : null}

@@ -8,8 +8,8 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       {/* logo */}
-      <Link to="/">
-        <a className="navbar-brand text-white nav-link">StorySeeker</a>
+      <Link to="/" className="navbar-brand text-white nav-link">
+        StorySeeker
       </Link>
 
       {/* toggle navbar button */}
