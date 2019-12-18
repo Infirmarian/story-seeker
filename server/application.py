@@ -6,18 +6,19 @@ import requests
 import secrets
 
 import db_connection as db
+from db_connection import DBError
 import utils
 import json
 import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-CORS(application)
+# CORS(application)
 
 
 def get_token(request) -> str:
-    return '5b2811141f07744c80bd5a1d4b1cbe27e72a8689bab509f53a31b5c3b0ac23d6'
-#    return request.cookies.get('token')
+    #    return 'b9634e96d47e2b62f3bb3e4193b72cc5e98d8a0133a69cebee5919c3d7a10c2b'
+    return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
@@ -104,8 +105,11 @@ def get_loggedin_user():
     token = get_token(request)
     if token is None:
         return application.response_class(response=json.dumps({'user': None}), mimetype='application/json')
-    user = db.get_name_from_token(token)
-    return application.response_class(response=json.dumps({'user': user}), mimetype='application/json')
+    try:
+        user = db.get_name_from_token(token)
+        return application.response_class(response=json.dumps({'user': user}), mimetype='application/json')
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/list', methods=['GET'])
@@ -126,10 +130,11 @@ def get_individual_story(storyid):
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No story id was given to find'}), mimetype='application/json')
-    story_overview = db.get_story_overview(token, storyid)
-    if story_overview is None:
-        return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'Token was either invalid or expired'}), mimetype='application/json')
-    return application.response_class(response=json.dumps(story_overview), mimetype='application/json')
+    try:
+        story_overview = db.get_story_overview(token, storyid)
+        return application.response_class(response=json.dumps(story_overview), mimetype='application/json')
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/overview/<storyid>', methods=['PUT'])
@@ -137,9 +142,11 @@ def save_individual_story(storyid):
     token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
-    values = request.json
-    resp = db.update_story(token, storyid, values)
-    return application.response_class(status=resp)
+    try:
+        db.update_story(token, storyid, request.json)
+        return application.response_class()
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/overview/<storyid>', methods=['DELETE'])
@@ -147,10 +154,11 @@ def delete_story(storyid):
     token = get_token(request)
     if token is None:
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authorization token was provided'}), mimetype='application/json')
-    res = db.delete_story(token, storyid)
-    if res:
-        return application.response_class(status=status.HTTP_400_BAD_REQUEST, response=json.dumps({'error': res}), mimetype='application/json')
-    return application.response_class(status=status.HTTP_200_OK)
+    try:
+        db.delete_story(token, storyid)
+        return application.response_class()  # 200 OK
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/overview', methods=['POST'])
@@ -163,11 +171,11 @@ def create_story():
     if a:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST, response=json.dumps({'error': a}), mimetype='application/json')
     title = utils.clean_title(values['title'])
-    index = db.create_story(token, title)
-    if index:
+    try:
+        index = db.create_story(token, title)
         return application.response_class(status=status.HTTP_201_CREATED, response=json.dumps({'id': index}), mimetype='application/json')
-    else:
-        return application.response_class(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/overview/<storyid>/title', methods=['GET'])
@@ -188,10 +196,12 @@ def get_story_content(storyid):
         return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'No authhorization code was provided'}), mimetype='application/json')
     if storyid is None:
         return application.response_class(status=status.HTTP_404_NOT_FOUND, response=json.dumps({'error': 'No story id was given to find'}), mimetype='application/json')
-    story_content = db.get_story_content(token, storyid)
-    if story_content is None:
-        return application.response_class(status=status.HTTP_403_FORBIDDEN, response=json.dumps({'error': 'Token was either invalid or expired'}), mimetype='application/json')
-    return application.response_class(response=json.dumps(story_content), mimetype='application/json')
+    try:
+        story_content = db.get_story_content(token, storyid)
+        # 200 OK
+        return application.response_class(response=json.dumps(story_content), mimetype='application/json')
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/builder/<storyid>', methods=['PUT'])
@@ -202,10 +212,11 @@ def save_story_content(storyid):
     if storyid is None:
         return application.response_class(status=status.HTTP_404_NOT_FOUND, response=json.dumps({'error': 'No story id was given to find'}), mimetype='application/json')
     content = request.json
-    if db.save_story_content(token, storyid, content):
-        return application.response_class()
-    else:
-        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    try:
+        db.save_story_content(token, storyid, content)
+        return application.response_class()  # 200 OK
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/api/submit/<storyid>', methods=['POST'])
@@ -215,10 +226,25 @@ def submit_story_for_review(storyid):
         return application.response_class(status=status.HTTP_403_FORBIDDEN)
     if storyid is None:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST)
-    error = db.submit_for_approval(token, storyid)
-    if error:
+    try:
+        db.compile_and_submit_story(token, storyid)
+        return application.response_class()
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
+
+
+@application.route('/api/preview/<storyid>', methods=['GET'])
+def get_preview(storyid):
+    token = get_token(request)
+    if token is None:
+        return application.response_class(status=status.HTTP_403_FORBIDDEN)
+    if storyid is None:
         return application.response_class(status=status.HTTP_400_BAD_REQUEST)
-    return application.response_class()
+    try:
+        story = db.get_story_preview(token, storyid)
+        return application.response_class(response=json.dumps(story), mimetype='application/json')
+    except DBError as e:
+        return application.response_class(status=e.status, response=e.response, mimetype='application/json')
 
 
 @application.route('/', defaults={'path': ''})

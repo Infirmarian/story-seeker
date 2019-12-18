@@ -123,6 +123,11 @@ function StoryDetails(props) {
       Submit Story for Approval
     </button>
   ) : null;
+  const previewStoryButton = id ? (
+    <Link to={"/preview/" + id} className={"btn btn-primary"}>
+      Preview Story
+    </Link>
+  ) : null;
   return (
     <div className="Story-Details">
       <Navbar />
