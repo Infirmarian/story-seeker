@@ -1,6 +1,6 @@
 .Content-Editor {
   width: 30vw;
-  height: 95vh;
+  height: 100vh;
   background: radial-gradient(circle at center, #31c4f3, #2dacd6);
   padding-left: 3%;
   padding-right: 3%;
@@ -24,12 +24,10 @@
   padding: 10px 20px;
   text-decoration: none;
   border: 2px outset;
-  font-size: 0.7em;
-  transition: 0.3s;
+  font-size: 0.8em;
 }
 .editor-button:hover {
   background: black;
-  color: white;
 }
 
 .input-fields {
@@ -39,12 +37,15 @@
   padding: 10px;
 }
 
-.path-fields {
-  border-radius: 5px 0px 0px 5px;
-}
-
 #content {
   height: 25vh;
+}
+
+#node-title {
+  font-size: 2.5em;
+  text-transform: uppercase;
+  margin-top: 5vh;
+  margin-bottom: 10px;
 }
 
 .editor-section {
@@ -53,18 +54,24 @@
   flex-direction: column;
 }
 
-#question-paths {
-  display: flex;
-  flex-direction: column;
-}
-
 .input-labels {
   font-size: 1.5rem;
-  margin-top: 3vh;
-  margin-bottom: 1px;
+  margin-top: 45px;
+  margin-bottom: 10px;
 }
 
-#extra-section {
+.delete-btn {
+  color: #fb8080 !important;
+  background: white;
+  border-radius: 50%;
+  margin-left: 5px;
+  transition: 0.3s;
+}
+.delete-btn:hover {
+  color: #744040 !important;
+}
+
+.extra-section {
   width: 100%;
   margin-top: 20px;
   display: flex;
@@ -75,9 +82,4 @@
 
 .extra-options {
   margin: 5px;
-}
-
-#end-beginning {
-  display: flex;
-  flex-direction: column;
 }
