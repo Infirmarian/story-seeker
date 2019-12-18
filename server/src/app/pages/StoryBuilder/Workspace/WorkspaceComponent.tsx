@@ -34,7 +34,7 @@ function WorkspaceComponent(props: any) {
     initializeSelectedNode();
     registerFactory(
       [new TSCustomNodeFactory(updateSelectedNode)],
-      [new AnswerPortFactory()],
+      [new AnswerPortFactory(), new InputPortFactory()],
       [new CustomLinkFactory()]
     );
 
@@ -68,12 +68,10 @@ function WorkspaceComponent(props: any) {
   // registerFactory(new TSCustomNodeFactory(updateSelectedNode));
 
   setEngineModel(model);
-  // useEffect(() => {
-  // 	var newModel = new DiagramModel();
-  // 	newModel.deserializeModel(JSON.parse(modelString), engine);
-  // 	setEngineModel(newModel);
-  // 	console.log("new model set");
-  // }, [setEngineModel]);
+  //hack to set correct selected node
+  setTimeout(() => {
+    updateSelectedNode(model.getNodes()[0]);
+  }, 2000);
 
   return (
     <div>

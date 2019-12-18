@@ -3,7 +3,7 @@ import {
   DefaultLinkFactory,
   DefaultLinkModel,
 } from "@projectstorm/react-diagrams";
-import { AnswerPort } from "./CustomPorts";
+import { AnswerPort, InputPort } from "./CustomPorts";
 
 export class CustomLinkModel extends DefaultLinkModel {
   constructor() {
@@ -17,7 +17,7 @@ export class CustomLinkModel extends DefaultLinkModel {
     super.deserialize(event);
     console.log("link deserialize", event);
     if (event.data.target) {
-      event.getModel(event.data.targetPort).then((model: DefaultPortModel) => {
+      event.getModel(event.data.targetPort).then((model: InputPort) => {
         this.setTargetPort(model);
       });
     }
