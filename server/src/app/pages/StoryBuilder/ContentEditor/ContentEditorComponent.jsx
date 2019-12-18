@@ -107,7 +107,7 @@ function ContentEditorComponent(props) {
             className="btn extra-options editor-button"
             onClick={() => removeNode(selectedNode)}
           >
-            Remove Node
+            Remove This Node
           </p>
         ) : null}
         {/* <button

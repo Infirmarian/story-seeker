@@ -19,16 +19,13 @@ function PathGroup(props) {
           updatePath(event.target.value, label - 1);
         }}
       ></input>
-      {/* <div className="delete-btn btn">x</div> */}
       <span
         className="delete"
         onClick={() => {
           removePath(label - 1);
         }}
       >
-        {/* <span className="delete-btn">x</span> */}
         <i className="fas fa-times delete-btn"></i>
-        {/* <i className="fas fa-times-circle delete-btn"></i> */}
       </span>
     </div>
   );

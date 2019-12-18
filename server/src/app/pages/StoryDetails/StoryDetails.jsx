@@ -120,7 +120,7 @@ function StoryDetails(props) {
         return false;
       }}
     >
-      Submit Story for Approval
+      Submit Story For Approval
     </button>
   ) : null;
   return (

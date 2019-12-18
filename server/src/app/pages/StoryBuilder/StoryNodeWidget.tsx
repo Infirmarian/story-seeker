@@ -62,7 +62,7 @@ export class TSCustomNodeWidget extends React.Component<
       >
         <div
           className={
-            "node-header" + `${isBeginning ? " start-node-header" : ""}`
+            "node-header" + `${isBeginning ? "start-node-header" : ""}`
           }
         >
           {inelement ? (
