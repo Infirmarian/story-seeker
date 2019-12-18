@@ -6,7 +6,7 @@ import {
   DefaultDiagramState,
 } from "@projectstorm/react-diagrams";
 import { TSCustomNodeFactory } from "../StoryNodeFactory";
-import { AnswerPortFactory } from "../CustomPortFactory";
+import { AnswerPortFactory, InputPortFactory } from "../CustomPortFactory";
 import { StoryNode } from "../StoryNode";
 
 import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
@@ -33,15 +33,15 @@ function WorkspaceComponent(props: any) {
   useEffect(() => {
     initializeSelectedNode();
     registerFactory(
-      new TSCustomNodeFactory(updateSelectedNode),
-      new AnswerPortFactory(),
-      new CustomLinkFactory()
+      [new TSCustomNodeFactory(updateSelectedNode)],
+      [new AnswerPortFactory()],
+      [new CustomLinkFactory()]
     );
 
     //this makes a call to line 96 of reducers.js
     //TODO: edit functionality to make a fetch request
     if (id > 0) {
-      initializeModel(-1);
+      initializeModel(id);
     } else {
       initializeModel(-1);
     }

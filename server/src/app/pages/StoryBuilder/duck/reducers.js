@@ -45,9 +45,16 @@ export const engine = (state = initialEngine, action) => {
       state.setModel(action.payload.model);
       return state;
     case REGISTER_FACTORY:
-      state.getNodeFactories().registerFactory(action.payload.nodeFactory);
-      state.getPortFactories().registerFactory(action.payload.portFactory);
-      state.getLinkFactories().registerFactory(action.payload.linkFactory);
+      const { nodeFactories, portFactories, linkFactories } = action.payload;
+      nodeFactories.forEach((factory) => {
+        state.getNodeFactories().registerFactory(factory);
+      });
+      portFactories.forEach((factory) => {
+        state.getPortFactories().registerFactory(factory);
+      });
+      linkFactories.forEach((factory) => {
+        state.getLinkFactories().registerFactory(factory);
+      });
       return state;
     default:
       return state;
