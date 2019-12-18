@@ -6,7 +6,7 @@ import {
   DefaultDiagramState,
 } from "@projectstorm/react-diagrams";
 import { TSCustomNodeFactory } from "../StoryNodeFactory";
-import { AnswerPortFactory } from "../AnswerPortFactory";
+import { AnswerPortFactory } from "../CustomPortFactory";
 import { StoryNode } from "../StoryNode";
 
 import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
