@@ -3,7 +3,6 @@
   color: white;
   font-size: 12px;
   margin: 0;
-  word-break: break-all;
 }
 .story-node {
   background: #31c4f3;
@@ -56,10 +55,14 @@
 }
 .output-port-wrapper {
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
+  height: 15px;
+  display: block;
   margin-bottom: 1px;
+
+  /* display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: transparent; */
 }
 .output-port-wrapper > .port {
   width: 50%;

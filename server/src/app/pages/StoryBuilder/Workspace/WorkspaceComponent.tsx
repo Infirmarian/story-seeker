@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 
 import {
-  DiagramModel,
-  DiagramEngine,
-  DefaultDiagramState,
+	DiagramModel,
+	DiagramEngine,
+	DefaultDiagramState,
 } from "@projectstorm/react-diagrams";
 import { TSCustomNodeFactory } from "../StoryNodeFactory";
 import { AnswerPortFactory, InputPortFactory } from "../CustomPortFactory";
@@ -15,20 +15,20 @@ import { CustomLinkFactory } from "../CustomLinks";
 import StoryModel from "../StoryModel";
 import { URL } from "../../../../utils/constants";
 interface WorkspaceProps {
-  engine: DiagramEngine;
-  model: DiagramModel;
-  selectedNode: StoryNode;
+	engine: DiagramEngine;
+	model: DiagramModel;
+	selectedNode: StoryNode;
 }
 function WorkspaceComponent(props: any) {
-  const { engine, model, selectedNode } = props;
-  const {
-    updateSelectedNode,
-    setEngineModel,
-    registerFactory,
-    initializeSelectedNode,
-    initializeModel,
-  } = props;
-  console.log(engine, model, selectedNode);
+	const { engine, model, selectedNode } = props;
+	const {
+		updateSelectedNode,
+		setEngineModel,
+		registerFactory,
+		initializeSelectedNode,
+		initializeModel,
+	} = props;
+	console.log(engine, model, selectedNode);
 
   const { id } = props;
   useEffect(() => {
@@ -65,20 +65,20 @@ function WorkspaceComponent(props: any) {
     updateSelectedNode,
   ]);
 
-  const state = engine.getStateMachine().getCurrentState();
-  if (state instanceof DefaultDiagramState) {
-    console.log("Preventing loose links");
-    state.dragNewLink.config.allowLooseLinks = false;
-  }
+	const state = engine.getStateMachine().getCurrentState();
+	if (state instanceof DefaultDiagramState) {
+		console.log("Preventing loose links");
+		state.dragNewLink.config.allowLooseLinks = false;
+	}
 
-  const actions = engine
-    .getActionEventBus()
-    .getActionsForType(InputType.KEY_DOWN);
-  if (actions[0]) {
-    engine.getActionEventBus().deregisterAction(actions[0]);
-  }
+	const actions = engine
+		.getActionEventBus()
+		.getActionsForType(InputType.KEY_DOWN);
+	if (actions[0]) {
+		engine.getActionEventBus().deregisterAction(actions[0]);
+	}
 
-  // registerFactory(new TSCustomNodeFactory(updateSelectedNode));
+	// registerFactory(new TSCustomNodeFactory(updateSelectedNode));
 
   setEngineModel(model);
   //hack to set correct selected node
@@ -86,11 +86,11 @@ function WorkspaceComponent(props: any) {
   //   updateSelectedNode(model.getNodes()[0]);
   // }, 2000);
 
-  return (
-    <div>
-      <CanvasWidget className="Graph" engine={engine} />
-    </div>
-  );
+	return (
+		<div>
+			<CanvasWidget className="Graph" engine={engine} />
+		</div>
+	);
 }
 
 export default WorkspaceComponent;
