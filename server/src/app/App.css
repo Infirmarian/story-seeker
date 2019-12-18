@@ -126,13 +126,14 @@ a:focus,
 a:active {
   color: #155d74;
 }
-
+.btn {
+  margin: 8px 10px;
+  transition: 0.3s;
+}
 .btn-primary {
   background-color: #1d809f !important;
   border-color: #1d809f !important;
   color: #fff !important;
-  margin: 15px;
-  transition: 0.3s;
 }
 
 .btn-primary:hover,
@@ -160,8 +161,6 @@ a:active {
 }
 .btn-alert {
   background-color: rgb(199, 25, 25) !important;
-  margin: 15px;
-  transition: 0.3s;
 }
 .btn-alert:hover {
   color: white !important;

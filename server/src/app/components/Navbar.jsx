@@ -24,11 +24,6 @@ function Navbar() {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav text-right ml-auto">
           <li className="navbar-item">
-            <Link className="nav-link" to="/">
-              Home
-            </Link>
-          </li>
-          <li className="navbar-item">
             <Link className="nav-link" to="/viewer">
               All Stories
             </Link>
@@ -46,11 +41,11 @@ function Navbar() {
               Logout
             </div>
           </li>
-          <li className="navbar-item">
+          {/* <li className="navbar-item">
             <Link className="nav-link" to="/viewer/new">
               New Story
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </nav>

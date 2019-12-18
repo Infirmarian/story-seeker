@@ -85,13 +85,13 @@ function StoryDetails(props) {
   } = storyDetails;
 
   const editStoryButton = id ? (
-    <Link to={"/builder/" + id} className={"btn btn-primary "}>
+    <Link to={"/builder/" + id} className={"btn btn-primary"}>
       Edit Story
     </Link>
   ) : null;
   const deleteStoryButton = id ? (
     <button
-      className="btn btn-alert"
+      className="btn btn-alert ml-0"
       onClick={(event) => {
         event.preventDefault();
         DeleteStory(id, history);
@@ -214,7 +214,7 @@ function StoryDetails(props) {
           </select>
         </div>
         <div className="uneditable-info">
-          <div className={`status ${published ? "status-success" : ""}`}>
+          <div className={`status status-${published}`}>
             {published
               ? published === "not published"
                 ? "not\u00a0published"
@@ -222,15 +222,19 @@ function StoryDetails(props) {
               : "not\u00a0published"}
           </div>
           <div className="status status-primary">
-            Last Modified: {last_modified}
+            Last Modified: {last_modified ? last_modified : "N/A"}
           </div>
         </div>
         <div className="button-section">
           <button type="submit" className="btn btn-primary ml-0">
             Save Details
           </button>
-          {editStoryButton}
+          <Link to="/viewer" className="btn btn-primary">
+            Go Back
+          </Link>
+          <br />
           {deleteStoryButton}
+          {editStoryButton}
           {submitStoryButton}
         </div>
       </form>
