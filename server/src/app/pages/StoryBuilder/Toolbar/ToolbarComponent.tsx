@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { StoryNode } from "../StoryNode";
 import "./Toolbar.css";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
@@ -15,10 +16,10 @@ interface ToolbarProps {
 function ToolbarComponent(props: any) {
   const { engine, model, addNode, addNodeOnDrop } = props;
 
-  const convertModelToJSON = () => {
+  /* const convertModelToJSON = () => {
     var result: { content: Array<any>; title: string } = {
       content: Array(model.getNodes().length),
-      title: "title"
+      title: "title",
     };
     var mapping: { [index: string]: number } = {};
     var counter = 1;
@@ -53,20 +54,20 @@ function ToolbarComponent(props: any) {
         result.content[mapping[node.getID()]] = {
           main,
           question,
-          options
+          options,
         };
       else result.content[mapping[node.getID()]] = { main };
     });
     return JSON.stringify(result);
-  };
+  }; */
 
   const handleSubmit = () => {
     fetch(URL + `/api/builder/${model.StoryID}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(model.serialize())
+      body: JSON.stringify(model.serialize()),
     });
   };
 
@@ -83,14 +84,25 @@ function ToolbarComponent(props: any) {
         className="toolbar-btn"
         onClick={() => addNode()}
         // draggable={true}
-        onDrop={event => handleDropToAdd(event)}
-        onDragOver={event => event.preventDefault()}
+        onDrop={(event) => handleDropToAdd(event)}
+        onDragOver={(event) => event.preventDefault()}
       >
         <i className="fas fa-plus-circle fa-4x"></i>
       </span>
-      <span className="toolbar-btn" id="Submit-Btn" onClick={handleSubmit}>
+      <span className="toolbar-btn Submit-Btn" onClick={handleSubmit}>
         Save
       </span>
+      <Link to="/viewer">
+        <span
+          className="toolbar-btn Submit-Btn"
+          onClick={() => {
+            handleSubmit();
+            //TODO: modal for "Are You Sure?"
+          }}
+        >
+          Save & Exit
+        </span>
+      </Link>
     </div>
   );
 }
