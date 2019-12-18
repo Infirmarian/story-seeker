@@ -2,17 +2,23 @@
   min-height: 100vh;
 }
 
-.publish-status {
+.status {
   color: rgb(122, 122, 122);
   border: solid 1px;
   border-radius: 10px;
   padding-left: 10px;
   padding-right: 10px;
-  width: min-content;
+  width: max-content;
 }
-.publish-status-published {
+.status-primary {
+  color: #31c4f3;
+}
+.status-success {
   color: rgb(6, 209, 97);
 }
-.publish-status-pending {
+.status-pending {
   color: rgb(219, 143, 0);
+}
+.status-danger {
+  color: rgb(199, 25, 25);
 }
