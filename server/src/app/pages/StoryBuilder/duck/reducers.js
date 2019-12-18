@@ -63,6 +63,8 @@ export const engine = (state = initialEngine, action) => {
 
 export const model = (state = initialModel, action) => {
   switch (action.type) {
+    case SET_ENGINE_MODEL:
+      return action.payload.model;
     default:
       return state;
   }
@@ -72,6 +74,8 @@ export const selectedNode = (state = initialNode, action) => {
   switch (action.type) {
     case UPDATE_SELECTED_NODE:
       return action.payload.selectedNode;
+    // case SET_ENGINE_MODEL:
+    //   return action.payload.model.getNodes()[0];
     default:
       return state;
   }

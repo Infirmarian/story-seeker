@@ -16,8 +16,8 @@ CORS(application)
 
 
 def get_token(request) -> str:
-    # return '5b2811141f07744c80bd5a1d4b1cbe27e72a8689bab509f53a31b5c3b0ac23d6'
-    return 'b9634e96d47e2b62f3bb3e4193b72cc5e98d8a0133a69cebee5919c3d7a10c2b'
+    return '013820971e995bc7ba32ddf4bc56e701d263326481a1004d1e410b5d93ba617f'
+    # return 'b9634e96d47e2b62f3bb3e4193b72cc5e98d8a0133a69cebee5919c3d7a10c2b'
 #    return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements

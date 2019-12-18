@@ -12,7 +12,8 @@ import { StoryNode } from "../StoryNode";
 import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
 import "./Workspace.css";
 import { CustomLinkFactory } from "../CustomLinks";
-
+import StoryModel from "../StoryModel";
+import { URL } from "../../../../utils/constants";
 interface WorkspaceProps {
   engine: DiagramEngine;
   model: DiagramModel;
@@ -41,7 +42,19 @@ function WorkspaceComponent(props: any) {
     //this makes a call to line 96 of reducers.js
     //TODO: edit functionality to make a fetch request
     if (id > 0) {
-      initializeModel(id);
+      // initializeModel(id);
+      fetch(URL + `/api/builder/${id}`).then((response) => {
+        response.json().then((json) => {
+          var newModel = new StoryModel();
+          console.log("json", json);
+          newModel.deserializeModel(json, engine);
+          newModel.storyID = id;
+          console.log(newModel);
+          setEngineModel(newModel);
+          console.log(newModel.getNodes());
+          engine.repaintCanvas();
+        });
+      });
     } else {
       initializeModel(-1);
     }
@@ -69,9 +82,9 @@ function WorkspaceComponent(props: any) {
 
   setEngineModel(model);
   //hack to set correct selected node
-  setTimeout(() => {
-    updateSelectedNode(model.getNodes()[0]);
-  }, 2000);
+  // setTimeout(() => {
+  //   updateSelectedNode(model.getNodes()[0]);
+  // }, 2000);
 
   return (
     <div>
