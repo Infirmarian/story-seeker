@@ -56,8 +56,6 @@ function DeleteStory(id, history) {
 function StoryDetails(props) {
   let history = useHistory();
   const { id } = props.match.params;
-
-  // Data for current story being viewed
   const [storyDetails, setStoryDetails] = useState({});
   useEffect(() => {
     if (id) {
@@ -67,7 +65,6 @@ function StoryDetails(props) {
             title: json.title,
             summary: json.summary,
             genre: json.genre,
-            price: json.price,
             published: json.published,
             last_modified: json.last_modified,
           });
@@ -75,30 +72,23 @@ function StoryDetails(props) {
       });
     }
   }, [id]);
-  const {
-    title,
-    summary,
-    genre,
-    price,
-    published,
-    last_modified,
-  } = storyDetails;
 
+  const { title, summary, genre, published, last_modified } = storyDetails;
   const editStoryButton = id ? (
-    <Link to={"/builder/" + id} className={"btn btn-primary"}>
+    <Link to={"/builder/" + id} className={"btn btn-primary "}>
       Edit Story
     </Link>
   ) : null;
   const deleteStoryButton = id ? (
     <button
-      className="btn btn-alert ml-0"
+      className="btn btn-alert"
       onClick={(event) => {
         event.preventDefault();
         DeleteStory(id, history);
         return false;
       }}
     >
-      Delete Story
+      Delete
     </button>
   ) : null;
   const submitStoryButton = id ? (
@@ -123,11 +113,16 @@ function StoryDetails(props) {
       Submit Story For Approval
     </button>
   ) : null;
+  const previewStoryButton = id ? (
+    <Link to={"/preview/" + id} className={"btn btn-primary"}>
+      Preview Story
+    </Link>
+  ) : null;
   return (
-    <div className="Story-Details">
+    <div>
       <Navbar />
       <form
-        className="details-form"
+        className="Story-Details"
         onSubmit={(event) => {
           event.preventDefault();
           SaveStoryContent(
@@ -142,101 +137,62 @@ function StoryDetails(props) {
           return false;
         }}
       >
-        <div className="info">
-          <label className="input-labels" htmlFor="title">
-            Title
-          </label>
-          <input
-            className="form-control"
-            id="title"
-            type="text"
-            name="title"
-            defaultValue={title}
-          />
-          <label className="input-labels" htmlFor="summary">
-            Summary
-          </label>
-          <textarea
-            className="form-control"
-            id="summary"
-            type="text"
-            defaultValue={summary}
-          />
-          <label className="input-labels" htmlFor="genre">
-            Genre
-          </label>
-          <select
-            id="genre"
-            className="form-control form-control-sm"
-            value={genre}
-            onChange={(event) => {
-              console.log(event.target.value);
-              setStoryDetails({
-                title,
-                summary,
-                genre: event.target.value,
-                published,
-                last_modified,
-              });
-            }}
-          >
-            <option value="adventure">Adventure</option>
-            <option value="comedy">Comedy</option>
-            <option value="fantasy">Fantasy</option>
-            <option value="science fiction">Science Fiction</option>
-            <option value="western">Western</option>
-            <option value="romance">Romance</option>
-            <option value="mystery">Mystery</option>
-            <option value="detective">Detective</option>
-            <option value="dystopia">Dystopia</option>
-          </select>
-          <label htmlFor="price" className="input-labels">
-            Pricing
-          </label>
-          <select
-            name=""
-            id="price"
-            className="form-control form-control-sm"
-            value={price}
-            onChange={(event) => {
-              setStoryDetails({
-                title,
-                summary,
-                genre,
-                price: event.target.value,
-                published,
-                last_modified,
-              });
-            }}
-          >
-            <option value="0">free</option>
-            <option value="0.99">$0.99</option>
-          </select>
+        <label htmlFor="title">Title</label>
+        <input
+          className="form-control"
+          id="title"
+          type="text"
+          name="title"
+          defaultValue={title}
+        />
+        <label htmlFor="summary">Summary</label>
+        <textarea
+          className="form-control"
+          id="summary"
+          type="text"
+          defaultValue={summary}
+        />
+        <label htmlFor="genre">Genre</label>
+        <select
+          id="genre"
+          className="form-control form-control-sm"
+          value={genre}
+          onChange={(event) => {
+            console.log(event.target.value);
+            setStoryDetails({ title, summary, genre: event.target.value });
+          }}
+        >
+          <option value="adventure">Adventure</option>
+          <option value="comedy">Comedy</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="science fiction">Science Fiction</option>
+          <option value="western">Western</option>
+          <option value="romance">Romance</option>
+          <option value="mystery">Mystery</option>
+          <option value="detective">Detective</option>
+          <option value="dystopia">Dystopia</option>
+        </select>
+        <div
+          className={
+            published
+              ? `publish-status publish-status-${published}`
+              : "publish-status"
+          }
+        >
+          {published
+            ? published === "not published"
+              ? "not\u00a0published"
+              : published
+            : "not\u00a0published"}
         </div>
-        <div className="uneditable-info">
-          <div className={`status status-${published}`}>
-            {published
-              ? published === "not published"
-                ? "not\u00a0published"
-                : published
-              : "not\u00a0published"}
-          </div>
-          <div className="status status-primary">
-            Last Modified: {last_modified ? last_modified : "N/A"}
-          </div>
-        </div>
-        <div className="button-section">
-          <button type="submit" className="btn btn-primary ml-0">
-            Save Details
-          </button>
-          <Link to="/viewer" className="btn btn-primary">
-            Go Back
-          </Link>
-          <br />
-          {deleteStoryButton}
-          {editStoryButton}
-          {submitStoryButton}
-        </div>
+        <div>Last Modified: {last_modified}</div>
+        <button type="submit" className="btn btn-primary">
+          Save
+        </button>
+        {editStoryButton}
+        {previewStoryButton}
+        {submitStoryButton}
+        {deleteStoryButton}
       </form>
     </div>
   );

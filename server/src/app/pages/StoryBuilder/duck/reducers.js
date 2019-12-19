@@ -3,7 +3,7 @@ import createEngine, {
   DiagramModel,
   DiagramEngine,
   DefaultDiagramState,
-  DefaultNodeModel,
+  DefaultNodeModel
 } from "@projectstorm/react-diagrams";
 
 // Object Types
@@ -19,7 +19,7 @@ import {
   SET_ENGINE_MODEL,
   REGISTER_FACTORY,
   INITIALIZE_MODEL,
-  ADD_NODE_ON_DROP,
+  ADD_NODE_ON_DROP
 } from "./actions";
 
 // Redux
@@ -32,11 +32,11 @@ const modelString = `{"zoom":90.38333333333338,"offsetX":25.868833333333207,"off
 
 const initialEngine = createEngine();
 var initialModel = new StoryModel();
-const initialNodeContent = "This is the beginning...";
+const initialNodeContent = "You are walking down a dark path...";
 const initialNode = new StoryNode({
   text: initialNodeContent,
   beginning: true,
-  engine: initialEngine,
+  engine: initialEngine
 });
 
 export const engine = (state = initialEngine, action) => {
@@ -85,23 +85,19 @@ export const reducer = reduceReducers(
   combineReducers({
     engine,
     model,
-    selectedNode,
+    selectedNode
   }),
   (state, action) => {
     const { engine, model, selectedNode } = state;
     switch (action.type) {
       case INITIALIZE_SELECTED_NODE:
-        // console.log("initial Node", selectedNode);
-
         selectedNode.setPosition(100, 100);
-        if (selectedNode.getOutPorts().length === 0) {
-          selectedNode.addOutputPort("choice 1");
-          selectedNode.addOutputPort("choice 2");
-        }
+        selectedNode.addOutputPort("blue");
+        selectedNode.addOutputPort("red");
         return {
           engine,
           model,
-          selectedNode,
+          selectedNode
         };
       case INITIALIZE_MODEL:
         //id passed in through initializeModel()
@@ -109,23 +105,18 @@ export const reducer = reduceReducers(
         const id = action.payload.id;
 
         // MAKE FETCH REQUEST BASED ON ID for a JSON model string
-        if (id == -1) {
+        // dummy data modelString is currently declared on line 29
+        if (id === -1) {
           //creates a default model
-          console.log(selectedNode);
           model.addAll(selectedNode);
         } else {
-          fetch(URL + `/api/builder/${id}`)
-            .then((response) => {
-              response.json().then((json) => {
-                model.deserializeModel(json, engine);
-                model.StoryID = id;
-                engine.repaintCanvas();
-              });
-            })
-            .catch((error) => {
-              console.warn(error);
-              model.addAll(selectedNode);
+          fetch(URL + `/api/builder/${id}`).then(response => {
+            response.json().then(json => {
+              model.deserializeModel(json, engine);
+              model.StoryID = id;
+              engine.repaintCanvas();
             });
+          });
         }
 
         //selects arbitrary node as selected node
@@ -136,28 +127,27 @@ export const reducer = reduceReducers(
         return {
           engine,
           model,
-          selectedNode: start,
+          selectedNode: start
         };
       case ADD_NODE:
         var nodeToAdd = new StoryNode({
-          text: "",
-          engine: engine,
+          text: "Default",
+          engine: engine
         });
         var x = Math.floor(engine.getCanvas().clientWidth / 2);
         var y = Math.floor(engine.getCanvas().clientHeight / 2);
         nodeToAdd.setPosition(x, y);
-        nodeToAdd.addOutputPort("");
         console.log(model.addNode(nodeToAdd));
         engine.repaintCanvas();
         return {
           engine,
           model,
-          selectedNode,
+          selectedNode
         };
       case ADD_NODE_ON_DROP:
         var nodeToAdd = new StoryNode({
           text: "Default",
-          engine: engine,
+          engine: engine
         });
         nodeToAdd.setPosition(action.payload.point);
         console.log(model.addNode(nodeToAdd));
@@ -165,14 +155,14 @@ export const reducer = reduceReducers(
         return {
           engine,
           model,
-          selectedNode,
+          selectedNode
         };
       case REMOVE_NODE:
         if (model.getNodes().length <= 1) {
           return {
             engine,
             model,
-            selectedNode,
+            selectedNode
           };
         }
         const inputPort = action.payload.node.getInputPort();
@@ -195,7 +185,7 @@ export const reducer = reduceReducers(
                 .getNode();
             }
           }
-          outputPorts.forEach((port) => {
+          outputPorts.forEach(port => {
             let outgoingLinks = port.getLinks();
             for (let link in outgoingLinks) {
               outgoingLinks[link].remove();
@@ -211,10 +201,10 @@ export const reducer = reduceReducers(
         return {
           engine,
           model,
-          selectedNode: newNode,
+          selectedNode: newNode
         };
       case UPDATE_START_NODE:
-        model.getNodes().forEach((element) => {
+        model.getNodes().forEach(element => {
           if (element.isBeginning) {
             element.clearBeginning();
           }
@@ -224,7 +214,7 @@ export const reducer = reduceReducers(
         return {
           engine,
           model,
-          selectedNode,
+          selectedNode
         };
       default:
         return state;

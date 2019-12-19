@@ -4,7 +4,7 @@ import {
   DefaultLinkModel,
   DefaultPortModel,
   DefaultNodeModel,
-  PortModel,
+  PortModel
 } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";
@@ -17,9 +17,10 @@ export interface StoryNodeOptions extends BaseModelOptions {
 }
 const MAX_TEXT_LENGTH = 50;
 const MAX_QUESTION_LENGTH = 15;
+
 export class StoryNode extends DefaultNodeModel {
   text: string;
-  question: string | undefined;
+  question: string;
   isBeginning: boolean;
   isEnd: boolean;
   engine: DiagramEngine;
@@ -27,7 +28,7 @@ export class StoryNode extends DefaultNodeModel {
 
   constructor(options: StoryNodeOptions) {
     super({
-      type: "ts-custom-node",
+      type: "ts-custom-node"
     });
     this.text = options.text;
     this.question = "...";
@@ -66,10 +67,10 @@ export class StoryNode extends DefaultNodeModel {
       question: this.question,
       beginning: this.isBeginning,
       end: this.isEnd,
-      outputPortAnswers: this.portsOut.map((port) => {
+      outputPortAnswers: this.portsOut.map(port => {
         let answerPort = port as AnswerPort;
         return { text: answerPort.answer, id: answerPort.getID() };
-      }),
+      })
     };
   }
 
@@ -103,26 +104,14 @@ export class StoryNode extends DefaultNodeModel {
   }
   setFullText(nt: string): void {
     this.text = nt;
-    if (nt.length <= MAX_TEXT_LENGTH + 1) {
-      this.updateNode();
-    }
+    this.engine.repaintCanvas();
   }
-  getQuestion(): string | undefined {
+  getQuestion(): string {
     return this.question;
   }
-  getShortQuestion(): string | undefined {
-    if (this.question !== undefined)
-      return (
-        this.question.substring(0, MAX_QUESTION_LENGTH) +
-        (this.question.length > MAX_QUESTION_LENGTH ? "..." : "")
-      );
-    return this.question;
-  }
-  setQuestion(q: string | undefined): void {
+  setQuestion(q: string): void {
     this.question = q;
-    if (q && q.length <= MAX_QUESTION_LENGTH + 1) {
-      this.updateNode();
-    }
+    this.engine.repaintCanvas();
   }
   setEnd(): void {
     this.setQuestion("");
@@ -143,7 +132,7 @@ export class StoryNode extends DefaultNodeModel {
       engine: this.engine,
       in: false,
       name: String(uuid()),
-      label: String(uuid()),
+      label: String(uuid())
     });
     this.addPort(addedPort);
     // var addedPort = this.addOutPort(option);
@@ -171,9 +160,9 @@ export class StoryNode extends DefaultNodeModel {
       for (let link in links) {
         links[link].remove();
       }
-      // console.log("before", this.getPorts(), this.getOutPorts());
-      // this.removePort(portToRemove);
-      // console.log("after", this.getPorts(), this.getOutPorts());
+      console.log("before", this.getPorts(), this.getOutPorts());
+      this.removePort(portToRemove);
+      console.log("after", this.getPorts(), this.getOutPorts());
       this.engine.repaintCanvas();
       return true;
     }
@@ -212,7 +201,7 @@ export class StoryNode extends DefaultNodeModel {
       for (var v in inputPort.getLinks()) {
         incomingLinks.push(inputPort.getLinks()[v]);
       }
-      incomingLinks.forEach((element) => {
+      incomingLinks.forEach(element => {
         element.remove();
       });
       this.removePort(inputPort);
