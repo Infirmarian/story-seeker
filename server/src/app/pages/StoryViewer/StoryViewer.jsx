@@ -10,17 +10,17 @@ function StoryViewer() {
   useEffect(() => {
     // fetch user data
     fetch(URL + "/api/list")
-      .then(response => {
+      .then((response) => {
         if (response.status === 403) {
           history.push("/login");
         } else {
-          response.json().then(json => {
+          response.json().then((json) => {
             console.log(json);
             setStories(json.stories);
           });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         history.push("/login");
       });
@@ -39,15 +39,13 @@ function StoryViewer() {
           </tr>
         </thead>
         <tbody>
-          {stories.map(story => {
+          {stories.map((story) => {
             return (
               <tr>
                 <td>{story.title}</td>
                 <td>{story.genre}</td>
                 <td>
-                  <div
-                    className={`publish-status publish-status-${story.published}`}
-                  >
+                  <div className={`status status-${story.published}`}>
                     {story.published === "not published"
                       ? "not\u00a0published"
                       : story.published}
@@ -57,7 +55,7 @@ function StoryViewer() {
                   {story.price === 0 ? "free" : "$" + (story.price - 0.01)}
                 </td>
                 <td>
-                  <Link to={`/viewer/details/${story.id}`}> Details </Link>
+                  <Link to={`/viewer/details/${story.id}`}> See Details </Link>
                 </td>
               </tr>
             );

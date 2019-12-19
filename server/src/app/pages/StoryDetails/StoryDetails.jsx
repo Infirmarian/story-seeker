@@ -172,13 +172,7 @@ function StoryDetails(props) {
           <option value="detective">Detective</option>
           <option value="dystopia">Dystopia</option>
         </select>
-        <div
-          className={
-            published
-              ? `publish-status publish-status-${published}`
-              : "publish-status"
-          }
-        >
+        <div className={published ? `status status-${published}` : "status"}>
           {published
             ? published === "not published"
               ? "not\u00a0published"

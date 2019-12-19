@@ -15,7 +15,7 @@ export interface StoryNodeOptions extends BaseModelOptions {
   id?: string;
   engine: DiagramEngine;
 }
-const MAX_TEXT_LENGTH = 50;
+const MAX_TEXT_LENGTH = 80;
 const MAX_QUESTION_LENGTH = 15;
 export class StoryNode extends DefaultNodeModel {
   text: string;

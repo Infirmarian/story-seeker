@@ -23,7 +23,7 @@ function ContentEditorComponent(props) {
     value: nodeContent,
     setValue: setNodeContent,
     reset: resetNodeContent,
-    bind: bindNodeContent
+    bind: bindNodeContent,
   } = useInput(
     selectedNode.getFullText(),
     selectedNode.setFullText,
@@ -34,7 +34,7 @@ function ContentEditorComponent(props) {
     value: question,
     setValue: setQuestion,
     reset: resetQuestion,
-    bind: bindQuestion
+    bind: bindQuestion,
   } = useInput(
     selectedNode.getQuestion(),
     selectedNode.setQuestion,
@@ -54,7 +54,7 @@ function ContentEditorComponent(props) {
     setIsEndNode(selectedNode.isEnd);
   }, [selectedNode]);
   const toggleEndNode = () => {
-    setIsEndNode(prev => {
+    setIsEndNode((prev) => {
       if (!prev) {
         selectedNode.setEnd();
         setQuestion("");
@@ -66,8 +66,8 @@ function ContentEditorComponent(props) {
     });
   };
   return (
-    <div className="Content-Editor">
-      <div className="editor-section">
+    <div className="Content-Editor bg-primary">
+      <div className="editor-section bg-primary">
         <label className="input-labels" htmlFor="content">
           Content
         </label>
