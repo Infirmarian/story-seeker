@@ -10,6 +10,7 @@
   padding-left: 5px;
   padding-right: 5px;
   margin-bottom: 0px;
+  font-family: "Monsterrat", sans-serif;
 }
 
 .path-input {
@@ -38,15 +39,3 @@
   background: transparent;
   transition: 0.3s;
 }
-
-/* .delete-btn {
-  color: #fb8080 !important;
-  background: white;
-  border-radius: 50%;
-  margin-left: 0;
-  transition: 0.3s;
-  cursor: pointer;
-} */
-/* .delete-btn:hover {
-  color: #744040 !important;
-} */

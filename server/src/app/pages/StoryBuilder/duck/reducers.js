@@ -105,34 +105,17 @@ export const reducer = reduceReducers(
         };
       case INITIALIZE_MODEL:
         //id passed in through initializeModel()
-        //This is the id matching with the URL parameter for a specific storybuilder page instance
         const id = action.payload.id;
 
         // MAKE FETCH REQUEST BASED ON ID for a JSON model string
         if (id == -1) {
           //creates a default model
-          console.log(selectedNode);
           model.addAll(selectedNode);
-        } else {
-          fetch(URL + `/api/builder/${id}`)
-            .then((response) => {
-              response.json().then((json) => {
-                model.deserializeModel(json, engine);
-                model.storyID = id;
-                engine.repaintCanvas();
-              });
-            })
-            .catch((error) => {
-              console.warn(error);
-              model.addAll(selectedNode);
-            });
         }
 
         //selects arbitrary node as selected node
-        //TODO: figure out which node is selected (might be part of deserialized model)
         const start = model.getNodes()[0];
 
-        //keep this return as is. As long as you have deserialized some model using model.deserializeModel() then the correct data should load on the workspace
         return {
           engine,
           model,

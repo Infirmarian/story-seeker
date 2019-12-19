@@ -15,7 +15,7 @@ interface ToolbarProps {
 
 function ToolbarComponent(props: any) {
   const { engine, model, addNode, addNodeOnDrop } = props;
-  var history = useHistory();
+  let history = useHistory();
   /* const convertModelToJSON = () => {
     var result: { content: Array<any>; title: string } = {
       content: Array(model.getNodes().length),

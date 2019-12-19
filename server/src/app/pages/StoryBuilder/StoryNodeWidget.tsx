@@ -24,6 +24,7 @@ export class TSCustomNodeWidget extends React.Component<
   }
 
   render() {
+    const answerLength = 4;
     const question = this.props.node.getShortQuestion();
     const text = this.props.node.getShortText();
     const isBeginning = this.props.node.isBeginning;
@@ -34,8 +35,8 @@ export class TSCustomNodeWidget extends React.Component<
         <div className="output-port-wrapper" key={ansPort.getID()}>
           <p className="port-answer node-text">
             {ansPort.answer
-              ? ansPort.answer.substring(0, 4) +
-                `${ansPort.answer.length > 4 ? "..." : ""}`
+              ? ansPort.answer.substring(0, answerLength) +
+                `${ansPort.answer.length > answerLength ? "..." : ""}`
               : ""}
           </p>
           <PortWidget engine={this.props.engine} port={ansPort}>

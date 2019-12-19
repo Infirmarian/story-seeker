@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS ss.stories(
     genre ss.category,
     published ss.publication_status NOT NULL DEFAULT 'not published',
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_modified TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_compiled TIMESTAMPTZ NOT NULL DEFAULT 0,
     FOREIGN KEY (authorid) REFERENCES ss.authors(userid)
 );
 
@@ -133,4 +135,3 @@ REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;
 GRANT USAGE ON SCHEMA ss TO catalog;
 GRANT SELECT ON ss.authors TO catalog;
 GRANT SELECT ON ss.stories TO catalog;
-

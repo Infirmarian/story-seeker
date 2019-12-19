@@ -1,9 +1,11 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { URL } from "../../utils/constants";
 import "./Navbar.css";
 
 function Navbar() {
+  let location = useLocation();
+  console.log(location);
   let history = useHistory();
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -41,11 +43,13 @@ function Navbar() {
               Logout
             </div>
           </li>
-          {/* <li className="navbar-item">
-            <Link className="nav-link" to="/viewer/new">
-              New Story
-            </Link>
-          </li> */}
+          {location.pathname == "/viewer" ? (
+            <li className="navbar-item">
+              <Link className="nav-link" to="/viewer/new">
+                New Story
+              </Link>
+            </li>
+          ) : null}
         </ul>
       </div>
     </nav>
