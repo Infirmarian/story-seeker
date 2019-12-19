@@ -141,6 +141,7 @@ function StoryDetails(props) {
               title: event.target.title.value,
               summary: event.target.summary.value,
               genre: event.target.genre.value,
+              price: event.target.price.value,
             }),
             id,
             history
