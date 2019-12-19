@@ -4,10 +4,14 @@
 
 .details-form {
   width: 80vw;
-  padding: 30px;
+  padding: 0px 30px 30px 30px;
   align-content: center;
+  overflow: scroll;
+  height: 90vh;
 }
-
+.input-labels {
+  font-family: "Montserrat", sans-serif;
+}
 .info {
   margin-bottom: 5vh;
 }

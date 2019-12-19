@@ -30,6 +30,13 @@ function Navbar() {
               All Stories
             </Link>
           </li>
+          {location.pathname === "/viewer" ? (
+            <li className="navbar-item">
+              <Link className="nav-link" to="/viewer/new">
+                New Story
+              </Link>
+            </li>
+          ) : null}
           <li className="navbar-item">
             <div
               className="nav-link"
@@ -43,13 +50,6 @@ function Navbar() {
               Logout
             </div>
           </li>
-          {location.pathname == "/viewer" ? (
-            <li className="navbar-item">
-              <Link className="nav-link" to="/viewer/new">
-                New Story
-              </Link>
-            </li>
-          ) : null}
         </ul>
       </div>
     </nav>

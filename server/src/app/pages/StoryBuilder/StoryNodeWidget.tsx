@@ -24,7 +24,7 @@ export class TSCustomNodeWidget extends React.Component<
   }
 
   render() {
-    const answerLength = 4;
+    const answerLength = 6;
     const question = this.props.node.getShortQuestion();
     const text = this.props.node.getShortText();
     const isBeginning = this.props.node.isBeginning;

@@ -91,7 +91,7 @@ function StoryDetails(props) {
   ) : null;
   const deleteStoryButton = id ? (
     <button
-      className="btn btn-alert ml-0"
+      className="btn btn-alert"
       onClick={(event) => {
         event.preventDefault();
         DeleteStory(id, history);
@@ -124,7 +124,7 @@ function StoryDetails(props) {
     </button>
   ) : null;
   const previewStoryButton = id ? (
-    <Link to={"/preview/" + id} className={"btn btn-primary"}>
+    <Link to={"/preview/" + id} className="btn btn-primary ml-0">
       Preview Story
     </Link>
   ) : null;
@@ -233,17 +233,17 @@ function StoryDetails(props) {
           </div>
         </div>
         <div className="button-section">
-          <button type="submit" className="btn btn-primary ml-0">
-            Save Details
-          </button>
-          <Link to="/viewer" className="btn btn-primary">
+          <Link to="/viewer" className="btn btn-primary ml-0">
             Go Back
           </Link>
+          <button type="submit" className="btn btn-primary">
+            Save Details
+          </button>
           <br />
-          {deleteStoryButton}
           {previewStoryButton}
           {editStoryButton}
           {submitStoryButton}
+          {deleteStoryButton}
         </div>
       </form>
     </div>
