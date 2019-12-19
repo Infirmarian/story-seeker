@@ -46,12 +46,10 @@ function WorkspaceComponent(props: any) {
       fetch(URL + `/api/builder/${id}`).then((response) => {
         response.json().then((json) => {
           var newModel = new StoryModel();
-          console.log("json", json);
+          // console.log("json", json);
           newModel.deserializeModel(json, engine);
           newModel.storyID = id;
-          console.log(newModel);
           setEngineModel(newModel);
-          console.log(newModel.getNodes());
           if (newModel.getNodes().length > 0) {
             updateSelectedNode(newModel.getNodes()[0]);
           }
@@ -81,13 +79,7 @@ function WorkspaceComponent(props: any) {
     engine.getActionEventBus().deregisterAction(actions[0]);
   }
 
-  // registerFactory(new TSCustomNodeFactory(updateSelectedNode));
-
   setEngineModel(model);
-  //hack to set correct selected node
-  // setTimeout(() => {
-  //   updateSelectedNode(model.getNodes()[0]);
-  // }, 2000);
 
   return (
     <div>

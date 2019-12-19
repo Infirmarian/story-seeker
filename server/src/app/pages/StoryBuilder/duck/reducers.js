@@ -26,7 +26,6 @@ import {
 import { combineReducers } from "redux";
 import reduceReducers from "reduce-reducers";
 import StoryModel from "../StoryModel";
-import { URL } from "../../../../utils/constants";
 
 const modelString = `{"zoom":90.38333333333338,"offsetX":25.868833333333207,"offsetY":22.306162247731233,"nodes":[{"x":0,"y":0,"id":"1ce35c28-3067-442a-9554-1254c36bb001","text":"Hi","question":"...","beginning":false,"end":false,"outputPortAnswers":[{"text":"FIRE RED","id":"6468971a-d99e-4ba9-addd-50cd668ec923"}]},{"x":263.322884012539,"y":96.25668449197856,"id":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e","text":"Goodbye","question":"...","beginning":false,"end":false,"outputPortAnswers":[{"text":"","id":"2ea72e8d-ce47-47dd-b570-db33863d0039"}]},{"x":90.55061773925883,"y":352.1495482205421,"id":"d3f1386a-8c2c-4a76-badf-b687df19cd3e","text":"Default","question":"...","beginning":false,"end":false,"outputPortAnswers":[]}],"links":[{"sourceID":"1ce35c28-3067-442a-9554-1254c36bb001","sourceIndex":0,"sink":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e"},{"sourceID":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e","sourceIndex":0,"sink":"d3f1386a-8c2c-4a76-badf-b687df19cd3e"}]}`;
 
@@ -74,8 +73,6 @@ export const selectedNode = (state = initialNode, action) => {
   switch (action.type) {
     case UPDATE_SELECTED_NODE:
       return action.payload.selectedNode;
-    // case SET_ENGINE_MODEL:
-    //   return action.payload.model.getNodes()[0];
     default:
       return state;
   }
