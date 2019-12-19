@@ -18,7 +18,7 @@ function ToolbarComponent(props: any) {
   const convertModelToJSON = () => {
     var result: { content: Array<any>; title: string } = {
       content: Array(model.getNodes().length),
-      title: "title"
+      title: "title",
     };
     var mapping: { [index: string]: number } = {};
     var counter = 1;
@@ -53,7 +53,7 @@ function ToolbarComponent(props: any) {
         result.content[mapping[node.getID()]] = {
           main,
           question,
-          options
+          options,
         };
       else result.content[mapping[node.getID()]] = { main };
     });
@@ -64,9 +64,9 @@ function ToolbarComponent(props: any) {
     fetch(URL + `/api/builder/${model.StoryID}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(model.serialize())
+      body: JSON.stringify(model.serialize()),
     });
   };
 
@@ -83,8 +83,8 @@ function ToolbarComponent(props: any) {
         className="toolbar-btn"
         onClick={() => addNode()}
         // draggable={true}
-        onDrop={event => handleDropToAdd(event)}
-        onDragOver={event => event.preventDefault()}
+        onDrop={(event) => handleDropToAdd(event)}
+        onDragOver={(event) => event.preventDefault()}
       >
         <i className="fas fa-plus-circle fa-4x"></i>
       </span>
