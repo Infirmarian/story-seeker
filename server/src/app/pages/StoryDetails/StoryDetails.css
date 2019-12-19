@@ -3,11 +3,11 @@
 }
 
 .details-form {
-  width: 80vw;
-  padding: 0px 30px 30px 30px;
+  width: 100vw;
+  padding: 0 20vw 30px 30px;
   align-content: center;
   overflow: scroll;
-  height: 90vh;
+  height: 100vh;
 }
 .input-labels {
   font-family: "Montserrat", sans-serif;
