@@ -64,8 +64,8 @@ function StoryDetails(props) {
           setStoryDetails({
             title: json.title,
             summary: json.summary,
-            genre: json.genre,
             price: json.price,
+            genre: json.genre,
             published: json.published,
             last_modified: json.last_modified,
           });
@@ -96,7 +96,7 @@ function StoryDetails(props) {
         return false;
       }}
     >
-      Delete Story
+      Delete
     </button>
   ) : null;
   const submitStoryButton = id ? (
@@ -127,10 +127,10 @@ function StoryDetails(props) {
     </Link>
   ) : null;
   return (
-    <div className="Story-Details">
+    <div>
       <Navbar />
       <form
-        className="details-form"
+        className="Story-Details"
         onSubmit={(event) => {
           event.preventDefault();
           SaveStoryContent(
@@ -240,7 +240,6 @@ function StoryDetails(props) {
           {previewStoryButton}
           {editStoryButton}
           {submitStoryButton}
-        </div>
       </form>
     </div>
   );

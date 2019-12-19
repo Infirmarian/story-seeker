@@ -46,11 +46,11 @@ function StoryPreview(props) {
     <>
       <Navbar />
       <div className="container text-center my-auto">
-        <h1 className="title-text">{story.title}</h1>
-        <p className="main-text">
+        <h1 className="title-text-preview">{story.title}</h1>
+        <p className="main-text-preview">
           {story.content ? story.content[current].main : null}
         </p>
-        <p className="question">
+        <p className="question-preview">
           {story.content ? story.content[current].question : null}
         </p>
         {backButton}

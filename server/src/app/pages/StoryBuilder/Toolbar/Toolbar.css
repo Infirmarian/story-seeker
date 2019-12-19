@@ -1,7 +1,7 @@
 .Toolbar {
   height: 10vh;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -11,28 +11,32 @@
   justify-content: center;
   align-items: center;
   transition: 0.3s;
+  padding-top: 10px;
 }
 
 #Add-Btn {
-  color: #31c4f3;
-  margin-left: 20px;
   margin-right: auto;
+  color: #1d809f;
+  margin-left: 20px;
 }
 
 #Add-Btn:hover {
-  color: #19586d;
+  color: #0f3947;
 }
 
-.Submit-Btn {
-  background-color: #31c4f3;
+#Submit-Btn {
+  background-color: #1d809f;
   color: white;
   margin-right: 20px;
+  margin-top: 10px;
   padding: 14px;
-  border-radius: 25px;
+  border-radius: 30px;
   font-size: 1.6rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
 }
 
 .Submit-Btn:hover {
-  background-color: #19586d;
   text-decoration: none;
+  background-color: #0f3947;
 }
