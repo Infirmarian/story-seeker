@@ -65,6 +65,7 @@ function StoryDetails(props) {
             title: json.title,
             summary: json.summary,
             genre: json.genre,
+            price: json.price,
             published: json.published,
             last_modified: json.last_modified,
           });
@@ -73,7 +74,14 @@ function StoryDetails(props) {
     }
   }, [id]);
 
-  const { title, summary, genre, published, last_modified } = storyDetails;
+  const {
+    title,
+    summary,
+    genre,
+    price,
+    published,
+    last_modified,
+  } = storyDetails;
   const editStoryButton = id ? (
     <Link to={"/builder/" + id} className={"btn btn-primary "}>
       Edit Story
@@ -81,14 +89,14 @@ function StoryDetails(props) {
   ) : null;
   const deleteStoryButton = id ? (
     <button
-      className="btn btn-alert"
+      className="btn btn-alert ml-0"
       onClick={(event) => {
         event.preventDefault();
         DeleteStory(id, history);
         return false;
       }}
     >
-      Delete
+      Delete Story
     </button>
   ) : null;
   const submitStoryButton = id ? (

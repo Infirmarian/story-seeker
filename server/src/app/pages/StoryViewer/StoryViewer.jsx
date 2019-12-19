@@ -65,6 +65,7 @@ function StoryViewer() {
                 <td>
                   <Link to={`/viewer/details/${story.id}`}> Details </Link>
                 </td>
+                <td></td>
               </tr>
             );
           })}

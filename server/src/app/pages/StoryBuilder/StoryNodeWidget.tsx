@@ -62,7 +62,7 @@ export class TSCustomNodeWidget extends React.Component<
       >
         <div
           className={
-            "node-header" + `${isBeginning ? "start-node-header" : ""}`
+            "node-header" + `${isBeginning ? " start-node-header" : ""}`
           }
         >
           {inelement ? (
@@ -74,7 +74,7 @@ export class TSCustomNodeWidget extends React.Component<
         </div>
         {question !== undefined ? (
           <div className="node-footer">
-            <p className="question node-text">
+            <p className="node-question node-text">
               {question === "" ? "...?" : question}
             </p>
             <div className="output-port-container">{outputs}</div>

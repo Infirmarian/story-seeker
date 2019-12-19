@@ -10,7 +10,7 @@
   border: solid 2px black;
   border-radius: 5px;
   padding: 1px;
-  width: 125px;
+  width: 150px;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -42,7 +42,7 @@
   flex-direction: row;
   background-color: transparent;
 }
-.question {
+.node-question {
   width: 50%;
 }
 .output-port-container {

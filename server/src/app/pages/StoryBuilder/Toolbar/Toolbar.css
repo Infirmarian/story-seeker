@@ -1,5 +1,5 @@
 .Toolbar {
-  height: 9vh;
+  height: 10vh;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -34,4 +34,5 @@
 
 .Submit-Btn:hover {
   background-color: #19586d;
+  text-decoration: none;
 }
