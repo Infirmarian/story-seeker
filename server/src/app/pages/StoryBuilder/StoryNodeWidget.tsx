@@ -22,11 +22,10 @@ export class TSCustomNodeWidget extends React.Component<
     super(props);
     this.state = { callback: props.callback };
   }
-
   render() {
+    const answerLength = 8;
+    const paddingSubstring = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
     const question = this.props.node.getShortQuestion();
-    const text = this.props.node.getShortText();
-    const isBeginning = this.props.node.isBeginning;
     var outputPorts = this.props.node.getOutPorts();
     const outputs = outputPorts.map((port) => {
       const ansPort = port as AnswerPort;
@@ -34,8 +33,10 @@ export class TSCustomNodeWidget extends React.Component<
         <div className="output-port-wrapper" key={ansPort.getID()}>
           <p className="port-answer node-text">
             {ansPort.answer
-              ? ansPort.answer.substring(0, 2) +
-                `${ansPort.answer.length > 2 ? "..." : ""}`
+              ? ansPort.answer.substring(0, answerLength) +
+                `${
+                  ansPort.answer.length > answerLength ? "..." : "\u00A0\u00A0"
+                }`
               : ""}
           </p>
           <PortWidget engine={this.props.engine} port={ansPort}>
@@ -57,22 +58,25 @@ export class TSCustomNodeWidget extends React.Component<
     }
     return (
       <div
-        className={isBeginning ? "story-node-start story-node" : "story-node"}
+        className={
+          this.props.node.isBeginning
+            ? "story-node-start story-node"
+            : "story-node"
+        }
         onClick={() => this.state.callback(this.props.node)}
       >
         <div
           className={
-            "node-header" + `${isBeginning ? " start-node-header" : ""}`
+            "node-header" +
+            `${this.props.node.isBeginning ? " start-node-header" : ""}`
           }
         >
           {inelement ? (
             <div className="input-port-container">{inelement}</div>
           ) : null}
-          <p className="node-text">
-            {text === "" ? "Create your story..." : text}
-          </p>
+          <p className="node-text">{this.props.node.getShortText()}</p>
         </div>
-        {question !== undefined ? (
+        {question !== "" ? (
           <div className="node-footer">
             <p className="node-question node-text">
               {question === "" ? "...?" : question}

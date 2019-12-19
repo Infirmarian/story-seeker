@@ -1,16 +1,15 @@
 .node-text {
-  font-family: "Monsterrat", sans-serif;
+  font-family: sans-serif;
   color: white;
   font-size: 12px;
   margin: 0;
-  word-break: break-all;
 }
 .story-node {
   background: #31c4f3;
   border: solid 2px black;
   border-radius: 5px;
   padding: 1px;
-  width: 150px;
+  width: 175px;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -37,6 +36,7 @@
   border-top: 1px solid #000;
   width: 100%;
   height: 100%;
+  padding-bottom: 5px;
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -55,19 +55,21 @@
   align-items: flex-end;
 }
 .output-port-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
+  height: 15px;
+  display: block;
   margin-bottom: 1px;
+
+  /* display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: transparent; */
 }
 .output-port-wrapper > .port {
-  width: 50%;
+  width: 15px;
   display: inline-block;
 }
 .port-answer {
   color: white;
-  width: 50%;
   margin-right: 0px !important;
   display: inline-block;
 }

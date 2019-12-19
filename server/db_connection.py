@@ -211,7 +211,7 @@ def create_story(token: str, title: str, repeat=False):
             if userid is None:
                 raise DBError(403, "User token provided is invalid")
             cursor.execute(
-                'INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);,',
+                'INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);',
                 (title, userid,))
             conn.commit()
             cursor.execute(

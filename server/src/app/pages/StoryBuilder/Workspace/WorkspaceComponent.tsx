@@ -34,9 +34,9 @@ function WorkspaceComponent(props: any) {
   useEffect(() => {
     initializeSelectedNode();
     registerFactory(
-      [new TSCustomNodeFactory(updateSelectedNode)],
-      [new AnswerPortFactory(), new InputPortFactory()],
-      [new CustomLinkFactory()]
+      new TSCustomNodeFactory(updateSelectedNode),
+      new AnswerPortFactory(),
+      new CustomLinkFactory()
     );
 
     //this makes a call to line 96 of reducers.js
@@ -56,9 +56,10 @@ function WorkspaceComponent(props: any) {
         });
       });
     } else {
-      initializeModel(-1);
+      initializeModel(1);
     }
   }, [
+    id,
     initializeSelectedNode,
     initializeModel,
     registerFactory,
@@ -81,10 +82,6 @@ function WorkspaceComponent(props: any) {
 	// registerFactory(new TSCustomNodeFactory(updateSelectedNode));
 
   setEngineModel(model);
-  //hack to set correct selected node
-  // setTimeout(() => {
-  //   updateSelectedNode(model.getNodes()[0]);
-  // }, 2000);
 
 	return (
 		<div>

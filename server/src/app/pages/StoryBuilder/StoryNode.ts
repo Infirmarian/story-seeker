@@ -15,11 +15,11 @@ export interface StoryNodeOptions extends BaseModelOptions {
   id?: string;
   engine: DiagramEngine;
 }
-const MAX_TEXT_LENGTH = 50;
+const MAX_TEXT_LENGTH = 80;
 const MAX_QUESTION_LENGTH = 15;
 export class StoryNode extends DefaultNodeModel {
   text: string;
-  question: string | undefined;
+  question: string;
   isBeginning: boolean;
   isEnd: boolean;
   engine: DiagramEngine;
@@ -103,26 +103,14 @@ export class StoryNode extends DefaultNodeModel {
   }
   setFullText(nt: string): void {
     this.text = nt;
-    if (nt.length <= MAX_TEXT_LENGTH + 1) {
-      this.updateNode();
-    }
+    this.engine.repaintCanvas();
   }
-  getQuestion(): string | undefined {
+  getQuestion(): string {
     return this.question;
   }
-  getShortQuestion(): string | undefined {
-    if (this.question !== undefined)
-      return (
-        this.question.substring(0, MAX_QUESTION_LENGTH) +
-        (this.question.length > MAX_QUESTION_LENGTH ? "..." : "")
-      );
-    return this.question;
-  }
-  setQuestion(q: string | undefined): void {
+  setQuestion(q: string): void {
     this.question = q;
-    if (q && q.length <= MAX_QUESTION_LENGTH + 1) {
-      this.updateNode();
-    }
+    this.engine.repaintCanvas();
   }
   setEnd(): void {
     this.setQuestion("");
