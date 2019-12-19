@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, useHistory } from "react-router-dom";
 import { StoryNode } from "../StoryNode";
 import "./Toolbar.css";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
@@ -14,8 +15,8 @@ interface ToolbarProps {
 
 function ToolbarComponent(props: any) {
   const { engine, model, addNode, addNodeOnDrop } = props;
-
-  const convertModelToJSON = () => {
+  var history = useHistory();
+  /* const convertModelToJSON = () => {
     var result: { content: Array<any>; title: string } = {
       content: Array(model.getNodes().length),
       title: "title",
@@ -58,16 +59,23 @@ function ToolbarComponent(props: any) {
       else result.content[mapping[node.getID()]] = { main };
     });
     return JSON.stringify(result);
-  };
+  }; */
 
   const handleSubmit = () => {
-    fetch(URL + `/api/builder/${model.StoryID}`, {
+    fetch(URL + `/api/builder/${model.storyID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(model.serialize()),
-    });
+    })
+      .then(() => {
+        window.alert("Saved Story");
+      })
+      .catch((error) => {
+        console.warn(error);
+        window.alert("Failed to Save!");
+      });
   };
 
   const handleDropToAdd = (event: any) => {
@@ -82,13 +90,26 @@ function ToolbarComponent(props: any) {
         id="Add-Btn"
         className="toolbar-btn"
         onClick={() => addNode()}
+        // draggable={true}
         onDrop={(event) => handleDropToAdd(event)}
         onDragOver={(event) => event.preventDefault()}
       >
         <i className="fas fa-plus-circle fa-4x"></i>
       </span>
-      <span className="toolbar-btn" id="Submit-Btn" onClick={handleSubmit}>
+      <span className="btn btn-primary Submit-Btn" onClick={handleSubmit}>
         Save
+      </span>
+      <span
+        className="btn btn-primary Submit-Btn mr-4"
+        onClick={(event) => {
+          event.preventDefault();
+          if (window.confirm("Are You Sure You Want To Exit?")) {
+            handleSubmit();
+            history.push(`/viewer/details/${model.storyID}`);
+          }
+        }}
+      >
+        Save & Exit
       </span>
     </div>
   );

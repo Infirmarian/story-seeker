@@ -7,7 +7,6 @@ import Home from "./HomePage/Home";
 
 import React from "react";
 import Page404 from "./Page404/Page404";
-import StoryPreview from "./StoryPreview/StoryPreview";
 
 function Routes() {
   return (
@@ -18,7 +17,6 @@ function Routes() {
       <Route exact path="/viewer" component={StoryViewer} />
       <Route path="/viewer/details/:id" component={StoryDetails} />
       <Route path="/viewer/new" component={StoryDetails} />
-      <Route path="/preview/:id" component={StoryPreview} />
       <Route component={Page404} />
     </Switch>
   );

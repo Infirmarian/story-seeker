@@ -56,6 +56,8 @@ function DeleteStory(id, history) {
 function StoryDetails(props) {
   let history = useHistory();
   const { id } = props.match.params;
+
+  // Data for current story being viewed
   const [storyDetails, setStoryDetails] = useState({});
   useEffect(() => {
     if (id) {
@@ -64,8 +66,8 @@ function StoryDetails(props) {
           setStoryDetails({
             title: json.title,
             summary: json.summary,
-            price: json.price,
             genre: json.genre,
+            price: json.price,
             published: json.published,
             last_modified: json.last_modified,
           });
@@ -73,7 +75,6 @@ function StoryDetails(props) {
       });
     }
   }, [id]);
-
   const {
     title,
     summary,
@@ -82,8 +83,9 @@ function StoryDetails(props) {
     published,
     last_modified,
   } = storyDetails;
+
   const editStoryButton = id ? (
-    <Link to={"/builder/" + id} className={"btn btn-primary "}>
+    <Link to={"/builder/" + id} className={"btn btn-primary"}>
       Edit Story
     </Link>
   ) : null;
@@ -96,7 +98,7 @@ function StoryDetails(props) {
         return false;
       }}
     >
-      Delete
+      Delete Story
     </button>
   ) : null;
   const submitStoryButton = id ? (
@@ -118,7 +120,7 @@ function StoryDetails(props) {
         return false;
       }}
     >
-      Submit Story For Approval
+      Submit Story for Approval
     </button>
   ) : null;
   const previewStoryButton = id ? (
@@ -126,11 +128,12 @@ function StoryDetails(props) {
       Preview Story
     </Link>
   ) : null;
+
   return (
-    <div>
+    <div className="Story-Details">
       <Navbar />
       <form
-        className="Story-Details"
+        className="details-form"
         onSubmit={(event) => {
           event.preventDefault();
           SaveStoryContent(
@@ -240,6 +243,7 @@ function StoryDetails(props) {
           {previewStoryButton}
           {editStoryButton}
           {submitStoryButton}
+        </div>
       </form>
     </div>
   );

@@ -32,7 +32,7 @@ const modelString = `{"zoom":90.38333333333338,"offsetX":25.868833333333207,"off
 
 const initialEngine = createEngine();
 var initialModel = new StoryModel();
-const initialNodeContent = "You are walking down a dark path...";
+const initialNodeContent = "This is the beginning...";
 const initialNode = new StoryNode({
   text: initialNodeContent,
   beginning: true,
@@ -45,10 +45,16 @@ export const engine = (state = initialEngine, action) => {
       state.setModel(action.payload.model);
       return state;
     case REGISTER_FACTORY:
-      state.getNodeFactories().registerFactory(action.payload.nodeFactory);
-      state.getPortFactories().registerFactory(action.payload.portFactory);
-      state.getLinkFactories().registerFactory(action.payload.linkFactory);
-      console.log(state.getPortFactories());
+      const { nodeFactories, portFactories, linkFactories } = action.payload;
+      nodeFactories.forEach((factory) => {
+        state.getNodeFactories().registerFactory(factory);
+      });
+      portFactories.forEach((factory) => {
+        state.getPortFactories().registerFactory(factory);
+      });
+      linkFactories.forEach((factory) => {
+        state.getLinkFactories().registerFactory(factory);
+      });
       return state;
     default:
       return state;
@@ -85,9 +91,13 @@ export const reducer = reduceReducers(
     const { engine, model, selectedNode } = state;
     switch (action.type) {
       case INITIALIZE_SELECTED_NODE:
+        // console.log("initial Node", selectedNode);
+
         selectedNode.setPosition(100, 100);
-        selectedNode.addOutputPort("blue");
-        selectedNode.addOutputPort("red");
+        if (selectedNode.getOutPorts().length === 0) {
+          selectedNode.addOutputPort("choice 1");
+          selectedNode.addOutputPort("choice 2");
+        }
         return {
           engine,
           model,
@@ -99,18 +109,23 @@ export const reducer = reduceReducers(
         const id = action.payload.id;
 
         // MAKE FETCH REQUEST BASED ON ID for a JSON model string
-        // dummy data modelString is currently declared on line 29
-        if (id === -1) {
+        if (id == -1) {
           //creates a default model
+          console.log(selectedNode);
           model.addAll(selectedNode);
         } else {
-          fetch(URL + `/api/builder/${id}`).then((response) => {
-            response.json().then((json) => {
-              model.deserializeModel(json, engine);
-              model.StoryID = id;
-              engine.repaintCanvas();
+          fetch(URL + `/api/builder/${id}`)
+            .then((response) => {
+              response.json().then((json) => {
+                model.deserializeModel(json, engine);
+                model.storyID = id;
+                engine.repaintCanvas();
+              });
+            })
+            .catch((error) => {
+              console.warn(error);
+              model.addAll(selectedNode);
             });
-          });
         }
 
         //selects arbitrary node as selected node
@@ -125,12 +140,13 @@ export const reducer = reduceReducers(
         };
       case ADD_NODE:
         var nodeToAdd = new StoryNode({
-          text: "Default",
+          text: "",
           engine: engine,
         });
         var x = Math.floor(engine.getCanvas().clientWidth / 2);
         var y = Math.floor(engine.getCanvas().clientHeight / 2);
         nodeToAdd.setPosition(x, y);
+        nodeToAdd.addOutputPort("");
         console.log(model.addNode(nodeToAdd));
         engine.repaintCanvas();
         return {

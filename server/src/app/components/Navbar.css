@@ -1,6 +1,7 @@
 /*Navbar.css*/
+
 nav {
-  height: 5vh;
+  min-height: 5vh;
 }
 .nav-link {
   color: white !important;

@@ -36,6 +36,14 @@ function StoryViewer() {
             <th scope="col">Status</th>
             <th scope="col">Price</th>
             <th scope="col">Edit</th>
+            <th
+              id="create-story"
+              onClick={() => {
+                history.push("/viewer/new");
+              }}
+            >
+              Create A Story
+            </th>
           </tr>
         </thead>
         <tbody>

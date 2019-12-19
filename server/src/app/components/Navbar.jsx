@@ -29,11 +29,6 @@ function Navbar() {
             </Link>
           </li>
           <li className="navbar-item">
-            <Link className="nav-link" to="/viewer/new">
-              New Story
-            </Link>
-          </li>
-          <li className="navbar-item">
             <div
               className="nav-link"
               onClick={() => {
@@ -46,6 +41,11 @@ function Navbar() {
               Logout
             </div>
           </li>
+          {/* <li className="navbar-item">
+            <Link className="nav-link" to="/viewer/new">
+              New Story
+            </Link>
+          </li> */}
         </ul>
       </div>
     </nav>

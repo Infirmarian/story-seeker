@@ -3,12 +3,13 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  flex: 1;
 }
 
 .path-label {
   padding-left: 5px;
   padding-right: 5px;
-  font-family: "Montserrat", sans-serif;
+  margin-bottom: 0px;
 }
 
 .path-input {
@@ -20,6 +21,7 @@
   height: 100%;
   background: #000;
   border-radius: 0 10px 10px 0;
+  /* clip-path: polygon(0 0, 0 100%, 100% 50%); */
   transition: 0.3s;
   cursor: pointer;
   display: flex;
@@ -36,3 +38,15 @@
   background: transparent;
   transition: 0.3s;
 }
+
+/* .delete-btn {
+  color: #fb8080 !important;
+  background: white;
+  border-radius: 50%;
+  margin-left: 0;
+  transition: 0.3s;
+  cursor: pointer;
+} */
+/* .delete-btn:hover {
+  color: #744040 !important;
+} */

@@ -39,12 +39,7 @@ class StoryModel extends DiagramModel {
   }
 
   deserializeModel(obj, engine) {
-    this.getNodes().forEach((n) => {
-      this.removeNode(n);
-    });
-    this.getLinks().forEach((l) => {
-      this.removeLink(l);
-    });
+    console.log(obj);
     this.setZoomLevel(obj.zoom);
     this.setOffsetX(obj.offsetX);
     this.setOffsetY(obj.offsetY);

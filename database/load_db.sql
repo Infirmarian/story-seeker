@@ -34,8 +34,6 @@ CREATE TABLE IF NOT EXISTS ss.stories(
     genre ss.category,
     published ss.publication_status NOT NULL DEFAULT 'not published',
     created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_modified TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_compiled TIMESTAMPTZ NOT NULL DEFAULT 0,
     FOREIGN KEY (authorid) REFERENCES ss.authors(userid)
 );
 
