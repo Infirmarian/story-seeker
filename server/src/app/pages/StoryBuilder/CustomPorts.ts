@@ -3,7 +3,6 @@ import {
   DefaultPortModelOptions,
   PortModel,
   LinkModel,
-  DefaultLinkModel,
   DiagramEngine,
 } from "@projectstorm/react-diagrams";
 import { CustomLinkModel } from "./CustomLinks";
