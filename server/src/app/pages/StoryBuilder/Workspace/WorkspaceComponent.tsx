@@ -12,7 +12,8 @@ import { StoryNode } from "../StoryNode";
 import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
 import "./Workspace.css";
 import { CustomLinkFactory } from "../CustomLinks";
-
+import StoryModel from "../StoryModel";
+import { URL } from "../../../../utils/constants";
 interface WorkspaceProps {
   engine: DiagramEngine;
   model: DiagramModel;
@@ -33,20 +34,32 @@ function WorkspaceComponent(props: any) {
   useEffect(() => {
     initializeSelectedNode();
     registerFactory(
-      new TSCustomNodeFactory(updateSelectedNode),
-      new AnswerPortFactory(),
-      new CustomLinkFactory()
+      [new TSCustomNodeFactory(updateSelectedNode)],
+      [new AnswerPortFactory(), new InputPortFactory()],
+      [new CustomLinkFactory()]
     );
 
     //this makes a call to line 96 of reducers.js
     //TODO: edit functionality to make a fetch request
     if (id > 0) {
-      initializeModel(id);
+      // initializeModel(id);
+      fetch(URL + `/api/builder/${id}`).then((response) => {
+        response.json().then((json) => {
+          var newModel = new StoryModel();
+          // console.log("json", json);
+          newModel.deserializeModel(json, engine);
+          newModel.storyID = id;
+          setEngineModel(newModel);
+          if (newModel.getNodes().length > 0) {
+            updateSelectedNode(newModel.getNodes()[0]);
+          }
+          engine.repaintCanvas();
+        });
+      });
     } else {
-      initializeModel(1);
+      initializeModel(-1);
     }
   }, [
-    id,
     initializeSelectedNode,
     initializeModel,
     registerFactory,
@@ -66,15 +79,7 @@ function WorkspaceComponent(props: any) {
     engine.getActionEventBus().deregisterAction(actions[0]);
   }
 
-  // registerFactory(new TSCustomNodeFactory(updateSelectedNode));
-
   setEngineModel(model);
-  // useEffect(() => {
-  // 	var newModel = new DiagramModel();
-  // 	newModel.deserializeModel(JSON.parse(modelString), engine);
-  // 	setEngineModel(newModel);
-  // 	console.log("new model set");
-  // }, [setEngineModel]);
 
   return (
     <div>

@@ -55,7 +55,7 @@ function StoryViewer() {
                   {story.price === 0 ? "free" : "$" + (story.price - 0.01)}
                 </td>
                 <td>
-                  <Link to={`/viewer/details/${story.id}`}> See Details </Link>
+                  <Link to={`/viewer/details/${story.id}`}> Details </Link>
                 </td>
               </tr>
             );

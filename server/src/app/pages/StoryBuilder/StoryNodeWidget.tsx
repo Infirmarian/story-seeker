@@ -22,10 +22,12 @@ export class TSCustomNodeWidget extends React.Component<
     super(props);
     this.state = { callback: props.callback };
   }
+
   render() {
-    const answerLength = 8;
-    const paddingSubstring = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
-    const question = this.props.node.getQuestion();
+    const answerLength = 6;
+    const question = this.props.node.getShortQuestion();
+    const text = this.props.node.getShortText();
+    const isBeginning = this.props.node.isBeginning;
     var outputPorts = this.props.node.getOutPorts();
     const outputs = outputPorts.map((port) => {
       const ansPort = port as AnswerPort;
@@ -34,9 +36,7 @@ export class TSCustomNodeWidget extends React.Component<
           <p className="port-answer node-text">
             {ansPort.answer
               ? ansPort.answer.substring(0, answerLength) +
-                `${
-                  ansPort.answer.length > answerLength ? "..." : "\u00A0\u00A0"
-                }`
+                `${ansPort.answer.length > answerLength ? "..." : ""}`
               : ""}
           </p>
           <PortWidget engine={this.props.engine} port={ansPort}>
@@ -58,29 +58,29 @@ export class TSCustomNodeWidget extends React.Component<
     }
     return (
       <div
-        className={
-          this.props.node.isBeginning
-            ? "story-node-start story-node"
-            : "story-node"
-        }
+        className={isBeginning ? "story-node-start story-node" : "story-node"}
         onClick={() => this.state.callback(this.props.node)}
       >
         <div
           className={
-            "node-header" +
-            `${this.props.node.isBeginning ? " start-node-header" : ""}`
+            "node-header" + `${isBeginning ? " start-node-header" : ""}`
           }
         >
           {inelement ? (
             <div className="input-port-container">{inelement}</div>
           ) : null}
-          <p className="node-text">{this.props.node.getShortText()}</p>
+          <p className="node-text">
+            {text === ""
+              ? isBeginning
+                ? "Create your story..."
+                : "Continue your story..."
+              : text}
+          </p>
         </div>
-        {question !== "" ? (
+        {question !== undefined ? (
           <div className="node-footer">
             <p className="question node-text">
-              {question.substring(0, 20) +
-                `${question.length > 20 ? "..." : ""}`}
+              {question === "" ? "...?" : question}
             </p>
             <div className="output-port-container">{outputs}</div>
           </div>

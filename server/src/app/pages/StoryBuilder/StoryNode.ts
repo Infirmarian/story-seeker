@@ -15,11 +15,11 @@ export interface StoryNodeOptions extends BaseModelOptions {
   id?: string;
   engine: DiagramEngine;
 }
-const MAX_TEXT_LENGTH = 80;
+const MAX_TEXT_LENGTH = 50;
 const MAX_QUESTION_LENGTH = 15;
 export class StoryNode extends DefaultNodeModel {
   text: string;
-  question: string;
+  question: string | undefined;
   isBeginning: boolean;
   isEnd: boolean;
   engine: DiagramEngine;
@@ -82,6 +82,9 @@ export class StoryNode extends DefaultNodeModel {
     this.question = question;
     this.isBeginning = beginning;
     this.isEnd = end;
+    if (this.isEnd) {
+      this.setQuestion(undefined);
+    }
     outputPortAnswers.forEach((e: any) => {
       this.addOutputPort(e.text);
     });
@@ -103,17 +106,29 @@ export class StoryNode extends DefaultNodeModel {
   }
   setFullText(nt: string): void {
     this.text = nt;
-    this.engine.repaintCanvas();
+    if (nt.length <= MAX_TEXT_LENGTH + 1) {
+      this.updateNode();
+    }
   }
-  getQuestion(): string {
+  getQuestion(): string | undefined {
     return this.question;
   }
-  setQuestion(q: string): void {
+  getShortQuestion(): string | undefined {
+    if (this.question !== undefined)
+      return (
+        this.question.substring(0, MAX_QUESTION_LENGTH) +
+        (this.question.length > MAX_QUESTION_LENGTH ? "..." : "")
+      );
+    return this.question;
+  }
+  setQuestion(q: string | undefined): void {
     this.question = q;
-    this.engine.repaintCanvas();
+    if (q && q.length <= MAX_QUESTION_LENGTH + 1) {
+      this.updateNode();
+    }
   }
   setEnd(): void {
-    this.setQuestion("");
+    this.setQuestion(undefined);
     this.getOutPorts().forEach((port) => {
       this.removeOutputPort(port.getOptions().id);
     });
@@ -121,7 +136,8 @@ export class StoryNode extends DefaultNodeModel {
   }
   resetEnd(): void {
     this.isEnd = false;
-    this.setQuestion("...");
+    this.setQuestion("");
+    this.addOutputPort("");
   }
   addOutputPort(option: string): any {
     console.log("Adding output port");
@@ -207,7 +223,7 @@ export class StoryNode extends DefaultNodeModel {
       inputPort = null;
     }
     this.isBeginning = true;
-    this.isEnd = false;
+    this.resetEnd();
   }
   clearBeginning(): void {
     // this.addInPort("in");

@@ -135,4 +135,3 @@ REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;
 GRANT USAGE ON SCHEMA ss TO catalog;
 GRANT SELECT ON ss.authors TO catalog;
 GRANT SELECT ON ss.stories TO catalog;
-

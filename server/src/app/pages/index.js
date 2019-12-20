@@ -3,11 +3,11 @@ import StoryBuilder from "./StoryBuilder/StoryBuilder";
 import LoginPage from "./LoginPage/Login";
 import StoryViewer from "./StoryViewer/StoryViewer";
 import StoryDetails from "./StoryDetails/StoryDetails";
+import StoryPreview from "./StoryPreview/StoryPreview";
 import Home from "./HomePage/Home";
 
 import React from "react";
 import Page404 from "./Page404/Page404";
-import StoryPreview from "./StoryPreview/StoryPreview";
 
 function Routes() {
   return (

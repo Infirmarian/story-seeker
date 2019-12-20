@@ -17,7 +17,7 @@ CLIENT_SECRET = os.environ['LWA_SECRET']
 
 
 def get_token(request) -> str:
-    #    return '0ce57ee5d349908bb8cbbb621b65ebe6c8c4f0b2779087656837d8b8cfe5274a'
+    # return '0ce57ee5d349908bb8cbbb621b65ebe6c8c4f0b2779087656837d8b8cfe5274a'
     return request.cookies.get('token')
 
 # Send static files for the privacy and terms of service agreements

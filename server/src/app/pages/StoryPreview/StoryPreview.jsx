@@ -77,5 +77,4 @@ function StoryPreview(props) {
     </>
   );
 }
-
 export default StoryPreview;

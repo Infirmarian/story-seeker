@@ -3,42 +3,39 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  flex: 1;
 }
 
 .path-label {
   padding-left: 5px;
   padding-right: 5px;
-  font-family: "Montserrat", sans-serif;
+  margin-bottom: 0px;
+  font-family: "Monsterrat", sans-serif;
 }
 
 .path-input {
   width: 80%;
 }
 
-#delete-btn {
-  color: #fb8080 !important;
-  background: white;
-  border-radius: 50%;
-  margin-left: 5px;
+.delete {
+  padding: 10px;
+  height: 100%;
+  background: #000;
+  border-radius: 0 10px 10px 0;
+  /* clip-path: polygon(0 0, 0 100%, 100% 50%); */
+  transition: 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.delete:hover {
+  background-color: #fb8080;
+}
+.delete:hover > .delete-btn {
+  color: white !important;
+}
+.delete-btn {
+  color: lightgray !important;
+  background: transparent;
   transition: 0.3s;
 }
-#delete-btn:hover {
-  color: #744040 !important;
-}
-
-/* .delete-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(251, 128, 128, 1);
-	width: 15px;
-	height: 15px;
-	border-radius: 50%;
-	padding: 5px;
-	margin-left: 5px;
-
-	color: white;
-
-	font-family: "Monsterrat", sans-serif;
-	font-weight: bold;
-} */

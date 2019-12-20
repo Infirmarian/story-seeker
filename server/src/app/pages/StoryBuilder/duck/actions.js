@@ -70,13 +70,17 @@ export const setEngineModel = (model) => {
   };
 };
 
-export const registerFactory = (nodeFactory, portFactory, linkFactory) => {
+export const registerFactory = (
+  nodeFactories,
+  portFactories,
+  linkFactories
+) => {
   return {
     type: REGISTER_FACTORY,
     payload: {
-      nodeFactory,
-      portFactory,
-      linkFactory,
+      nodeFactories,
+      portFactories,
+      linkFactories,
     },
   };
 };

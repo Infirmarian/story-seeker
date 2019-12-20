@@ -39,6 +39,7 @@ class StoryModel extends DiagramModel {
   }
 
   deserializeModel(obj, engine) {
+    console.log(obj);
     this.getNodes().forEach((n) => {
       this.removeNode(n);
     });
