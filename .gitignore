@@ -3,6 +3,8 @@
 secrets/
 venv/
 __pycache__/
+# Elastic Beanstalk
+.elasticbeanstalk
 
 # Frontend
 node_modules/
