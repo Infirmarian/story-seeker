@@ -7,9 +7,9 @@ function ContentEditorComponent(props) {
   const { model, selectedNode } = props;
   const { removeNode, updateStartNode } = props;
   const {
-    value: nodeContent,
+    //value: nodeContent,
     setValue: setNodeContent,
-    reset: resetNodeContent,
+    //reset: resetNodeContent,
     bind: bindNodeContent,
   } = useInput(
     selectedNode.getFullText(),
@@ -18,9 +18,9 @@ function ContentEditorComponent(props) {
   );
 
   const {
-    value: question,
+    //    value: question,
     setValue: setQuestion,
-    reset: resetQuestion,
+    //    reset: resetQuestion,
     bind: bindQuestion,
   } = useInput(
     selectedNode.getQuestion(),
@@ -34,7 +34,7 @@ function ContentEditorComponent(props) {
       setQuestion("");
       setNodeContent("");
     };
-  }, [selectedNode]);
+  }, [selectedNode, setNodeContent, setQuestion]);
 
   const [isEndNode, setIsEndNode] = useState(false);
   useEffect(() => {

@@ -1,8 +1,7 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { StoryNode } from "../StoryNode";
 import "./Toolbar.css";
-import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { URL } from "../../../../utils/constants";
 // import { Link } from "react-router-dom";
 

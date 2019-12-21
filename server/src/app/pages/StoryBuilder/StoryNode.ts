@@ -1,10 +1,7 @@
 import {
-  NodeModel,
   DiagramEngine,
-  DefaultLinkModel,
   DefaultPortModel,
   DefaultNodeModel,
-  PortModel,
 } from "@projectstorm/react-diagrams";
 import { AnswerPort, InputPort } from "./CustomPorts";
 import { BaseModelOptions } from "@projectstorm/react-canvas-core";

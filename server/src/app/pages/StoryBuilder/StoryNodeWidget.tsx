@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
 import { StoryNode } from "./StoryNode";
 import { AnswerPort } from "./CustomPorts";
@@ -62,9 +62,7 @@ export class TSCustomNodeWidget extends React.Component<
         onClick={() => this.state.callback(this.props.node)}
       >
         <div
-          className={
-            "node-header" + `${isBeginning ? " start-node-header" : ""}`
-          }
+          className={`node-header${isBeginning ? " start-node-header" : ""}`}
         >
           {inelement ? (
             <div className="input-port-container">{inelement}</div>

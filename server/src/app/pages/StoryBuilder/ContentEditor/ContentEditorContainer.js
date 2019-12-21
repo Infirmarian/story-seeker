@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { setEngineModel, removeNode, updateStartNode } from "../duck/actions";
+import { removeNode, updateStartNode } from "../duck/actions";
 import ContentEditorComponent from "./ContentEditorComponent";
 
 const mapStateToProps = (state) => ({

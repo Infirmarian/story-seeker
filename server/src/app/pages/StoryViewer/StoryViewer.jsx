@@ -41,7 +41,7 @@ function StoryViewer() {
         <tbody>
           {stories.map((story) => {
             return (
-              <tr>
+              <tr key={story.id}>
                 <td>{story.title}</td>
                 <td>{story.genre}</td>
                 <td>
