@@ -114,13 +114,13 @@ function ContentEditorComponent(props) {
             Remove This Node
           </p>
         ) : null}
-        {/* <button
+        <button
           onClick={() => {
             console.log(model);
           }}
         >
           Check Model
-        </button> */}
+        </button>
       </div>
     </div>
   );

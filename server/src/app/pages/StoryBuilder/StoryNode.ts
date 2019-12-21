@@ -27,7 +27,7 @@ export class StoryNode extends DefaultNodeModel {
       type: "ts-custom-node",
     });
     this.text = options.text;
-    this.question = "...";
+    this.question = "";
     this.isBeginning = options.beginning || false;
     this.isEnd = false;
     this.engine = options.engine;
@@ -173,7 +173,7 @@ export class StoryNode extends DefaultNodeModel {
         links[link].remove();
       }
       // console.log("before", this.getPorts(), this.getOutPorts());
-      // this.removePort(portToRemove);
+      this.removePort(portToRemove);
       // console.log("after", this.getPorts(), this.getOutPorts());
       this.engine.repaintCanvas();
       return true;
@@ -220,7 +220,7 @@ export class StoryNode extends DefaultNodeModel {
       inputPort = null;
     }
     this.isBeginning = true;
-    this.resetEnd();
+    if (this.isEnd) this.resetEnd();
   }
   clearBeginning(): void {
     // this.addInPort("in");
