@@ -95,14 +95,14 @@ function ToolbarComponent(props: any) {
       >
         <i className="fas fa-plus-circle fa-4x"></i>
       </span>
-      <span
+      {/* <span
         className="btn btn-primary Submit-Btn"
         onClick={() => {
           console.log(engine);
         }}
       >
         Check Engine
-      </span>
+      </span> */}
       <span className="btn btn-primary Submit-Btn" onClick={handleSubmit}>
         Save
       </span>
