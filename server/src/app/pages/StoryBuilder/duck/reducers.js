@@ -129,7 +129,7 @@ export const reducer = reduceReducers(
         };
       case ADD_NODE_ON_DROP:
         nodeToAdd = new StoryNode({
-          text: "Default",
+          text: "",
           engine: engine,
         });
         nodeToAdd.setPosition(action.payload.point);
@@ -148,24 +148,26 @@ export const reducer = reduceReducers(
             selectedNode,
           };
         }
-        const inputPort = action.payload.node.getInputPort();
+        var nodeToRemove = action.payload.node;
+        const inputPort = nodeToRemove.getInputPort();
         if (inputPort) {
           let incomingLinks = inputPort.getLinks();
           for (let link in incomingLinks) {
             incomingLinks[link].remove();
           }
         }
-        const outputPorts = action.payload.node.getOutPorts();
-        console.log(outputPorts);
+        const outputPorts = nodeToRemove.getOutPorts();
+        // console.log(outputPorts);
         var newNode = null;
         if (outputPorts.length > 0) {
-          if (action.payload.node.isBeginning) {
+          if (nodeToRemove.isBeginning) {
             console.log(outputPorts);
             let outgoingLinks = outputPorts[0].getLinks();
-            if (outgoingLinks.length > 0) {
+            if (Object.keys(outgoingLinks).length > 0) {
               newNode = outgoingLinks[Object.keys(outgoingLinks)[0]]
                 .getTargetPort()
                 .getNode();
+              newNode.setBeginning();
             }
           }
           outputPorts.forEach((port) => {
@@ -175,11 +177,10 @@ export const reducer = reduceReducers(
             }
           });
         }
-        model.removeNode(action.payload.node);
+        model.removeNode(nodeToRemove);
         if (newNode == null) {
           newNode = model.getNodes()[0];
         }
-        newNode.setBeginning();
         engine.repaintCanvas();
         return {
           engine,
