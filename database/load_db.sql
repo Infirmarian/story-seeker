@@ -14,6 +14,7 @@ CREATE TYPE ss.category AS ENUM(
     'dystopia');
 CREATE TYPE ss.rating AS ENUM('G', 'PG', 'PG-13', 'R', 'NR');
 CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
+CREATE TYPE ss.reading_type AS ENUM('subscribed', 'owned');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
@@ -45,11 +46,13 @@ CREATE TABLE IF NOT EXISTS ss.users(
     joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS ss.categories(
-    storyid SERIAL,
-    category ss.category,
+CREATE TABLE IF NOT EXISTS ss.readings(
+    storyid INT,
+    userid VARCHAR(256),
+    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    type reading_type NOT NULL,
     FOREIGN KEY (storyid) REFERENCES ss.stories (id),
-    PRIMARY KEY(storyid, category)
+    FOREIGN KEY (userid) REFERENCES ss.users(id)
 );
 
 CREATE TABLE IF NOT EXISTS ss.ratings(
@@ -83,21 +86,21 @@ CREATE TABLE IF NOT EXISTS ss.saved_state(
     current_state JSON NOT NULL,
     FOREIGN KEY (userid) REFERENCES ss.users(id)
 );
-/*
-CREATE TABLE IF NOT EXISTS a.in_progress_stories(
-    authorid INT NOT NULL,
-    content JSON NOT NULL,
-    id SERIAL PRIMARY KEY,
-    storyid INT,
-    FOREIGN KEY (authorid) REFERENCES ss.authors (id),
-    FOREIGN KEY (storyid) REFERENCES ss.stories (id)
-);
-*/
+
 CREATE TABLE IF NOT EXISTS a.tokens(
     token VARCHAR(64) NOT NULL PRIMARY KEY,
     userid VARCHAR(256) NOT NULL,
     expiration TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (userid) REFERENCES ss.authors(userid)
+);
+
+CREATE TABLE IF NOT EXISTS a.payments(
+    authorid VARCHAR(256),
+    month TIMESTAMPTZ NOT NULL DEFAULT date_trunc('month', NOW()),
+    payment NUMERIC(8, 2) NOT NULL DEFAULT 0,
+    paid BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (authorid) REFERENCES ss.authors(userid),
+    PRIMARY KEY (authorid, month)
 );
 
 --CREATE USER lambda WITH PASSWORD '########';
@@ -113,6 +116,7 @@ GRANT INSERT ON ss.users TO lambda;
 GRANT SELECT ON ss.libraries TO lambda;
 GRANT INSERT ON ss.libraries TO lambda;
 GRANT SELECT ON ss.stories TO lambda;
+GRANT INSERT ON ss.readings TO lambda;
 
 --CREATE USER server WITH PASSWORD '########';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM server;
