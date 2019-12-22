@@ -106,7 +106,7 @@ def validate_title(title: str) -> bool:
     for char in title:
         if not char.isalpha() and not char in {"'", " ", ":"}:
             return "%s is not allowed in a title" % char
-    if(db.title_exists(title)):
+    if(db.query(db.title_exists, title)):
         return "A story called %s already exists" % title
     return None
 

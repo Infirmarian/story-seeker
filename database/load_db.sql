@@ -15,6 +15,7 @@ CREATE TYPE ss.category AS ENUM(
 CREATE TYPE ss.rating AS ENUM('G', 'PG', 'PG-13', 'R', 'NR');
 CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
 CREATE TYPE ss.reading_type AS ENUM('subscribed', 'owned');
+CREATE TYPE a.access_level AS ENUM('user', 'admin');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
@@ -88,9 +89,11 @@ CREATE TABLE IF NOT EXISTS ss.saved_state(
 );
 
 CREATE TABLE IF NOT EXISTS a.tokens(
-    token VARCHAR(64) NOT NULL PRIMARY KEY,
+    token VARCHAR(32) NOT NULL PRIMARY KEY,
     userid VARCHAR(256) NOT NULL,
     expiration TIMESTAMPTZ NOT NULL,
+    authorization a.access_level NOT NULL DEFAULT 'user',
+    -- ALTER TABLE a.tokens ADD COLUMN authorization a.access_level NOT NULL DEFAULT 'user';
     FOREIGN KEY (userid) REFERENCES ss.authors(userid)
 );
 

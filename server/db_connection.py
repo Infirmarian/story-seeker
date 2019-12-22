@@ -26,7 +26,7 @@ class DBError(Exception):
         self.response = json.dumps({"error": msg})
 
 
-def connect_to_db():
+def __connect_to_db():
     global conn
     conn = psycopg2.connect(
         database=DATABASE,
@@ -37,306 +37,229 @@ def connect_to_db():
     )
 
 
-def cache_login(userid, name, email, token, ttl, repeat=False):
+def query(func, *args, **kwargs):
     try:
-        with conn.cursor() as cursor:
-            # Add the user to the database if they don't already exist
-            cursor.execute('''INSERT INTO ss.authors (name, email, userid) 
-                            VALUES (%s, %s, %s) ON CONFLICT DO NOTHING''', (name, email, userid))
-            cursor.execute(
-                "INSERT INTO a.tokens (userid, token, expiration) VALUES (%s, %s, NOW() + INTERVAL '%s SECOND');", (userid, token, ttl))
-            conn.commit()
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return cache_login(userid, name, email, token, ttl, repeat=True)
+        func(*args, **kwargs)
+    except OperationalError:
+        __connect_to_db()
+        return func(*args, **kwargs)
 
 
-def logout_user(token, repeat=False) -> None:
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('DELETE FROM a.tokens WHERE token = %s;', (token,))
-            conn.commit()
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return logout_user(token, repeat=True)
+def cache_login(userid, name, email, token, ttl):
+    with conn.cursor() as cursor:
+        # Add the user to the database if they don't already exist
+        cursor.execute('''INSERT INTO ss.authors (name, email, userid) 
+                        VALUES (%s, %s, %s) ON CONFLICT DO NOTHING''', (name, email, userid))
+        cursor.execute(
+            "INSERT INTO a.tokens (userid, token, expiration) VALUES (%s, %s, NOW() + INTERVAL '%s SECOND');", (userid, token, ttl))
+        conn.commit()
 
 
-def logout_all(token: str, repeat=False) -> bool:
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                return False
-            cursor.execute(
-                'DELETE FROM a.tokens WHERE userid = %s;', (userid,))
-            conn.commit()
-            return True
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return logout_all(token, repeat=True)
+def logout_user(token) -> None:
+    with conn.cursor() as cursor:
+        cursor.execute('DELETE FROM a.tokens WHERE token = %s;', (token,))
+        conn.commit()
 
 
-def get_name_from_token(token: str, repeat=False) -> Union[None, str]:
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('''SELECT name FROM ss.authors a
-                JOIN a.tokens t ON t.userid = a.userid WHERE token = %s AND expiration > NOW()''', (token,))
-            value = cursor.fetchone()
-            if value is None:
-                raise DBError(404, 'User for given token not found')
-            return value[0]
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return get_name_from_token(str, True)
+def logout_all(token: str) -> bool:
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            return False
+        cursor.execute(
+            'DELETE FROM a.tokens WHERE userid = %s;', (userid,))
+        conn.commit()
+        return True
 
 
-def get_all_stories(token: str, repeat=False):
-    # str -> Union[dict, None]
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                '''SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW()''', (token,))
-            userid = cursor.fetchone()
-            if userid is None:
-                return None
-            userid = userid[0]
-            cursor.execute('''SELECT id, title, price, genre, published 
-                            FROM ss.stories WHERE authorid = %s
-                            ORDER BY last_modified DESC;''', (userid,))  # TODO: get this information
-            response = {'stories': [{
-                'id': n[0],
-                'title': n[1],
-                'price': n[2],
-                'genre': n[3],
-                'published': n[4],
-            } for n in cursor.fetchall()]}
-            return response
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return get_all_stories(token, True)
+def get_name_from_token(token: str) -> Union[None, str]:
+    with conn.cursor() as cursor:
+        cursor.execute('''SELECT name FROM ss.authors a
+            JOIN a.tokens t ON t.userid = a.userid WHERE token = %s AND expiration > NOW()''', (token,))
+        value = cursor.fetchone()
+        if value is None:
+            raise DBError(404, 'User for given token not found')
+        return value[0]
 
 
-def get_story_overview(token: str, storyid: str, repeat=False):
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, 'Bad token provided')
-            cursor.execute(
-                '''SELECT title, price, genre, published, summary, created, last_modified 
-                FROM ss.stories WHERE id = %s AND authorid = %s;''', (storyid, userid,))
-            result = cursor.fetchone()
-            if result is None:
-                raise DBError(
-                    404, 'Selected story by logged-in user not found')
-            return {
-                'title': result[0],
-                'price': str(result[1]),
-                'genre': result[2],
-                'published': result[3],
-                'summary': result[4],
-                'created':  result[5].strftime("%m/%d/%Y, %H:%M:%S"),
-                'last_modified': result[6].strftime("%m/%d/%Y, %H:%M:%S")
-            }
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return get_story_overview(token, storyid, True)
+def get_all_stories(token: str):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            '''SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW()''', (token,))
+        userid = cursor.fetchone()
+        if userid is None:
+            return None
+        userid = userid[0]
+        cursor.execute('''SELECT id, title, price, genre, published 
+                        FROM ss.stories WHERE authorid = %s
+                        ORDER BY last_modified DESC;''', (userid,))  # TODO: get this information
+        response = {'stories': [{
+            'id': n[0],
+            'title': n[1],
+            'price': n[2],
+            'genre': n[3],
+            'published': n[4],
+        } for n in cursor.fetchall()]}
+        return response
 
 
-def update_story(token: str, storyid: str, values: dict, repeat=False) -> int:
-    try:
-        with conn.cursor() as cursor:
-            uid = get_userid_from_token(token, cursor)
-            if uid is None:
-                raise DBError(403, 'Bad token provided')
-            cursor.execute(
-                'SELECT published FROM ss.stories WHERE id = %s AND authorid = %s', (storyid, uid))
-            published = cursor.fetchone()
-            if published is None:
-                raise DBError(404, 'No story found with matching user and id')
-            if published[0] != 'not published':
-                raise DBError(
-                    403, 'Cannot update a story that has already been published')
-            cursor.execute(
-                '''UPDATE ss.stories 
-                SET title = %s, 
-                summary = %s, 
-                genre = %s,
-                last_modified = NOW() WHERE id = %s AND authorid = %s''',
-                (values['title'], values['summary'], values['genre'], storyid, uid))
-            conn.commit()
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return update_story(token, storyid, values, True)
-
-
-def get_story_content(token: str, storyid: str, repeat=False) -> Dict:
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, 'Bad token provided')
-            cursor.execute(
-                'SELECT serialized_story FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
-            result = cursor.fetchone()
-            if result:
-                return result[0]
+def get_story_overview(token: str, storyid: str):
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, 'Bad token provided')
+        cursor.execute(
+            '''SELECT title, price, genre, published, summary, created, last_modified 
+            FROM ss.stories WHERE id = %s AND authorid = %s;''', (storyid, userid,))
+        result = cursor.fetchone()
+        if result is None:
             raise DBError(
-                404, 'Unable to find requested story by provided author')
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return get_story_content(token, storyid, True)
+                404, 'Selected story by logged-in user not found')
+        return {
+            'title': result[0],
+            'price': str(result[1]),
+            'genre': result[2],
+            'published': result[3],
+            'summary': result[4],
+            'created':  result[5].strftime("%m/%d/%Y, %H:%M:%S"),
+            'last_modified': result[6].strftime("%m/%d/%Y, %H:%M:%S")
+        }
 
 
-def create_story(token: str, title: str, repeat=False):
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, "User token provided is invalid")
-            cursor.execute(
-                'INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);',
-                (title, userid,))
-            conn.commit()
-            cursor.execute(
-                'SELECT id FROM ss.stories WHERE title = %s;', (title,))
-            return cursor.fetchone()[0]
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return create_story(token, title, True)
+def update_story(token: str, storyid: str, values: dict) -> int:
+    with conn.cursor() as cursor:
+        uid = get_userid_from_token(token, cursor)
+        if uid is None:
+            raise DBError(403, 'Bad token provided')
+        cursor.execute(
+            'SELECT published FROM ss.stories WHERE id = %s AND authorid = %s', (storyid, uid))
+        published = cursor.fetchone()
+        if published is None:
+            raise DBError(404, 'No story found with matching user and id')
+        if published[0] != 'not published':
+            raise DBError(
+                403, 'Cannot update a story that has already been published')
+        cursor.execute(
+            '''UPDATE ss.stories 
+            SET title = %s, 
+            summary = %s, 
+            genre = %s,
+            last_modified = NOW() WHERE id = %s AND authorid = %s''',
+            (values['title'], values['summary'], values['genre'], storyid, uid))
+        conn.commit()
 
 
-def delete_story(token: str, storyid: str, repeat=False) -> str:
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                return 'Invalid token provided'
-            cursor.execute(
-                'SELECT published FROM ss.stories WHERE authorid = %s AND id = %s;', (userid, storyid))
-            v = cursor.fetchone()
-            if v is None:
-                raise DBError(
-                    403, 'Authorized user is not permitted to delete the given story')
-            status = v[0]
-            if status == 'published':
-                raise DBError(403, 'Published stories may not be deleted')
-            cursor.execute('DELETE FROM ss.stories WHERE id = %s;', (storyid,))
-            conn.commit()
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return delete_story(token, storyid, True)
+def get_story_content(token: str, storyid: str) -> Dict:
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, 'Bad token provided')
+        cursor.execute(
+            'SELECT serialized_story FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        raise DBError(
+            404, 'Unable to find requested story by provided author')
 
 
-def title_exists(title: str, repeat=False) -> bool:
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                'SELECT title FROM ss.stories WHERE title ~ %s;', (title,))
-            return cursor.fetchone() is not None
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return title_exists(title, True)
+def create_story(token: str, title: str):
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, "User token provided is invalid")
+        cursor.execute(
+            'INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);',
+            (title, userid,))
+        conn.commit()
+        cursor.execute(
+            'SELECT id FROM ss.stories WHERE title = %s;', (title,))
+        return cursor.fetchone()[0]
 
 
-def save_story_content(token: str, storyid: str, content: str, repeat=False) -> bool:
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, 'Invalid token provided')
-            cursor.execute(
-                'UPDATE ss.stories SET serialized_story = %s, last_modified = NOW() WHERE id = %s AND authorid = %s;', (content, storyid, userid))
-            conn.commit()
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return save_story_content(token, storyid, content, True)
+def delete_story(token: str, storyid: str) -> str:
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            return 'Invalid token provided'
+        cursor.execute(
+            'SELECT published FROM ss.stories WHERE authorid = %s AND id = %s;', (userid, storyid))
+        v = cursor.fetchone()
+        if v is None:
+            raise DBError(
+                403, 'Authorized user is not permitted to delete the given story')
+        status = v[0]
+        if status == 'published':
+            raise DBError(403, 'Published stories may not be deleted')
+        cursor.execute('DELETE FROM ss.stories WHERE id = %s;', (storyid,))
+        conn.commit()
 
 
-def compile_and_submit_story(token: str, storyid: str, repeat=False):
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, 'Invalid login token provided')
-            cursor.execute(
-                'SELECT published, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
-            result = cursor.fetchone()
-            if result is None:
-                raise DBError(404, 'No such story found')
-            if result[0] == 'published':
-                raise DBError(
-                    403, 'Cannot make changes to an already published story')
-            author = get_author_from_userid(userid, cursor)
-            compiled = utils.compile_to_alexa(result[1], result[2], author)
-            try:
-                compiled = utils.validate_json(compiled)
-            except utils.ValidationError as e:
-                raise DBError(400, str(e))
-            cursor.execute(
-                "UPDATE ss.stories SET content = %s, published = 'pending', last_compiled = NOW() WHERE id = %s AND authorid = %s;", (
-                    json.dumps(compiled), storyid, userid)
-            )
-            conn.commit()
-            return compiled
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return compile_and_submit_story(token, storyid, True)
+def title_exists(title: str) -> bool:
+    with conn.cursor() as cursor:
+        cursor.execute(
+            'SELECT title FROM ss.stories WHERE title ~ %s;', (title,))
+        return cursor.fetchone() is not None
 
 
-def get_story_preview(token, storyid, repeat=False):
-    try:
-        with conn.cursor() as cursor:
-            userid = get_userid_from_token(token, cursor)
-            if userid is None:
-                raise DBError(403, "Bad user token provided")
-            cursor.execute(
-                'SELECT published, last_compiled, last_modified, content, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
-            result = cursor.fetchone()
-            if result is None:
-                raise DBError(
-                    400, "Story by given author and id doesn't exist")
-            if result[0] == 'published':
-                return result[3]
-            author = get_author_from_userid(userid, cursor)
-            if result[1] < result[2]:
-                nc = utils.compile_to_alexa(result[4], result[5], author)
-                cursor.execute(
-                    'UPDATE ss.stories SET content = %s, last_compiled = NOW() WHERE id = %s AND authorid = %s', (json.dumps(nc), storyid, userid))
-                conn.commit()
-                return nc
+def save_story_content(token: str, storyid: str, content: str) -> bool:
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, 'Invalid token provided')
+        cursor.execute(
+            'UPDATE ss.stories SET serialized_story = %s, last_modified = NOW() WHERE id = %s AND authorid = %s;', (content, storyid, userid))
+        conn.commit()
+
+
+def compile_and_submit_story(token: str, storyid: str):
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, 'Invalid login token provided')
+        cursor.execute(
+            'SELECT published, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
+        result = cursor.fetchone()
+        if result is None:
+            raise DBError(404, 'No such story found')
+        if result[0] == 'published':
+            raise DBError(
+                403, 'Cannot make changes to an already published story')
+        author = get_author_from_userid(userid, cursor)
+        compiled = utils.compile_to_alexa(result[1], result[2], author)
+        try:
+            compiled = utils.validate_json(compiled)
+        except utils.ValidationError as e:
+            raise DBError(400, str(e))
+        cursor.execute(
+            "UPDATE ss.stories SET content = %s, published = 'pending', last_compiled = NOW() WHERE id = %s AND authorid = %s;", (
+                json.dumps(compiled), storyid, userid)
+        )
+        conn.commit()
+        return compiled
+
+
+def get_story_preview(token, storyid):
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        if userid is None:
+            raise DBError(403, "Bad user token provided")
+        cursor.execute(
+            'SELECT published, last_compiled, last_modified, content, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
+        result = cursor.fetchone()
+        if result is None:
+            raise DBError(
+                400, "Story by given author and id doesn't exist")
+        if result[0] == 'published':
             return result[3]
-    except OperationalError as e:
-        if repeat:
-            raise e
-        connect_to_db()
-        return get_story_preview(token, storyid, True)
+        author = get_author_from_userid(userid, cursor)
+        if result[1] < result[2]:
+            nc = utils.compile_to_alexa(result[4], result[5], author)
+            cursor.execute(
+                'UPDATE ss.stories SET content = %s, last_compiled = NOW() WHERE id = %s AND authorid = %s', (json.dumps(nc), storyid, userid))
+            conn.commit()
+            return nc
+        return result[3]
 
 
 def get_userid_from_token(token, cursor):
