@@ -27,7 +27,13 @@ function StoryViewer() {
   }, [history]);
   return (
     <div className="Story-Viewer">
-      <Navbar />
+      <Navbar
+        links={[
+          { link: "/viewer", text: "All Stories" },
+          { link: "/viewer/new", text: "New Story" },
+          { link: "/account", text: "Account" },
+        ]}
+      />
       <table className="table">
         <thead className="thead-light">
           <tr>

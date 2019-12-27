@@ -131,7 +131,12 @@ function StoryDetails(props) {
 
   return (
     <div className="Story-Details">
-      <Navbar />
+      <Navbar
+        links={[
+          { link: "/viewer", text: "All Stories" },
+          { link: "/account", text: "Account" },
+        ]}
+      />
       <form
         className="details-form"
         onSubmit={(event) => {

@@ -4,9 +4,8 @@ import { URL } from "../../../utils/constants";
 function Home() {
   const [username, setUsername] = useState("");
   useEffect(() => {
-    fetch(URL + "/api/get_loggedin_user").then(response => {
-      response.json().then(value => {
-        console.log(value.user);
+    fetch(URL + "/api/current_user").then((response) => {
+      response.json().then((value) => {
         setUsername(value.user);
       });
     });

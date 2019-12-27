@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     email VARCHAR(320),
+    paypal VARCHAR(256),
     joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -92,8 +93,7 @@ CREATE TABLE IF NOT EXISTS a.tokens(
     token VARCHAR(32) NOT NULL PRIMARY KEY,
     userid VARCHAR(256) NOT NULL,
     expiration TIMESTAMPTZ NOT NULL,
-    authorization a.access_level NOT NULL DEFAULT 'user',
-    -- ALTER TABLE a.tokens ADD COLUMN authorization a.access_level NOT NULL DEFAULT 'user';
+    access_level a.access_level NOT NULL DEFAULT 'user',
     FOREIGN KEY (userid) REFERENCES ss.authors(userid)
 );
 

@@ -39,7 +39,7 @@ def __connect_to_db():
 
 def query(func, *args, **kwargs):
     try:
-        func(*args, **kwargs)
+        return func(*args, **kwargs)
     except OperationalError:
         __connect_to_db()
         return func(*args, **kwargs)
@@ -80,6 +80,16 @@ def get_name_from_token(token: str) -> Union[None, str]:
         if value is None:
             raise DBError(404, 'User for given token not found')
         return value[0]
+
+
+def get_user_details(token: str):
+    with conn.cursor() as cursor:
+        cursor.execute('''SELECT name, email, paypal FROM ss.authors a
+        JOIN a.tokens t ON t.userid = a.userid WHERE token = %s AND expiration > NOW()''', (token,))
+        value = cursor.fetchone()
+        if value is None:
+            raise DBError(404, 'User page not found')
+        return {"name": value[0], "email": value[1], "paypal": value[2]}
 
 
 def get_all_stories(token: str):

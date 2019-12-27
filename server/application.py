@@ -17,8 +17,15 @@ CLIENT_SECRET = os.environ['LWA_SECRET']
 
 
 def get_token(request) -> str:
-    # return '0ce57ee5d349908bb8cbbb621b65ebe6c8c4f0b2779087656837d8b8cfe5274a'
+    #    return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
     return request.cookies.get('token')
+
+
+def json_response(response, status=200):
+    if isinstance(response, str):
+        return application.response_class(response, status, mimetype='application/json')
+    else:
+        return application.response_class(json.dumps(response), status, mimetype='application/json')
 
 # Send static files for the privacy and terms of service agreements
 @application.route('/privacy')
@@ -100,7 +107,7 @@ def logout():
     return resp
 
 # Get the logged in user, based on their token
-@application.route('/api/get_loggedin_user', methods=['GET'])
+@application.route('/api/current_user', methods=['GET'])
 def get_loggedin_user():
     token = get_token(request)
     if token is None:
@@ -110,6 +117,18 @@ def get_loggedin_user():
         return application.response_class(response=json.dumps({'user': user}), mimetype='application/json')
     except DBError as e:
         return application.response_class(status=e.status, response=e.response, mimetype='application/json')
+
+
+@application.route('/api/current_user/details', methods=['GET'])
+def author_details():
+    token = get_token(request)
+    if token is None:
+        return json_response({'error': 'No authentication provided'}, status.HTTP_403_FORBIDDEN)
+    try:
+        user = query(db.get_user_details, token)
+        return json_response(user)
+    except DBError as e:
+        return json_response(e.response, e.status)
 
 
 @application.route('/api/list', methods=['GET'])
@@ -245,6 +264,12 @@ def get_preview(storyid):
         return application.response_class(response=json.dumps(story), mimetype='application/json')
     except DBError as e:
         return application.response_class(status=e.status, response=e.response, mimetype='application/json')
+
+
+# Catch all /api requests and 404
+@application.route('/api/<path:path>')
+def error_api(path):
+    return application.response_class(status=status.HTTP_404_NOT_FOUND)
 
 
 @application.route('/', defaults={'path': ''})
