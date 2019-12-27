@@ -60,6 +60,9 @@ function WorkspaceComponent(props: any) {
       initializeModel(-1);
     }
   }, [
+    engine,
+    id,
+    setEngineModel,
     initializeSelectedNode,
     initializeModel,
     registerFactory,

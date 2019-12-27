@@ -13,6 +13,14 @@ function SaveStoryContent(content, id, history) {
         "Content-Type": "application/json",
       },
       body: content,
+    }).then((response) => {
+      if (response.status === 200) {
+        window.alert("Successfully updated story content");
+      } else {
+        response.json().then((json) => {
+          window.alert(`Error: ${json.error}`);
+        });
+      }
     });
   } else {
     fetch(URL + "/api/overview", {
@@ -47,7 +55,7 @@ function DeleteStory(id, history) {
         history.push("/viewer");
       } else {
         response.json().then((json) => {
-          console.error(json);
+          window.alert(`Failed to delete: ${json.error}`);
         });
       }
     });
@@ -180,13 +188,13 @@ function StoryDetails(props) {
           <select
             id="genre"
             className="form-control form-control-sm"
-            value={genre}
+            value={genre || "adventure"}
             onChange={(event) => {
-              console.log(event.target.value);
               setStoryDetails({
                 title,
                 summary,
                 genre: event.target.value,
+                price,
                 published,
                 last_modified,
               });
@@ -206,10 +214,9 @@ function StoryDetails(props) {
             Pricing
           </label>
           <select
-            name=""
             id="price"
             className="form-control form-control-sm"
-            value={price}
+            value={price || "0"}
             onChange={(event) => {
               setStoryDetails({
                 title,
@@ -221,8 +228,8 @@ function StoryDetails(props) {
               });
             }}
           >
-            <option value="0">free</option>
-            <option value="0.99">$0.99</option>
+            <option value="0">Free</option>
+            <option value="1">$0.99</option>
           </select>
         </div>
         <div className="uneditable-info">

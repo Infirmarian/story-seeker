@@ -1,8 +1,4 @@
-import {
-  DiagramModel,
-  LinkModel,
-  DefaultLinkModel,
-} from "@projectstorm/react-diagrams";
+import { DiagramModel, DefaultLinkModel } from "@projectstorm/react-diagrams";
 import { StoryNode } from "./StoryNode";
 
 class StoryModel extends DiagramModel {

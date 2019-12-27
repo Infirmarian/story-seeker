@@ -1,10 +1,4 @@
-import createEngine, {
-  DefaultLinkModel,
-  DiagramModel,
-  DiagramEngine,
-  DefaultDiagramState,
-  DefaultNodeModel,
-} from "@projectstorm/react-diagrams";
+import createEngine from "@projectstorm/react-diagrams";
 
 // Object Types
 import { StoryNode } from "../StoryNode";
@@ -26,8 +20,6 @@ import {
 import { combineReducers } from "redux";
 import reduceReducers from "reduce-reducers";
 import StoryModel from "../StoryModel";
-
-const modelString = `{"zoom":90.38333333333338,"offsetX":25.868833333333207,"offsetY":22.306162247731233,"nodes":[{"x":0,"y":0,"id":"1ce35c28-3067-442a-9554-1254c36bb001","text":"Hi","question":"...","beginning":false,"end":false,"outputPortAnswers":[{"text":"FIRE RED","id":"6468971a-d99e-4ba9-addd-50cd668ec923"}]},{"x":263.322884012539,"y":96.25668449197856,"id":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e","text":"Goodbye","question":"...","beginning":false,"end":false,"outputPortAnswers":[{"text":"","id":"2ea72e8d-ce47-47dd-b570-db33863d0039"}]},{"x":90.55061773925883,"y":352.1495482205421,"id":"d3f1386a-8c2c-4a76-badf-b687df19cd3e","text":"Default","question":"...","beginning":false,"end":false,"outputPortAnswers":[]}],"links":[{"sourceID":"1ce35c28-3067-442a-9554-1254c36bb001","sourceIndex":0,"sink":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e"},{"sourceID":"3af3e36a-6d92-49bf-a6bf-8c5c3290f18e","sourceIndex":0,"sink":"d3f1386a-8c2c-4a76-badf-b687df19cd3e"}]}`;
 
 const initialEngine = createEngine();
 var initialModel = new StoryModel();
@@ -86,6 +78,7 @@ export const reducer = reduceReducers(
   }),
   (state, action) => {
     const { engine, model, selectedNode } = state;
+    var nodeToAdd;
     switch (action.type) {
       case INITIALIZE_SELECTED_NODE:
         // console.log("initial Node", selectedNode);
@@ -105,7 +98,7 @@ export const reducer = reduceReducers(
         const id = action.payload.id;
 
         // MAKE FETCH REQUEST BASED ON ID for a JSON model string
-        if (id == -1) {
+        if (id === -1) {
           //creates a default model
           model.addAll(selectedNode);
         }
@@ -119,7 +112,7 @@ export const reducer = reduceReducers(
           selectedNode: start,
         };
       case ADD_NODE:
-        var nodeToAdd = new StoryNode({
+        nodeToAdd = new StoryNode({
           text: "",
           engine: engine,
         });
@@ -135,8 +128,8 @@ export const reducer = reduceReducers(
           selectedNode,
         };
       case ADD_NODE_ON_DROP:
-        var nodeToAdd = new StoryNode({
-          text: "Default",
+        nodeToAdd = new StoryNode({
+          text: "",
           engine: engine,
         });
         nodeToAdd.setPosition(action.payload.point);
@@ -155,24 +148,26 @@ export const reducer = reduceReducers(
             selectedNode,
           };
         }
-        const inputPort = action.payload.node.getInputPort();
+        var nodeToRemove = action.payload.node;
+        const inputPort = nodeToRemove.getInputPort();
         if (inputPort) {
           let incomingLinks = inputPort.getLinks();
           for (let link in incomingLinks) {
             incomingLinks[link].remove();
           }
         }
-        const outputPorts = action.payload.node.getOutPorts();
-        console.log(outputPorts);
+        const outputPorts = nodeToRemove.getOutPorts();
+        // console.log(outputPorts);
         var newNode = null;
         if (outputPorts.length > 0) {
-          if (action.payload.node.isBeginning) {
+          if (nodeToRemove.isBeginning) {
             console.log(outputPorts);
             let outgoingLinks = outputPorts[0].getLinks();
-            if (outgoingLinks.length > 0) {
+            if (Object.keys(outgoingLinks).length > 0) {
               newNode = outgoingLinks[Object.keys(outgoingLinks)[0]]
                 .getTargetPort()
                 .getNode();
+              newNode.setBeginning();
             }
           }
           outputPorts.forEach((port) => {
@@ -182,11 +177,10 @@ export const reducer = reduceReducers(
             }
           });
         }
-        model.removeNode(action.payload.node);
+        model.removeNode(nodeToRemove);
         if (newNode == null) {
           newNode = model.getNodes()[0];
         }
-        newNode.setBeginning();
         engine.repaintCanvas();
         return {
           engine,
