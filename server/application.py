@@ -13,12 +13,12 @@ import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-# CORS(application)
+CORS(application)
 
 
 def get_token(request) -> str:
-    #    return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
-    return request.cookies.get('token')
+    return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
+    # return request.cookies.get('token')
 
 
 def json_response(response, status=200):
@@ -127,6 +127,18 @@ def author_details():
     try:
         user = query(db.get_user_details, token)
         return json_response(user)
+    except DBError as e:
+        return json_response(e.response, e.status)
+
+
+@application.route('/api/report/<storyid>', methods=['GET'])
+def get_statistics(storyid):
+    token = get_token(request)
+    if token is None:
+        return json_response({'error': 'No authorization provided'}, status.HTTP_403_FORBIDDEN)
+    try:
+        response = db.story_statistics(token, storyid)
+        return json_response(response)
     except DBError as e:
         return json_response(e.response, e.status)
 

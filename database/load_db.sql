@@ -136,6 +136,9 @@ GRANT SELECT ON a.tokens TO server;
 GRANT UPDATE ON a.tokens TO server;
 GRANT INSERT ON a.tokens TO server;
 GRANT DELETE ON a.tokens TO server;
+GRANT SELECT ON ss.libraries TO server;
+GRANT SELECT ON a.payments TO server;
+GRANT SELECT ON ss.readings TO server;
 
 --CREATE USER catalog WITH PASSWORD '#######';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;

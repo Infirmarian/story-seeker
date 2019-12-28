@@ -42,6 +42,7 @@ function StoryViewer() {
             <th scope="col">Status</th>
             <th scope="col">Price</th>
             <th scope="col">Edit</th>
+            <th scope="col">Report</th>
           </tr>
         </thead>
         <tbody>
@@ -62,6 +63,9 @@ function StoryViewer() {
                 </td>
                 <td>
                   <Link to={`/viewer/details/${story.id}`}> Details </Link>
+                </td>
+                <td>
+                  <Link to={`/viewer/report/${story.id}`}>View</Link>
                 </td>
               </tr>
             );

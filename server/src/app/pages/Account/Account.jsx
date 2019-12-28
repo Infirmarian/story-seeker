@@ -37,6 +37,26 @@ function Account() {
             <h6>Email Address</h6>
             <p>{authorData.email}</p>
           </div>
+          <table className="table">
+            <thead className="thead-light">
+              <tr>
+                <th scope="col">Month</th>
+                <th scope="col">Payment</th>
+                <th scope="col">Paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {authorData.payments
+                ? authorData.payments.map((i) => (
+                    <tr key={i.month}>
+                      <td>{i.month}</td>
+                      <td>{`$${i.payment}`}</td>
+                      <td>{i.paid ? "Paid" : "Pending"}</td>
+                    </tr>
+                  ))
+                : null}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

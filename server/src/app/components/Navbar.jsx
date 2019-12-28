@@ -6,7 +6,6 @@ import "./Navbar.css";
 function Navbar(props) {
   let history = useHistory();
   const { links } = props;
-  console.log(links);
   const navlinks = links.map((l) => {
     return (
       <li className="navbar-item" key={l.link}>

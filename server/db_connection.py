@@ -5,6 +5,7 @@ from psycopg2 import OperationalError
 from datetime import datetime
 from typing import Union, Dict
 import utils
+import datetime
 
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
@@ -84,22 +85,75 @@ def get_name_from_token(token: str) -> Union[None, str]:
 
 def get_user_details(token: str):
     with conn.cursor() as cursor:
-        cursor.execute('''SELECT name, email, paypal FROM ss.authors a
+        cursor.execute('''SELECT name, email, paypal, a.userid FROM ss.authors a
         JOIN a.tokens t ON t.userid = a.userid WHERE token = %s AND expiration > NOW()''', (token,))
         value = cursor.fetchone()
         if value is None:
             raise DBError(404, 'User page not found')
-        return {"name": value[0], "email": value[1], "paypal": value[2]}
+        cursor.execute(
+            'SELECT month, payment, paid FROM a.payments WHERE authorid = %s ORDER BY month LIMIT 12;', (value[3],))
+        values = cursor.fetchall()
+        return {"name": value[0], "email": value[1], "paypal": value[2],
+                "payments": [{"month": p[0].strftime("%m/%Y"), "payment":float(p[1]), "paid":p[2]} for p in values]}
+
+
+def story_statistics(token: str, storyid: str):
+    with conn.cursor() as cursor:
+        userid = get_userid_from_token(token, cursor)
+        cursor.execute(
+            '''SELECT s.title, COALESCE(i.purchases, 0), s.published
+            FROM ss.stories s
+            LEFT JOIN (
+                SELECT storyid, count(*) AS purchases
+                FROM ss.libraries WHERE storyid = %s GROUP BY storyid) i ON i.storyid = s.id
+            WHERE id = %s AND authorid = %s''', (storyid, storyid, userid))
+        response = cursor.fetchone()
+        if response is None:
+            raise DBError(404, 'Specified story not found')
+        cursor.execute(
+            '''SELECT count(*), date_trunc('month', acquire_date)
+                FROM ss.libraries l
+                JOIN ss.stories s ON s.id = l.storyid
+                WHERE l.storyid = %s
+                AND s.authorid = %s
+                AND acquire_date > date_trunc('month', NOW() - INTERVAL '1 YEAR')
+                GROUP BY date_trunc('month', acquire_date)
+                LIMIT 12;''', (storyid, userid))
+        purchases = cursor.fetchall()
+        cursor.execute(
+            '''SELECT count(*), date_trunc('month', time) 
+            FROM ss.readings r
+            JOIN ss.stories s ON s.id = r.storyid
+            WHERE r.storyid = %s
+            AND s.authorid = %s
+            AND time > date_trunc('month', NOW() - INTERVAL '1 YEAR')
+            GROUP BY date_trunc('month', time)
+            LIMIT 12;''', (storyid, userid)
+        )
+        readings = cursor.fetchall()
+        today = datetime.date.today()
+        results = {}
+        for _ in range(12):
+            today = today.replace(day=1)
+            results[today.strftime("%Y/%m")] = {'purchase': 0, 'readings': 0}
+            today = today - datetime.timedelta(days=1)
+        for m in purchases:
+            results[m[1].strftime("%Y/%m")]['purchase'] = m[0]
+        for m in readings:
+            results[m[1].strftime("%Y/%m")]['readings'] = m[0]
+        results = list(results.items())
+        results.sort(key=lambda x: x[0])
+        return {
+            'title': response[0],
+            'lifetime_purchases': response[1],
+            'published': response[2],
+            'data': results
+        }
 
 
 def get_all_stories(token: str):
     with conn.cursor() as cursor:
-        cursor.execute(
-            '''SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW()''', (token,))
-        userid = cursor.fetchone()
-        if userid is None:
-            return None
-        userid = userid[0]
+        userid = get_userid_from_token(token, cursor)
         cursor.execute('''SELECT id, title, price, genre, published 
                         FROM ss.stories WHERE authorid = %s
                         ORDER BY last_modified DESC;''', (userid,))  # TODO: get this information
@@ -116,8 +170,6 @@ def get_all_stories(token: str):
 def get_story_overview(token: str, storyid: str):
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, 'Bad token provided')
         cursor.execute(
             '''SELECT title, price, genre, published, summary, created, last_modified 
             FROM ss.stories WHERE id = %s AND authorid = %s;''', (storyid, userid,))
@@ -139,8 +191,6 @@ def get_story_overview(token: str, storyid: str):
 def update_story(token: str, storyid: str, values: dict) -> int:
     with conn.cursor() as cursor:
         uid = get_userid_from_token(token, cursor)
-        if uid is None:
-            raise DBError(403, 'Bad token provided')
         cursor.execute(
             'SELECT published FROM ss.stories WHERE id = %s AND authorid = %s', (storyid, uid))
         published = cursor.fetchone()
@@ -162,8 +212,6 @@ def update_story(token: str, storyid: str, values: dict) -> int:
 def get_story_content(token: str, storyid: str) -> Dict:
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, 'Bad token provided')
         cursor.execute(
             'SELECT serialized_story FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
         result = cursor.fetchone()
@@ -176,8 +224,6 @@ def get_story_content(token: str, storyid: str) -> Dict:
 def create_story(token: str, title: str):
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, "User token provided is invalid")
         cursor.execute(
             'INSERT INTO ss.stories (title, authorid) VALUES (%s, %s);',
             (title, userid,))
@@ -190,8 +236,6 @@ def create_story(token: str, title: str):
 def delete_story(token: str, storyid: str) -> str:
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            return 'Invalid token provided'
         cursor.execute(
             'SELECT published FROM ss.stories WHERE authorid = %s AND id = %s;', (userid, storyid))
         v = cursor.fetchone()
@@ -215,8 +259,6 @@ def title_exists(title: str) -> bool:
 def save_story_content(token: str, storyid: str, content: str) -> bool:
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, 'Invalid token provided')
         cursor.execute(
             'UPDATE ss.stories SET serialized_story = %s, last_modified = NOW() WHERE id = %s AND authorid = %s;', (content, storyid, userid))
         conn.commit()
@@ -225,8 +267,6 @@ def save_story_content(token: str, storyid: str, content: str) -> bool:
 def compile_and_submit_story(token: str, storyid: str):
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, 'Invalid login token provided')
         cursor.execute(
             'SELECT published, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
         result = cursor.fetchone()
@@ -252,8 +292,6 @@ def compile_and_submit_story(token: str, storyid: str):
 def get_story_preview(token, storyid):
     with conn.cursor() as cursor:
         userid = get_userid_from_token(token, cursor)
-        if userid is None:
-            raise DBError(403, "Bad user token provided")
         cursor.execute(
             'SELECT published, last_compiled, last_modified, content, serialized_story, title FROM ss.stories WHERE id = %s AND authorid = %s;', (storyid, userid))
         result = cursor.fetchone()
@@ -277,8 +315,8 @@ def get_userid_from_token(token, cursor):
         'SELECT userid FROM a.tokens WHERE token = %s AND expiration > NOW();', (token,))
     userid = cursor.fetchone()
     if userid:
-        userid = userid[0]
-    return userid
+        return userid[0]
+    raise DBError(403, 'Invalid or expired token provided')
 
 
 def get_author_from_userid(userid, cursor):
