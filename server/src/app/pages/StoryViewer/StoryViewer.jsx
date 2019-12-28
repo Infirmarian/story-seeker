@@ -27,7 +27,13 @@ function StoryViewer() {
   }, [history]);
   return (
     <div className="Story-Viewer">
-      <Navbar />
+      <Navbar
+        links={[
+          { link: "/viewer", text: "All Stories" },
+          { link: "/viewer/new", text: "New Story" },
+          { link: "/account", text: "Account" },
+        ]}
+      />
       <table className="table">
         <thead className="thead-light">
           <tr>
@@ -36,6 +42,7 @@ function StoryViewer() {
             <th scope="col">Status</th>
             <th scope="col">Price</th>
             <th scope="col">Edit</th>
+            <th scope="col">Report</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +63,9 @@ function StoryViewer() {
                 </td>
                 <td>
                   <Link to={`/viewer/details/${story.id}`}> Details </Link>
+                </td>
+                <td>
+                  <Link to={`/viewer/report/${story.id}`}>View</Link>
                 </td>
               </tr>
             );

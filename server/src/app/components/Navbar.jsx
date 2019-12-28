@@ -1,12 +1,20 @@
 import React from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { URL } from "../../utils/constants";
 import "./Navbar.css";
 
-function Navbar() {
-  let location = useLocation();
-  console.log(location);
+function Navbar(props) {
   let history = useHistory();
+  const { links } = props;
+  const navlinks = links.map((l) => {
+    return (
+      <li className="navbar-item" key={l.link}>
+        <Link className="nav-link" to={l.link}>
+          {l.text}
+        </Link>
+      </li>
+    );
+  });
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       {/* logo */}
@@ -25,23 +33,11 @@ function Navbar() {
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav text-right ml-auto">
-          <li className="navbar-item">
-            <Link className="nav-link" to="/viewer">
-              All Stories
-            </Link>
-          </li>
-          {location.pathname === "/viewer" ? (
-            <li className="navbar-item">
-              <Link className="nav-link" to="/viewer/new">
-                New Story
-              </Link>
-            </li>
-          ) : null}
+          {navlinks}
           <li className="navbar-item">
             <div
               className="nav-link"
               onClick={() => {
-                console.log("logging out");
                 fetch(URL + "/api/logout").then(() => {
                   history.push("/");
                 });

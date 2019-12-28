@@ -1,6 +1,9 @@
 from flask import Flask, send_file, request, abort
 import os
 import utils
+import json
+from db_connector import query, DBError
+import db_connector as db
 application = Flask(__name__, static_folder='catalog')
 
 
@@ -17,6 +20,24 @@ def page_not_found(error):
 @application.route('/')
 def hello():
     return 'Management page'
+
+
+@application.route('/login')
+def login():
+    return 'Login page', 200
+
+
+@application.route('/api/pending', methods=['GET'])
+def pending():
+    auth = utils.get_authorization(request)
+    if auth is None:
+        abort(403)
+    try:
+        query(db.get_pending, auth=auth)
+        return application.response_class(
+            json.dumps({db.get_pending(auth)}), mimetype='application/json')
+    except DBError as e:
+        return application.response_class(e.response, e.status, mimetype='application/json')
 
 
 @application.route('/titles')

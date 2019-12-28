@@ -15,7 +15,12 @@ function StoryBuilder(props) {
     <Provider store={store}>
       <div className="StoryBuilder">
         <div className="Workspace">
-          <Navbar />
+          <Navbar
+            links={[
+              { link: "/viewer", text: "All Stories" },
+              { link: `/viewer/details/${id}`, text: "Back" },
+            ]}
+          />
           <Workspace id={id} />
           <Toolbar />
         </div>

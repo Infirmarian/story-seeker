@@ -1,18 +1,25 @@
 # Copyright Robert Geil 2019
 import psycopg2
+from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
+import secrets
 load_dotenv()
 
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_NAME = os.environ['DB_NAME']
 DB_HOST = os.environ['DB_HOST']
-conn = psycopg2.connect(user=DB_USER,
-                        password=DB_PASSWORD,
-                        host=DB_HOST,
-                        port='5432',
-                        database=DB_NAME)
+conn = None
+
+
+def connect_to_db():
+    global conn
+    conn = psycopg2.connect(user=DB_USER,
+                            password=DB_PASSWORD,
+                            host=DB_HOST,
+                            port='5432',
+                            database=DB_NAME)
 
 
 def compile_titles() -> None:
@@ -25,11 +32,11 @@ def compile_titles() -> None:
             comma = ''
             while row:
                 f.write('''%s{
-"id": "%s",
-"name": {
-    "value": "%s"
-    }
-}''' % (comma, row[1], row[0]))
+                    "id": "%s",
+                    "name": {
+                    "value": "%s"
+                    } 
+                }''' % (comma, row[1], row[0]))
                 comma = ','
                 row = cursor.fetchone()
         f.write(']}\n')
@@ -45,11 +52,15 @@ def compile_authors() -> None:
             comma = ''
             while row:
                 f.write('''%s{
-"id": "%s",
-"name": {
-    "value": "%s"
-    }
-}''' % (comma, row[0], row[0]))
+                    "id": "%s",
+                    "name": {
+                        "value": "%s"
+                        }
+                    }''' % (comma, row[0], row[0]))
                 comma = ','
                 row = cursor.fetchone()
         f.write(']}\n')
+
+
+def get_authorization(request):
+    return request.headers.get('Authorization')
