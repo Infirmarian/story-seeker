@@ -131,16 +131,30 @@ def story_statistics(token: str, storyid: str):
             LIMIT 12;''', (storyid, userid)
         )
         readings = cursor.fetchall()
+        cursor.execute(
+            '''SELECT count(DISTINCT(userid)), date_trunc('month', time) 
+            FROM ss.readings r            
+            JOIN ss.stories s ON s.id = r.storyid
+            WHERE r.storyid = %s
+            AND s.authorid = %s
+            AND time > date_trunc('month', NOW() - INTERVAL '1 YEAR')
+            GROUP BY date_trunc('month', time)
+            LIMIT 12;''', (storyid, userid)
+        )
+        unique_readings = cursor.fetchall()
         today = datetime.date.today()
         results = {}
         for _ in range(12):
             today = today.replace(day=1)
-            results[today.strftime("%Y/%m")] = {'purchase': 0, 'readings': 0}
+            results[today.strftime(
+                "%Y/%m")] = {'purchase': 0, 'readings': 0, 'unique_readings': 0}
             today = today - datetime.timedelta(days=1)
         for m in purchases:
             results[m[1].strftime("%Y/%m")]['purchase'] = m[0]
         for m in readings:
             results[m[1].strftime("%Y/%m")]['readings'] = m[0]
+        for m in unique_readings:
+            results[m[1].strftime("%Y/%m")]['unique_readings'] = m[0]
         results = list(results.items())
         results.sort(key=lambda x: x[0])
         return {
