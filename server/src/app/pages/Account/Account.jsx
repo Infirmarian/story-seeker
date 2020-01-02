@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { URL } from "../../../utils/constants";
 import { useHistory } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 
 function Account() {
   const history = useHistory();

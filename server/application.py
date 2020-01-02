@@ -13,12 +13,12 @@ import os
 application = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-# CORS(application)
+CORS(application)
 
 
 def get_token(request) -> str:
- #   return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
-    return request.cookies.get('token')
+   return 'FpUpHvjpNNS34Fk1th8AIdPsh4uM79xrIjYCM_FoYJE'
+    # return request.cookies.get('token')
 
 
 def json_response(response, status=200):

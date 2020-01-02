@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 import { URL } from "../../../utils/constants";
 import "./StoryPreview.css";
 function StoryPreview(props) {
@@ -44,7 +44,10 @@ function StoryPreview(props) {
   let optCount = 0;
   return (
     <>
-      <Navbar />
+      <Navbar links={[
+        {link: '/viewer', text: 'All Stories'},
+        {link: `/viewer/details/${id}`, text: 'Back'}
+      ]}/>
       <div className="container text-center my-auto">
         <h1 className="title-text-preview">{story.title}</h1>
         <p className="main-text-preview">

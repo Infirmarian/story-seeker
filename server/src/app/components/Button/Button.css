@@ -1,0 +1,79 @@
+.btn {
+	font-family: "Monsterrat", sans-serif;
+	box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+	font-weight: 700;
+	color: black;
+	background-color: #e0e0e0;
+	margin: 8px 10px;
+	transition: 0.3s;
+	font-size: 1rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.btn:hover {
+	background-color: #d5d5d5;
+}
+
+.btn-disabled {
+	color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(145, 142, 142, 0.5);
+	box-shadow: none;
+}
+.btn-disabled:hover {
+	cursor: default;
+	color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(145, 142, 142, 0.5);
+}
+
+.btn-xl {
+	padding: 1.25rem 2.5rem;
+}
+
+.btn-lg {
+	padding: 0.75rem 2rem;
+}
+
+.btn-md {
+	padding: 0.375rem 0.75rem;
+}
+
+.btn-sm {
+	padding: 0.25rem 0.625rem;
+}
+
+.btn-primary {
+	background-color: #1d809f !important;
+	border-color: #1d809f !important;
+	color: white !important;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: #155d74 !important;
+	border-color: #155d74 !important;
+}
+
+.btn-secondary {
+	background-color: #ecb807 !important;
+	border-color: #ecb807 !important;
+	color: white !important;
+}
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+	background-color: #ba9106 !important;
+	border-color: #ba9106 !important;
+}
+
+.btn-alert {
+	background-color: rgb(199, 25, 25) !important;
+	border-color: rgb(199, 25, 25);
+	color: white !important;
+}
+.btn-alert:hover,
+.btn-alert:focus,
+.btn-alert:active {
+	background-color: rgb(104, 9, 9) !important;
+}
