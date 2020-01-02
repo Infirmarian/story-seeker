@@ -12,6 +12,7 @@ function Button(props) {
 	// disabled: specifies whether button is disabled; true | false
 	// link: pass in the route that the button should navigate to on click
 	// href: use for internal page navigation (jump to element with id)
+	// first: specify if this button is the first in its row
 	const { variant, color, size, type, onClick, disabled, link, href } = props;
 
 	const Component = props.component || href ? "a" : link ? Link : "button";
@@ -30,12 +31,17 @@ function Button(props) {
 		: color
 		? `btn-${color}`
 		: "btn-primary";
-	const btnSize = size ? `btn-${size}` : "";
+	const btnSize = size ? `btn-${size}` : "btn-md";
 	const first = props.first ? "ml-0" : "";
 
-	const classes = [btnVariant, btnColor, btnSize, first, props.className].join(
-		" ",
-	);
+	const classes = [
+		btnVariant,
+		btnColor,
+		btnSize,
+		first,
+		props.className,
+		"ripple",
+	].join(" ");
 
 	return (
 		<Component className={classes} {...attributes}>

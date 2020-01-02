@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { URL } from "../../../utils/constants";
-import "./StoryDetails.css";
-import Navbar from "../../components/Navbar/Navbar";
 import { useHistory } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar";
 import Button from "../../components/Button/Button";
+import "./StoryDetails.css";
 
 function SaveStoryContent(content, id, history) {
 	if (id) {
@@ -94,13 +93,11 @@ function StoryDetails(props) {
 	} = storyDetails;
 
 	const editStoryButton = id ? (
-		<Link to={"/builder/" + id} className={"btn btn-primary"}>
-			Edit Story
-		</Link>
+		<Button link={`/builder/${id}`}>Edit Story</Button>
 	) : null;
 	const deleteStoryButton = id ? (
-		<button
-			className="btn btn-alert"
+		<Button
+			color="alert"
 			onClick={(event) => {
 				event.preventDefault();
 				DeleteStory(id, history);
@@ -108,11 +105,10 @@ function StoryDetails(props) {
 			}}
 		>
 			Delete Story
-		</button>
+		</Button>
 	) : null;
 	const submitStoryButton = id ? (
-		<button
-			className="btn btn-primary"
+		<Button
 			onClick={(event) => {
 				event.preventDefault();
 				const s = window.confirm(
@@ -130,12 +126,12 @@ function StoryDetails(props) {
 			}}
 		>
 			Submit Story for Approval
-		</button>
+		</Button>
 	) : null;
 	const previewStoryButton = id ? (
-		<Link to={"/preview/" + id} className="btn btn-primary ml-0">
+		<Button first link={`/preview/${id}`}>
 			Preview Story
-		</Link>
+		</Button>
 	) : null;
 
 	return (
@@ -246,20 +242,18 @@ function StoryDetails(props) {
 					</div>
 				</div>
 				<div className="button-section">
-					<Link to="/viewer" className="btn btn-primary ml-0">
+					<Button first link="/viewer">
 						Go Back
-					</Link>
-					<button type="submit" className="btn btn-primary">
-						Save Details
-					</button>
-					{/* <Button size="sm">Small</Button>
-					<Button size="md">Medium</Button>
-					<Button size="lg" href="#summary">
-						Large
 					</Button>
-					<Button size="xl" link="/viewer">
-						X-Large
-					</Button> */}
+					<Button type="submit">Save Details</Button>
+					<Button
+						color="alert"
+						onClick={(e) => {
+							e.preventDefault();
+						}}
+					>
+						Test
+					</Button>
 					<br />
 					{previewStoryButton}
 					{editStoryButton}
