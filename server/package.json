@@ -42,7 +42,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "env SERVER_STATE=DEVELOPMENT react-scripts build",
+    "prod": "env SERVER_STATE=PRODUCTION react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
