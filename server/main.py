@@ -1,19 +1,32 @@
 # Copyright Robert Geil 2019
 from flask_cors import CORS
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, send_file, send_from_directory, redirect
 from flask_api import status
 import requests
 import secrets
 
-import db_connection as db
-from db_connection import DBError, query
-import utils
 import json
 import os
+
+def dev():
+    return os.environ['SERVER_STATE'] == 'DEVELOPMENT'
+
+import utils
+import db_connection as db
+from db_connection import DBError, query
+from urllib.parse import urlparse, urlunparse
 app = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 # TODO: Delete this before deployment
-# CORS(application)
+#CORS(app, resources={r"/api/*": {"origins": "www.storyseeker.fun"}})
+
+@app.before_request
+def redirect_www():
+    urlparts = urlparse(request.url)
+    if urlparts.netloc == 'storyseeker.fun':
+        urlparts_list = list(urlparts)
+        urlparts_list[1] = 'www.'+urlparts_list[1]
+        return redirect(urlunparse(urlparts_list), code=status.HTTP_301_MOVED_PERMANENTLY)
 
 
 def get_token(request) -> str:
@@ -43,25 +56,6 @@ def robots():
     return send_file(app.static_folder+'/robots.txt')
 
 
-@app.route('/savejson', methods=['POST'])
-def save_json():
-    data = utils.validate_json(request.json)
-    if data is None:
-        response = app.response_class(
-            status=status.HTTP_401_UNAUTHORIZED,
-            response=json.dumps(
-                {'success': False, 'error_message': 'Story was poorly formatted'}),
-            mimetype='application/json'
-        )
-    else:
-        response = app.response_class(
-            status=status.HTTP_200_OK,
-            response=json.dumps({'success': True}),
-            mimetype='application/json'
-        )
-    return response
-
-
 @app.route('/api/login', methods=['POST'])
 def login_token():
     code = request.json.get('code')
@@ -84,9 +78,9 @@ def login_token():
                       user_data['name'], user_data['email'], token, 86400)
                 resp = app.response_class(status=200)
                 resp.set_cookie('token', value=token, max_age=86400,
-                                httponly=True)  # , domain='www.storyseeker.fun')
+                                httponly=True)#, domain='storyseeker.fun')
                 resp.set_cookie('name', value=user_data['name'], max_age=86400,
-                                httponly=True)  # , domain='www.storyseeker.fun')
+                                httponly=True)#, domain='storyseeker.fun')
                 return resp
             else:
                 return app.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE,
