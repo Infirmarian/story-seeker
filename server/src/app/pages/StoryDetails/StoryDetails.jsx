@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { URL } from "../../../utils/constants";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { useFormValidation } from "../../custom-hooks";
 import Navbar from "../../components/Navbar/Navbar";
 import Button from "../../components/Button/Button";
+import InputField from "../../components/InputField/InputField";
 import "./StoryDetails.css";
 
 function SaveStoryContent(content, id, history) {
@@ -61,12 +63,49 @@ function DeleteStory(id, history) {
 		});
 	}
 }
+
+const INITIAL_DETAILS = {
+	title: "",
+	summary: "",
+	genre: "",
+	price: "",
+	published: "",
+	last_modified: "",
+};
+const validateDetails = (details) => {
+	let errors = {};
+	if (!details.title) {
+		errors.title = "Title is required!";
+	}
+
+	if (!details.summary) {
+		errors.summary = "Summary is required!";
+	} else if (details.summary.split(" ").length < 2) {
+		errors.summary = "Summary must contain at least 2 words!";
+	}
+
+	if (!details.genre) {
+		errors.genre = "Genre must be specified!";
+	}
+
+	return errors;
+};
+
 function StoryDetails(props) {
 	let history = useHistory();
-	const { id } = props.match.params;
+	const { id } = useParams();
 
 	// Data for current story being viewed
-	const [storyDetails, setStoryDetails] = useState({});
+	const {
+		values: storyDetails,
+		setValues: setStoryDetails,
+		errors,
+		submitting,
+		handleChange,
+		handleSubmit,
+		handleBlur,
+	} = useFormValidation(INITIAL_DETAILS, validateDetails);
+
 	useEffect(() => {
 		if (id) {
 			fetch(URL + "/api/overview/" + id).then((response) => {
@@ -143,59 +182,54 @@ function StoryDetails(props) {
 				]}
 			/>
 			<form
-				className="details-form"
+				className={`details-form needs-validation ${
+					errors ? "was-validated" : ""
+				}`}
 				onSubmit={(event) => {
 					event.preventDefault();
 					SaveStoryContent(
 						JSON.stringify({
-							title: event.target.title.value,
-							summary: event.target.summary.value,
-							genre: event.target.genre.value,
-							price: event.target.price.value,
+							title,
+							summary,
+							genre,
+							price,
 						}),
 						id,
 						history,
 					);
 					return false;
 				}}
+				noValidate
 			>
 				<div className="info">
-					<label className="input-labels" htmlFor="title">
-						Title
-					</label>
-					<input
-						className="form-control"
-						id="title"
-						type="text"
+					<InputField
 						name="title"
-						defaultValue={title}
-					/>
-					<label className="input-labels" htmlFor="summary">
-						Summary
-					</label>
-					<textarea
-						className="form-control"
-						id="summary"
 						type="text"
-						defaultValue={summary}
+						value={title}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						autocomplete="off"
+						required
+						error={errors.title}
 					/>
-					<label className="input-labels" htmlFor="genre">
-						Genre
-					</label>
-					<select
-						id="genre"
-						className="form-control form-control-sm"
-						value={genre || "adventure"}
-						onChange={(event) => {
-							setStoryDetails({
-								title,
-								summary,
-								genre: event.target.value,
-								price,
-								published,
-								last_modified,
-							});
-						}}
+					<InputField
+						field="textarea"
+						name="summary"
+						type="text"
+						value={summary}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						autocomplete="off"
+						error={errors.summary}
+					/>
+					<InputField
+						field="select"
+						name="genre"
+						size="sm"
+						value={genre}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						error={errors.genre}
 					>
 						<option value="adventure">Adventure</option>
 						<option value="comedy">Comedy</option>
@@ -206,28 +240,20 @@ function StoryDetails(props) {
 						<option value="mystery">Mystery</option>
 						<option value="detective">Detective</option>
 						<option value="dystopia">Dystopia</option>
-					</select>
-					<label htmlFor="price" className="input-labels">
-						Pricing
-					</label>
-					<select
-						id="price"
-						className="form-control form-control-sm"
-						value={price || "0"}
-						onChange={(event) => {
-							setStoryDetails({
-								title,
-								summary,
-								genre,
-								price: event.target.value,
-								published,
-								last_modified,
-							});
-						}}
+					</InputField>
+					<InputField
+						field="select"
+						name="price"
+						label="pricing"
+						size="sm"
+						value={price}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						enabled={false}
 					>
 						<option value="0">Free</option>
 						<option value="1">$0.99</option>
-					</select>
+					</InputField>
 				</div>
 				<div className="uneditable-info">
 					<div className={`status status-${published}`}>
@@ -245,8 +271,14 @@ function StoryDetails(props) {
 					<Button first link="/viewer">
 						Go Back
 					</Button>
-					<Button type="submit">Save Details</Button>
 					<Button
+						type="submit"
+						disabled={Object.keys(errors).length > 0 ? true : submitting}
+					>
+						Save Details
+					</Button>
+					<Button
+						title="test"
 						color="alert"
 						onClick={(e) => {
 							e.preventDefault();

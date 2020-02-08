@@ -1,87 +1,58 @@
 .Content-Editor {
-  width: 30vw;
-  height: 100vh;
-  background: radial-gradient(circle at center, #31c4f3, #2dacd6);
-  padding-left: 3%;
-  padding-right: 3%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1.3rem;
-  color: white;
-  font-family: sans-serif;
-  overflow: scroll;
+	width: 30vw;
+	height: 100vh;
+	background: radial-gradient(circle at center, #31c4f3, #2dacd6);
+	padding-left: 3%;
+	padding-right: 3%;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	font-size: 1.3rem;
+	color: white;
+	font-family: sans-serif;
+	overflow: scroll;
 }
-.btn {
-  cursor: pointer;
-  color: white;
-  transition: 0.3s;
-}
-.editor-button {
-  color: #fff;
-  border-radius: 100px;
-  padding: 10px 20px;
-  text-decoration: none;
-  border: 2px outset;
-  font-size: 0.7em;
-  transition: 0.3s;
-}
-.editor-button:hover {
-  background: black;
-  color: white;
-}
-.editor-button-primary {
-  background: #244d5a;
-}
-.editor-button-danger {
-  background: darkred;
-}
+
 .input-fields {
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  padding: 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 10px;
 }
 
 .path-fields {
-  border-radius: 5px 0px 0px 5px;
+	border-radius: 5px 0px 0px 5px;
 }
 
 #content {
-  height: 35vh;
+	height: 35vh;
 }
 
 .editor-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 #question-paths {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-labels {
-  font-size: 1.5rem;
-  margin-top: 3vh;
-  margin-bottom: 1px;
+	display: flex;
+	flex-direction: column;
 }
 
 #extra-section {
-  width: 100%;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+	width: 100%;
+	margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
 }
 
 .extra-options {
-  margin: 5px;
+	margin: 5px;
 }
 
 #end-beginning {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }

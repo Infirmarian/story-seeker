@@ -1,35 +1,33 @@
 .Story-Details {
-  min-height: 100vh;
+	min-height: 100vh;
 }
 
 .details-form {
-  width: 100vw;
-  padding: 0 20vw 30px 30px;
-  align-content: center;
-  overflow: scroll;
-  height: 95vh;
+	width: 100vw;
+	padding: 0 20vw 30px 30px;
+	align-content: center;
+	overflow: scroll;
+	height: 95vh;
 }
-.input-labels {
-  font-family: "Montserrat", sans-serif;
-}
+
 .info {
-  margin-bottom: 5vh;
+	margin-bottom: 5vh;
 }
 .uneditable-info {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  margin: 10px 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	margin: 10px 0;
 }
 
 #summary {
-  min-height: 20vh;
+	min-height: 20vh;
 }
 
 .uneditable-info > .status {
-  margin-right: 20px;
+	margin-right: 20px;
 }
 
 .button-section {
-  margin-top: 20px;
+	margin-top: 20px;
 }
