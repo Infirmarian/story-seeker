@@ -18,7 +18,12 @@ export const useFormValidation = (initialState, validate) => {
 		const target = event.target;
 		setValues((prev) => {
 			const update = { ...prev, [target.name]: target.value };
-			setErrors(validate(update));
+			setErrors(() => {
+				const errors = validate(update);
+				console.log(errors[target.name]);
+				target.setCustomValidity(errors[target.name]);
+				return errors;
+			});
 			return update;
 		});
 	}

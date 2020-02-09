@@ -76,16 +76,26 @@ const validateDetails = (details) => {
 	let errors = {};
 	if (!details.title) {
 		errors.title = "Title is required!";
+	} else {
+		errors.title = "";
 	}
 
+	console.log(details.summary.split(" "));
 	if (!details.summary) {
 		errors.summary = "Summary is required!";
-	} else if (details.summary.split(" ").length < 2) {
+	} else if (
+		details.summary.split(" ").length < 2 ||
+		!details.summary.split(" ")[1]
+	) {
 		errors.summary = "Summary must contain at least 2 words!";
+	} else {
+		errors.summary = "";
 	}
 
 	if (!details.genre) {
 		errors.genre = "Genre must be specified!";
+	} else {
+		errors.genre = "";
 	}
 
 	return errors;
@@ -122,6 +132,16 @@ function StoryDetails(props) {
 			});
 		}
 	}, [id]);
+	const checkErrors = (errors) => {
+		var errorFound = false;
+		for (let error in errors) {
+			if (errors[error]) {
+				errorFound = true;
+				break;
+			}
+		}
+		return errorFound;
+	};
 	const {
 		title,
 		summary,
@@ -173,6 +193,7 @@ function StoryDetails(props) {
 		</Button>
 	) : null;
 
+	console.log(errors);
 	return (
 		<div className="Story-Details">
 			<Navbar
@@ -220,6 +241,7 @@ function StoryDetails(props) {
 						onChange={handleChange}
 						onBlur={handleBlur}
 						autocomplete="off"
+						required
 						error={errors.summary}
 					/>
 					<InputField
@@ -273,7 +295,7 @@ function StoryDetails(props) {
 					</Button>
 					<Button
 						type="submit"
-						disabled={Object.keys(errors).length > 0 ? true : submitting}
+						disabled={checkErrors(errors) || submitting == true}
 					>
 						Save Details
 					</Button>

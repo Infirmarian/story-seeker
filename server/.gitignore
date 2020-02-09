@@ -4,6 +4,7 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 cloud_sql_proxy.exe
+startup.sh
 
 #GCP File
 app.yaml

@@ -38,7 +38,11 @@ function InputField(props) {
 	if (enabled) attributes.enabled = enabled;
 
 	const fieldSize = size ? `form-control-${size}` : "";
-	const classes = ["form-control", fieldSize, props.className].join(" ");
+	var validity = "form-control";
+	// if (error) {
+	// 	validity = "form-control is-invalid";
+	// }
+	const classes = [validity, fieldSize, props.className].join(" ");
 
 	return (
 		<div>
@@ -48,7 +52,7 @@ function InputField(props) {
 			<InputComponent className={classes} {...attributes}>
 				{props.children}
 			</InputComponent>
-			<div className="invalid-feedback">{error}</div>
+			{error ? <div className="invalid-feedback">{error}</div> : null}
 		</div>
 	);
 }
