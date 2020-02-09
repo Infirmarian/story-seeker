@@ -6,17 +6,19 @@ from datetime import datetime
 from typing import Union, Dict
 import utils
 import datetime
+from main import dev
 
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DATABASE = os.environ['DB_NAME']
-HOST = os.environ['DB_HOST']
+CLOUD_SQL_CONN_NAME = os.environ['PSQL_CLOUD_INSTANCE']
+
 conn = psycopg2.connect(
     database=DATABASE,
     user=DB_USER,
     password=DB_PASSWORD,
-    host=HOST,
-    port='5432'
+    host='localhost' if dev() else f'/cloudsql/{CLOUD_SQL_CONN_NAME}',
+    port='3306' if dev() else '5432'
 )
 
 
@@ -33,8 +35,8 @@ def __connect_to_db():
         database=DATABASE,
         user=DB_USER,
         password=DB_PASSWORD,
-        host=HOST,
-        port='5432'
+        host='localhost' if dev() else f'/cloudsql/{CLOUD_SQL_CONN_NAME}',
+        port='3306' if dev() else '5432'
     )
 
 
@@ -218,8 +220,9 @@ def update_story(token: str, storyid: str, values: dict) -> int:
             SET title = %s, 
             summary = %s, 
             genre = %s,
+            price = %s,
             last_modified = NOW() WHERE id = %s AND authorid = %s''',
-            (values['title'], values['summary'], values['genre'], storyid, uid))
+            (values['title'], values['summary'], values['genre'], values['price'], storyid, uid))
         conn.commit()
 
 

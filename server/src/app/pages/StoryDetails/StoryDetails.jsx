@@ -64,7 +64,7 @@ function DeleteStory(id, history) {
 function StoryDetails(props) {
   let history = useHistory();
   const { id } = props.match.params;
-
+  const newStory = id ? false : true;
   // Data for current story being viewed
   const [storyDetails, setStoryDetails] = useState({});
   useEffect(() => {
@@ -152,9 +152,9 @@ function StoryDetails(props) {
           SaveStoryContent(
             JSON.stringify({
               title: event.target.title.value,
-              summary: event.target.summary.value,
-              genre: event.target.genre.value,
-              price: event.target.price.value,
+              summary: newStory ? null : event.target.summary.value,
+              genre: newStory ? "adventure" : event.target.genre.value,
+              price: newStory ? "0" : event.target.price.value,
             }),
             id,
             history
@@ -173,64 +173,68 @@ function StoryDetails(props) {
             name="title"
             defaultValue={title}
           />
-          <label className="input-labels" htmlFor="summary">
-            Summary
-          </label>
-          <textarea
-            className="form-control"
-            id="summary"
-            type="text"
-            defaultValue={summary}
-          />
-          <label className="input-labels" htmlFor="genre">
-            Genre
-          </label>
-          <select
-            id="genre"
-            className="form-control form-control-sm"
-            value={genre || "adventure"}
-            onChange={(event) => {
-              setStoryDetails({
-                title,
-                summary,
-                genre: event.target.value,
-                price,
-                published,
-                last_modified,
-              });
-            }}
-          >
-            <option value="adventure">Adventure</option>
-            <option value="comedy">Comedy</option>
-            <option value="fantasy">Fantasy</option>
-            <option value="science fiction">Science Fiction</option>
-            <option value="western">Western</option>
-            <option value="romance">Romance</option>
-            <option value="mystery">Mystery</option>
-            <option value="detective">Detective</option>
-            <option value="dystopia">Dystopia</option>
-          </select>
-          <label htmlFor="price" className="input-labels">
-            Pricing
-          </label>
-          <select
-            id="price"
-            className="form-control form-control-sm"
-            value={price || "0"}
-            onChange={(event) => {
-              setStoryDetails({
-                title,
-                summary,
-                genre,
-                price: event.target.value,
-                published,
-                last_modified,
-              });
-            }}
-          >
-            <option value="0">Free</option>
-            <option value="1">$0.99</option>
-          </select>
+          {newStory ? null : (
+            <>
+              <label className="input-labels" htmlFor="summary">
+                Summary
+              </label>
+              <textarea
+                className="form-control"
+                id="summary"
+                type="text"
+                defaultValue={summary}
+              />
+              <label className="input-labels" htmlFor="genre">
+                Genre
+              </label>
+              <select
+                id="genre"
+                className="form-control form-control-sm"
+                value={genre || "adventure"}
+                onChange={(event) => {
+                  setStoryDetails({
+                    title,
+                    summary,
+                    genre: event.target.value,
+                    price,
+                    published,
+                    last_modified,
+                  });
+                }}
+              >
+                <option value="adventure">Adventure</option>
+                <option value="comedy">Comedy</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="science fiction">Science Fiction</option>
+                <option value="western">Western</option>
+                <option value="romance">Romance</option>
+                <option value="mystery">Mystery</option>
+                <option value="detective">Detective</option>
+                <option value="dystopia">Dystopia</option>
+              </select>
+              <label htmlFor="price" className="input-labels">
+                Pricing
+              </label>
+              <select
+                id="price"
+                className="form-control form-control-sm"
+                value={price || "0"}
+                onChange={(event) => {
+                  setStoryDetails({
+                    title,
+                    summary,
+                    genre,
+                    price: event.target.value,
+                    published,
+                    last_modified,
+                  });
+                }}
+              >
+                <option value="0">Free</option>
+                <option value="1">$0.99</option>
+              </select>
+            </>
+          )}
         </div>
         <div className="uneditable-info">
           <div className={`status status-${published}`}>
@@ -249,7 +253,7 @@ function StoryDetails(props) {
             Go Back
           </Link>
           <button type="submit" className="btn btn-primary">
-            Save Details
+            {newStory ? "Create" : "Save Details"}
           </button>
           <br />
           {previewStoryButton}
