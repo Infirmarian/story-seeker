@@ -20,11 +20,7 @@ app = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 
 # TODO: Delete this before deployment
-<<<<<<< HEAD
-if dev():
-=======
 if(dev()):
->>>>>>> master
     CORS(app)
 
 @app.before_request
@@ -37,13 +33,9 @@ def redirect_www():
 
 
 def get_token(request) -> str:
-<<<<<<< HEAD
- #   return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
-    return 'JnHX_Fh3GwhNP7Dk4E_sHfh0NdkEJVMG-_xAuQtLKUE'
-=======
     if dev():
+        return 'XJDp21MH1YMY2N5jgbBZsHKaaz8hGbJ5StnnkKkiNI8'
         return 'iB_JnUtM48VdtIsPngKk_A-3iVD6zCLLkI-AflsynYk'
->>>>>>> master
     return request.cookies.get('token')
 
 

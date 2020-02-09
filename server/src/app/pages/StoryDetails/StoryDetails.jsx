@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { URL } from "../../../utils/constants";
 import { useHistory, useParams } from "react-router-dom";
 import { useFormValidation } from "../../custom-hooks";
@@ -64,14 +64,6 @@ function DeleteStory(id, history) {
 	}
 }
 
-const INITIAL_DETAILS = {
-	title: "",
-	summary: "",
-	genre: "",
-	price: "",
-	published: "",
-	last_modified: "",
-};
 const validateDetails = (details) => {
 	let errors = {};
 	if (!details.title) {
@@ -80,7 +72,6 @@ const validateDetails = (details) => {
 		errors.title = "";
 	}
 
-	console.log(details.summary.split(" "));
 	if (!details.summary) {
 		errors.summary = "Summary is required!";
 	} else if (
@@ -101,10 +92,34 @@ const validateDetails = (details) => {
 	return errors;
 };
 
+const newStoryValidate = (details) => {
+	let errors = {};
+	if (!details.title) {
+		errors.title = "Title is required!";
+	} else {
+		errors.title = "";
+	}
+	return errors;
+};
+
 function StoryDetails(props) {
 	let history = useHistory();
 	const { id } = useParams();
+	const newStory = id ? false : true;
+	const INITIAL_DETAILS = newStory
+		? {
+				title: "",
+		  }
+		: {
+				title: "",
+				summary: "",
+				genre: "",
+				price: "",
+				published: "",
+				last_modified: "",
+		  };
 
+	const validation = newStory ? newStoryValidate : validateDetails;
 	// Data for current story being viewed
 	const {
 		values: storyDetails,
@@ -112,9 +127,8 @@ function StoryDetails(props) {
 		errors,
 		submitting,
 		handleChange,
-		handleSubmit,
 		handleBlur,
-	} = useFormValidation(INITIAL_DETAILS, validateDetails);
+	} = useFormValidation(INITIAL_DETAILS, validation);
 
 	useEffect(() => {
 		if (id) {
@@ -131,7 +145,7 @@ function StoryDetails(props) {
 				});
 			});
 		}
-	}, [id]);
+	}, [id, setStoryDetails]);
 	const checkErrors = (errors) => {
 		var errorFound = false;
 		for (let error in errors) {
@@ -211,9 +225,9 @@ function StoryDetails(props) {
 					SaveStoryContent(
 						JSON.stringify({
 							title,
-							summary,
-							genre,
-							price,
+							summary: newStory ? null : summary,
+							genre: newStory ? "adventure" : genre,
+							price: newStory ? "0" : price,
 						}),
 						id,
 						history,
@@ -230,52 +244,55 @@ function StoryDetails(props) {
 						onChange={handleChange}
 						onBlur={handleBlur}
 						autocomplete="off"
-						required
 						error={errors.title}
 					/>
-					<InputField
-						field="textarea"
-						name="summary"
-						type="text"
-						value={summary}
-						onChange={handleChange}
-						onBlur={handleBlur}
-						autocomplete="off"
-						required
-						error={errors.summary}
-					/>
-					<InputField
-						field="select"
-						name="genre"
-						size="sm"
-						value={genre}
-						onChange={handleChange}
-						onBlur={handleBlur}
-						error={errors.genre}
-					>
-						<option value="adventure">Adventure</option>
-						<option value="comedy">Comedy</option>
-						<option value="fantasy">Fantasy</option>
-						<option value="science fiction">Science Fiction</option>
-						<option value="western">Western</option>
-						<option value="romance">Romance</option>
-						<option value="mystery">Mystery</option>
-						<option value="detective">Detective</option>
-						<option value="dystopia">Dystopia</option>
-					</InputField>
-					<InputField
-						field="select"
-						name="price"
-						label="pricing"
-						size="sm"
-						value={price}
-						onChange={handleChange}
-						onBlur={handleBlur}
-						enabled={false}
-					>
-						<option value="0">Free</option>
-						<option value="1">$0.99</option>
-					</InputField>
+					{newStory ? null : (
+						<>
+							<InputField
+								field="textarea"
+								name="summary"
+								type="text"
+								value={summary}
+								onChange={handleChange}
+								onBlur={handleBlur}
+								autocomplete="off"
+								required
+								error={errors.summary}
+							/>
+							<InputField
+								field="select"
+								name="genre"
+								size="sm"
+								value={genre}
+								onChange={handleChange}
+								onBlur={handleBlur}
+								error={errors.genre}
+							>
+								<option value="adventure">Adventure</option>
+								<option value="comedy">Comedy</option>
+								<option value="fantasy">Fantasy</option>
+								<option value="science fiction">Science Fiction</option>
+								<option value="western">Western</option>
+								<option value="romance">Romance</option>
+								<option value="mystery">Mystery</option>
+								<option value="detective">Detective</option>
+								<option value="dystopia">Dystopia</option>
+							</InputField>
+							<InputField
+								field="select"
+								name="price"
+								label="pricing"
+								size="sm"
+								value={price}
+								onChange={handleChange}
+								onBlur={handleBlur}
+								enabled={false}
+							>
+								<option value="0">Free</option>
+								<option value="1">$0.99</option>
+							</InputField>
+						</>
+					)}
 				</div>
 				<div className="uneditable-info">
 					<div className={`status status-${published}`}>
@@ -295,18 +312,9 @@ function StoryDetails(props) {
 					</Button>
 					<Button
 						type="submit"
-						disabled={checkErrors(errors) || submitting == true}
+						disabled={checkErrors(errors) || submitting === true}
 					>
-						Save Details
-					</Button>
-					<Button
-						title="test"
-						color="alert"
-						onClick={(e) => {
-							e.preventDefault();
-						}}
-					>
-						Test
+						{newStory ? "Create Story" : "Save Details"}
 					</Button>
 					<br />
 					{previewStoryButton}

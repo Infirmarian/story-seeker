@@ -12,7 +12,7 @@ export const useFormValidation = (initialState, validate) => {
 			}
 			setSubmitting(false);
 		}
-	}, [errors]);
+	}, [errors, submitting, values]);
 
 	function handleChange(event) {
 		const target = event.target;
@@ -28,18 +28,22 @@ export const useFormValidation = (initialState, validate) => {
 		});
 	}
 
-	function handleBlur() {
-		const validationErrors = validate(values);
-		console.log(validationErrors);
-		setErrors(validationErrors);
+	function handleBlur(event) {
+		const target = event.target;
+		setErrors(() => {
+			const errors = validate(values);
+			console.log(errors[target.name]);
+			target.setCustomValidity(errors[target.name]);
+			return errors;
+		});
 	}
 
-	function handleSubmit(event) {
-		event.preventDefault();
-		const validationErrors = validate(values);
-		setErrors(validationErrors);
-		setSubmitting(true);
-	}
+	// function handleSubmit(event) {
+	// 	event.preventDefault();
+	// 	const validationErrors = validate(values);
+	// 	setErrors(validationErrors);
+	// 	setSubmitting(true);
+	// }
 
 	return {
 		values,
@@ -47,7 +51,6 @@ export const useFormValidation = (initialState, validate) => {
 		errors,
 		submitting,
 		handleChange,
-		handleSubmit,
 		handleBlur,
 	};
 };

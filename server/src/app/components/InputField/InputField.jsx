@@ -39,11 +39,8 @@ function InputField(props) {
 
 	const fieldSize = size ? `form-control-${size}` : "";
 	var validity = "form-control";
-	// if (error) {
-	// 	validity = "form-control is-invalid";
-	// }
 	const classes = [validity, fieldSize, props.className].join(" ");
-
+	console.log(error);
 	return (
 		<div>
 			<label className="input-labels" htmlFor={name}>
