@@ -220,8 +220,9 @@ def update_story(token: str, storyid: str, values: dict) -> int:
             SET title = %s, 
             summary = %s, 
             genre = %s,
+            price = %s,
             last_modified = NOW() WHERE id = %s AND authorid = %s''',
-            (values['title'], values['summary'], values['genre'], storyid, uid))
+            (values['title'], values['summary'], values['genre'], values['price'], storyid, uid))
         conn.commit()
 
 
