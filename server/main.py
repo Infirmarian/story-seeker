@@ -17,8 +17,10 @@ from db_connection import DBError, query
 from urllib.parse import urlparse, urlunparse
 app = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
+
 # TODO: Delete this before deployment
-#CORS(app, resources={r"/api/*": {"origins": "www.storyseeker.fun"}})
+if(dev()):
+    CORS(app)
 
 @app.before_request
 def redirect_www():
@@ -30,7 +32,8 @@ def redirect_www():
 
 
 def get_token(request) -> str:
- #   return '030cf3971dc3de6931f893f43873965265ad3587a88a9a7d708f2d6850f1bd82'
+    if dev():
+        return 'iB_JnUtM48VdtIsPngKk_A-3iVD6zCLLkI-AflsynYk'
     return request.cookies.get('token')
 
 
