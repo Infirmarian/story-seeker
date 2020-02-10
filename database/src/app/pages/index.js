@@ -5,6 +5,7 @@ import Home from "./Home/Home";
 import { Forbidden } from "./Errors/Errors";
 import Pending from "./Pending/Pending";
 import Preview from "./Preview/Preview";
+import AllStories from "./AllStories/AllStories";
 
 function Routes() {
   return (
@@ -12,7 +13,8 @@ function Routes() {
       <Route exact path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route exact path="/pending" component={Pending} />
-      <Route path="/pending/:storyid" component={Preview} />
+      <Route exact path="/story" component={AllStories} />
+      <Route path="/story/:storyid" component={Preview} />
       <Route path="/403" component={Forbidden} />
     </Switch>
   );

@@ -1,0 +1,24 @@
+.status {
+  color: rgb(122, 122, 122);
+  border: solid 1px;
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: max-content;
+  margin: auto;
+}
+.status-primary {
+  color: #31c4f3;
+}
+.status-published,
+.status-success {
+  color: rgb(6, 209, 97);
+}
+.status-pending {
+  color: rgb(219, 143, 0);
+}
+
+td {
+  text-align: center;
+  align-items: center;
+}

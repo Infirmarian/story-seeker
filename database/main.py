@@ -1,24 +1,31 @@
-from flask import Flask, send_file, request, abort
-from flask_cors import CORS
-from flask_api import status
-import os
-from utils import get_authorization
-import json
-import requests
 import secrets
-def dev():
-    return True
-
+import requests
+import json
+from flask_api import status
+from flask_cors import CORS
+from flask import Flask, send_file, request, abort
 from db_connector import query, DBError
-import db_connector as db
-import update_models
 import time
+import update_models
+import os
+
+import db_connector as db
+
+
 CLIENT_SECRET = os.environ['CLIENT_SECRET']
 CLIENT_ID = os.environ['CLIENT_ID']
 VENDOR_ID = os.environ['VENDOR_ID']
+dev = os.environ['SERVER_STATE'] == 'DEVELOPMENT'
 
 app = Flask(__name__, static_folder='build')
-CORS(app)
+
+if dev:
+    CORS(app)
+
+
+def get_authorization(request):
+    return request.headers.get('Authorization')
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -39,8 +46,9 @@ def login():
                 user_data = user_info.json()
                 token = secrets.token_urlsafe(32)
                 try:
-                    query(db.login, user_data['user_id'], user_data['name'], user_data['email'], token)
-                    return app.response_class(json.dumps({'token': token}), 200, mimetype='application/json')
+                    access_level = query(
+                        db.login, user_data['user_id'], user_data['name'], user_data['email'], token)
+                    return app.response_class(json.dumps({'token': token, 'access': access_level}), 200, mimetype='application/json')
                 except DBError as e:
                     return app.response_class(e.response, e.status, mimetype='application/json')
             else:
@@ -60,6 +68,17 @@ def pending():
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
 
+
+@app.route('/api/stories', methods=['GET'])
+def all_stories():
+    auth = get_authorization(request)
+    try:
+        stories = query(db.get_all, auth)
+        return app.response_class(json.dumps(stories), mimetype='application/json')
+    except DBError as e:
+        return app.response_class(e.response, e.status, mimetype='application/json')
+
+
 @app.route('/api/preview/<storyid>', methods=['GET'])
 def get_story(storyid):
     auth = get_authorization(request)
@@ -68,6 +87,7 @@ def get_story(storyid):
         return app.response_class(json.dumps(result), mimetype='application/json')
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
+
 
 @app.route('/api/approve/<storyid>')
 def approve(storyid):
@@ -79,14 +99,14 @@ def approve(storyid):
         return app.response_class(e.response, e.status, mimetype='application/json')
 
 
-# @app.route('/update', methods=['POST'])
-# def update():
-#     authorization = request.headers.get('Authorization')
-#     if authorization and authorization == os.environ['AUTH_TOKEN']:
-#         utils.compile_authors()
-#         utils.compile_titles()
-#         return app.response_class(status=201)
-#     return app.response_class(status=403)
+@app.route('/api/revoke/<storyid>')
+def revoke(storyid):
+    auth = get_authorization(request)
+    try:
+        query(db.revoke_story, auth, storyid)
+        return app.response_class(status=200)
+    except DBError as e:
+        return app.response_class(e.response, e.status, mimetype='application/json')
 
 # Catch all /api requests and 404
 @app.route('/api/<path:path>')
@@ -98,6 +118,7 @@ def error_api(path):
 @app.route('/<path:path>')
 def catch_all(path):
     return send_file(app.static_folder + '/index.html')
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port='5050')

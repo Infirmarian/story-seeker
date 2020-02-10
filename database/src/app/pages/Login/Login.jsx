@@ -47,7 +47,8 @@ function LoadAmazon(history) {
         } else {
           data.json().then((json) => {
             sessionStorage.setItem("token", json.token);
-            history.push("/pending");
+            sessionStorage.setItem("access", json.access);
+            history.push("/");
           });
         }
       })
