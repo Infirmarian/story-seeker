@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS a.moderator_tokens(
     token VARCHAR(64) PRIMARY KEY,
     userid VARCHAR(256) NOT NULL,
     access_level a.access_level NOT NULL,
+    expiration TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 HOUR' NOT NULL,
     FOREIGN KEY (userid) REFERENCES a.moderators(userid)
 );
 
@@ -146,6 +147,7 @@ GRANT INSERT ON ss.stories TO server;
 GRANT UPDATE ON ss.stories TO server;
 GRANT DELETE ON ss.stories TO server;
 GRANT USAGE, SELECT ON SEQUENCE ss.stories_id_seq TO server; -- Needed to update sequencing
+GRANT USAGE, SELECT ON SEQUENCE ss.authors_iid_seq TO server;
 GRANT SELECT ON ss.authors TO server;
 GRANT INSERT ON ss.authors TO server;
 GRANT SELECT ON a.tokens TO server;
@@ -163,6 +165,7 @@ GRANT USAGE ON SCHEMA ss TO catalog;
 GRANT USAGE ON SCHEMA a TO catalog;
 GRANT SELECT ON ss.authors TO catalog;
 GRANT SELECT ON ss.stories TO catalog;
+GRANT UPDATE ON ss.stories TO catalog;
 GRANT SELECT ON a.moderators TO catalog;
 GRANT INSERT ON a.moderators TO catalog;
 GRANT SELECT ON a.moderator_tokens TO catalog;

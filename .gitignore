@@ -14,4 +14,13 @@ build/
 database/catalog/*.json
 
 # Alexa
-alexa/Story_Seeker/
+alexa/
+
+# App Engine
+app.yaml
+
+# SQL Dumps
+*.psql
+
+# Key for cloud storage
+database/storage-key.json

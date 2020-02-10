@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2 import OperationalError
 import os
 import json
+from update_models import update_titles
 from main import dev
 
 conn = None
@@ -53,6 +54,7 @@ def login(userid: str, name: str, email: str, token: str):
             raise DBError(403, 'Not authorized as an admin')
         cursor.execute('INSERT INTO a.moderator_tokens (token, userid, access_level) VALUES (%s, %s, %s)', 
             (token, userid, result[1]))
+        conn.commit()
 
 def get_pending(token: str):
     if token is None:
@@ -60,27 +62,37 @@ def get_pending(token: str):
     with conn.cursor() as cursor:
         get_user_and_auth(token, cursor)
         cursor.execute(
-            '''SELECT title, id FROM ss.stories WHERE published = 'pending' ORDER BY last_modified DESC''')
+            '''SELECT title, id, last_modified FROM ss.stories WHERE published = 'pending' ORDER BY last_modified DESC''')
         res = cursor.fetchall()
-        return {"stories":[{"title": n[0], "id": n[1]} for n in res]}
+        return {"stories":[{"title": n[0], "id": n[1], "last_modified": n[2].strftime("%m/%d/%Y")} for n in res]}
 
 def get_story(token: str, storyid: str):
     if token is None:
         raise DBError(403, 'No token provided')
     with conn.cursor() as cursor:
         get_user_and_auth(token, cursor)
-        cursor.execute('SELECT title, content FROM ss.stories WHERE id = %s;', (storyid,))
+        cursor.execute('SELECT content FROM ss.stories WHERE id = %s;', (storyid,))
         result = cursor.fetchone()
-        return {'title': result[0], 'content': result[1]}
+        return result[0]
 
 def approve_story(token: str, storyid: str):
     if token is None:
         raise DBError(403, 'No token provided')
     with conn.cursor() as cursor:
-        get_user_and_auth(token, cursor)
+        if get_user_and_auth(token, cursor)['access'] != 'admin':
+            raise DBError(403, 'Not an admin')
+        cursor.execute('SELECT published FROM ss.stories WHERE id = %s;', (storyid,))
+        status = cursor.fetchone()[0]
+        if status == 'published':
+            print("Already published")
+            return
         cursor.execute(
             '''UPDATE ss.stories SET published = 'published' WHERE id = %s''', (storyid,)
         )
+        conn.commit()
+    update_titles()
+
+
 
 def generate_monthly_author_payments(month, year):
     with conn.cursor() as cursor:
@@ -163,7 +175,7 @@ def generate_titles_json():
 
 def get_user_and_auth(token, cursor):
     cursor.execute(
-        'SELECT userid, authorization FROM a.tokens WHERE token = %s AND expiration > NOW()', (token,))
+        'SELECT userid, access_level FROM a.moderator_tokens WHERE token = %s AND expiration > NOW()', (token,))
     result = cursor.fetchone()
     if result:
         return dict(userid=result[0], access=result[1])

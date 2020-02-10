@@ -55,16 +55,16 @@ def login():
 def pending():
     auth = get_authorization(request)
     try:
-        pending = query(db.get_pending, auth=auth)
+        pending = query(db.get_pending, auth)
         return app.response_class(json.dumps(pending), mimetype='application/json')
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
 
-@app.route('/api/story/<storyid>', methods=['GET'])
+@app.route('/api/preview/<storyid>', methods=['GET'])
 def get_story(storyid):
     auth = get_authorization(request)
     try:
-        result = query(db.get_story, auth=auth, storyid=storyid)
+        result = query(db.get_story, auth, storyid)
         return app.response_class(json.dumps(result), mimetype='application/json')
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
@@ -73,7 +73,8 @@ def get_story(storyid):
 def approve(storyid):
     auth = get_authorization(request)
     try:
-        query(db.approve_story, auth=auth, storyid=storyid)
+        query(db.approve_story, auth, storyid)
+        return app.response_class(status=200)
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
 
