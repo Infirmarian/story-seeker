@@ -2,13 +2,21 @@ import psycopg2
 from psycopg2 import OperationalError
 import os
 import json
+from main import dev
 
 conn = None
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_NAME = os.environ['DB_NAME']
-DB_HOST = os.environ['DB_HOST']
+CLOUD_SQL_CONN_NAME = os.environ['PSQL_CLOUD_INSTANCE']
 
+conn = psycopg2.connect(
+    database=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD,
+    host='localhost' if dev() else f'/cloudsql/{CLOUD_SQL_CONN_NAME}',
+    port='3306' if dev() else '5432'
+)
 
 class DBError(Exception):
     def __init__(self, status, response):
@@ -18,11 +26,11 @@ class DBError(Exception):
 
 def __connect_to_db():
     global conn
-    conn = psycopg2.connect(user=DB_USER,
+    conn = psycopg2.connect(database=DB_NAME,
+                            user=DB_USER,
                             password=DB_PASSWORD,
-                            host=DB_HOST,
-                            port='5432',
-                            database=DB_NAME)
+                            host='localhost' if dev() else f'/cloudsql/{CLOUD_SQL_CONN_NAME}',
+                            port='3306' if dev() else '5432')
 
 
 def query(func, *args, **kwargs):
@@ -34,14 +42,45 @@ def query(func, *args, **kwargs):
         __connect_to_db()
         return func(*args, **kwargs)
 
-
-def get_pending(auth: str):
-    print(auth)
+def login(userid: str, name: str, email: str, token: str):
     with conn.cursor() as cursor:
-        cursor.execute(
-            '''SELECT * FROM ss.stories WHERE published = 'pending' ORDER BY last_modified DESC''')
-    return None
+        cursor.execute('''INSERT INTO a.moderators (userid, access_level, name, email) VALUES (%s, 'user', %s, %s) 
+                            ON CONFLICT DO NOTHING''', (userid, name, email))
+        conn.commit()
+        cursor.execute('SELECT userid, access_level FROM a.moderators WHERE userid = %s', (userid,))
+        result = cursor.fetchone()
+        if result[1] != 'admin':
+            raise DBError(403, 'Not authorized as an admin')
+        cursor.execute('INSERT INTO a.moderator_tokens (token, userid, access_level) VALUES (%s, %s, %s)', 
+            (token, userid, result[1]))
 
+def get_pending(token: str):
+    if token is None:
+        raise DBError(403, 'No token provided')
+    with conn.cursor() as cursor:
+        get_user_and_auth(token, cursor)
+        cursor.execute(
+            '''SELECT title, id FROM ss.stories WHERE published = 'pending' ORDER BY last_modified DESC''')
+        res = cursor.fetchall()
+        return {"stories":[{"title": n[0], "id": n[1]} for n in res]}
+
+def get_story(token: str, storyid: str):
+    if token is None:
+        raise DBError(403, 'No token provided')
+    with conn.cursor() as cursor:
+        get_user_and_auth(token, cursor)
+        cursor.execute('SELECT title, content FROM ss.stories WHERE id = %s;', (storyid,))
+        result = cursor.fetchone()
+        return {'title': result[0], 'content': result[1]}
+
+def approve_story(token: str, storyid: str):
+    if token is None:
+        raise DBError(403, 'No token provided')
+    with conn.cursor() as cursor:
+        get_user_and_auth(token, cursor)
+        cursor.execute(
+            '''UPDATE ss.stories SET published = 'published' WHERE id = %s''', (storyid,)
+        )
 
 def generate_monthly_author_payments(month, year):
     with conn.cursor() as cursor:
@@ -95,9 +134,9 @@ def generate_monthly_author_payments(month, year):
 
 
 def get_user_and_auth(token, cursor):
-    # cursor.execute(
-    #    'SELECT userid, authorization FROM a.tokens WHERE token = %s AND expiration > NOW()', (token,))
-    result = ['abcd', 'admin']  # cursor.fetchone()
+    cursor.execute(
+        'SELECT userid, authorization FROM a.tokens WHERE token = %s AND expiration > NOW()', (token,))
+    result = cursor.fetchone()
     if result:
-        result = dict(userid=result[0], access=result[1])
-    return result
+        return dict(userid=result[0], access=result[1])
+    raise DBError(403, "Unauthorized user")

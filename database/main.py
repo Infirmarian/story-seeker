@@ -1,59 +1,97 @@
 from flask import Flask, send_file, request, abort
+from flask_cors import CORS
+from flask_api import status
 import os
-import utils
+from utils import get_authorization
 import json
+import requests
+import secrets
+
+def dev():
+    return True
+
 from db_connector import query, DBError
 import db_connector as db
+import time
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
+CLIENT_ID = os.environ['CLIENT_ID']
+VENDOR_ID = os.environ['VENDOR_ID']
+
 app = Flask(__name__, static_folder='build')
+CORS(app)
 
-
-@app.errorhandler(404)
-def page_not_found(error):
-    return '''<title>404 Not Found</title>
-<h1>Not Found</h1>
-<p>
-  The requested URL was not found on the server. If you entered the URL manually
-  please check your spelling and try again.
-</p>''', 404
+@app.route('/api/login', methods=['POST'])
+def login():
+    code = request.json.get('code')
+    if code:
+        payload = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET
+        }
+        r = requests.post('https://api.amazon.com/auth/o2/token', data=payload)
+        if r.status_code == 200:
+            response = r.json()
+            user_info = requests.get(
+                'https://api.amazon.com/user/profile?access_token=%s' % response['access_token'])
+            if user_info.status_code == 200:
+                user_data = user_info.json()
+                token = secrets.token_urlsafe(32)
+                try:
+                    query(db.login, user_data['user_id'], user_data['name'], user_data['email'], token)
+                    return app.response_class(json.dumps({'token': token}), 200, mimetype='application/json')
+                except DBError as e:
+                    return app.response_class(e.response, e.status, mimetype='application/json')
+            else:
+                return app.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                                          response=json.dumps(
+                                              {'error': ' Unable to get user information from Amazon'}),
+                                          mimetype='application/json')
+    return app.response_class(status=400, response=json.dumps({'error': 'No code was provided for authentication'}), mimetype='application/json')
 
 
 @app.route('/api/pending', methods=['GET'])
 def pending():
-    auth = utils.get_authorization(request)
-    if auth is None:
-        abort(403)
+    auth = get_authorization(request)
     try:
-        query(db.get_pending, auth=auth)
-        return app.response_class(
-            json.dumps({db.get_pending(auth)}), mimetype='application/json')
+        pending = query(db.get_pending, auth=auth)
+        return app.response_class(json.dumps(pending), mimetype='application/json')
+    except DBError as e:
+        return app.response_class(e.response, e.status, mimetype='application/json')
+
+@app.route('/api/story/<storyid>', methods=['GET'])
+def get_story(storyid):
+    auth = get_authorization(request)
+    try:
+        result = query(db.get_story, auth=auth, storyid=storyid)
+        return app.response_class(json.dumps(result), mimetype='application/json')
+    except DBError as e:
+        return app.response_class(e.response, e.status, mimetype='application/json')
+
+@app.route('/api/approve/<storyid>')
+def approve(storyid):
+    auth = get_authorization(request)
+    try:
+        query(db.approve_story, auth=auth, storyid=storyid)
     except DBError as e:
         return app.response_class(e.response, e.status, mimetype='application/json')
 
 
-@app.route('/titles')
-def serve_titles():
-    t = request.args.get('token')
-    if os.path.exists(app.static_folder + '/titles.json') and t == os.environ['ACCESS_KEY']:
-        return send_file(app.static_folder + '/titles.json', mimetype='application/json')
-    abort(404)
+# @app.route('/update', methods=['POST'])
+# def update():
+#     authorization = request.headers.get('Authorization')
+#     if authorization and authorization == os.environ['AUTH_TOKEN']:
+#         utils.compile_authors()
+#         utils.compile_titles()
+#         return app.response_class(status=201)
+#     return app.response_class(status=403)
 
+# Catch all /api requests and 404
+@app.route('/api/<path:path>')
+def error_api(path):
+    return app.response_class(status=status.HTTP_404_NOT_FOUND)
 
-@app.route('/authors')
-def serve_authors():
-    t = request.args.get('token')
-    if os.path.exists(app.static_folder + '/authors.json') and t == os.environ['ACCESS_KEY']:
-        return send_file(app.static_folder + '/authors.json', mimetype='application/json')
-    abort(404)
-
-
-@app.route('/update', methods=['POST'])
-def update():
-    authorization = request.headers.get('Authorization')
-    if authorization and authorization == os.environ['AUTH_TOKEN']:
-        utils.compile_authors()
-        utils.compile_titles()
-        return app.response_class(status=201)
-    return app.response_class(status=403)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

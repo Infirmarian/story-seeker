@@ -4,7 +4,7 @@ import { URL } from "../../../utils/constants";
 function Setup() {
   window.onAmazonLoginReady = function() {
     window.amazon.Login.setClientId(
-      "amzn1.application-oa2-client.8497a1c842f24fd6b54cd7afef9ea32a"
+      "amzn1.application-oa2-client.819c3b24907c44f6928b93a7e4707e07"
     );
   };
   (function(d) {
@@ -43,9 +43,12 @@ function LoadAmazon(history) {
       .then((data) => {
         if (data.status > 200) {
           console.error(data);
+          history.push("/403");
         } else {
-          console.log("Successfully logged in");
-          history.push("/viewer");
+          data.json().then((json) => {
+            sessionStorage.setItem("token", json.token);
+            history.push("/pending");
+          });
         }
       })
       .catch((error) => {

@@ -4,23 +4,6 @@ from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
 import secrets
-load_dotenv()
-
-DB_USER = os.environ['DB_USER']
-DB_PASSWORD = os.environ['DB_PASSWORD']
-DB_NAME = os.environ['DB_NAME']
-DB_HOST = os.environ['DB_HOST']
-conn = None
-
-
-def connect_to_db():
-    global conn
-    conn = psycopg2.connect(user=DB_USER,
-                            password=DB_PASSWORD,
-                            host=DB_HOST,
-                            port='5432',
-                            database=DB_NAME)
-
 
 def compile_titles() -> None:
     with open('catalog/titles.json', 'w') as f:
