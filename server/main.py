@@ -1,27 +1,26 @@
 # Copyright Robert Geil 2019
-from flask_cors import CORS
-from flask import Flask, request, send_file, send_from_directory, redirect
-from flask_api import status
-import requests
-import secrets
-
-import json
-import os
-
-def dev():
-    d =  os.environ['SERVER_STATE'] == 'DEVELOPMENT'
-    return d
-
 import utils
+import json
+import secrets
+import requests
+from flask_api import status
+from flask import Flask, request, send_file, send_from_directory, redirect
+from flask_cors import CORS
 import db_connection as db
 from db_connection import DBError, query
 from urllib.parse import urlparse, urlunparse
+import os
+
+
+DEV = os.environ['SERVER_STATE'] == 'DEVELOPMENT'
+
 app = Flask(__name__, static_folder='build')
 CLIENT_SECRET = os.environ['LWA_SECRET']
 
 # TODO: Delete this before deployment
-if(dev()):
+if DEV:
     CORS(app)
+
 
 @app.before_request
 def redirect_www():
@@ -33,8 +32,8 @@ def redirect_www():
 
 
 def get_token(request) -> str:
-    if dev():
-        return 'XJDp21MH1YMY2N5jgbBZsHKaaz8hGbJ5StnnkKkiNI8'
+    if DEV:
+        return '_y953Qp1nEUrbdqjemPI8fQY7cD8Wbkyytone2r-H4U'
     return request.cookies.get('token')
 
 
@@ -82,9 +81,9 @@ def login_token():
                       user_data['name'], user_data['email'], token, 86400)
                 resp = app.response_class(status=200)
                 resp.set_cookie('token', value=token, max_age=86400,
-                                httponly=True)#, domain='storyseeker.fun')
+                                httponly=True)  # , domain='storyseeker.fun')
                 resp.set_cookie('name', value=user_data['name'], max_age=86400,
-                                httponly=True)#, domain='storyseeker.fun')
+                                httponly=True)  # , domain='storyseeker.fun')
                 return resp
             else:
                 return app.response_class(status=status.HTTP_503_SERVICE_UNAVAILABLE,
