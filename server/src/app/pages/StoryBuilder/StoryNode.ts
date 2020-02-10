@@ -34,7 +34,6 @@ export class StoryNode extends DefaultNodeModel {
     this.id = options.id;
 
     if (!this.isBeginning) {
-      // this.addInPort("in");
       this.addInputPort("in");
     }
   }
@@ -63,10 +62,12 @@ export class StoryNode extends DefaultNodeModel {
       question: this.question,
       beginning: this.isBeginning,
       end: this.isEnd,
-      outputPortAnswers: this.portsOut.map((port) => {
-        let answerPort = port as AnswerPort;
-        return { text: answerPort.answer, id: answerPort.getID() };
-      }),
+      outputPortAnswers: this.isEnd
+        ? []
+        : this.portsOut.map((port) => {
+            let answerPort = port as AnswerPort;
+            return { text: answerPort.answer, id: answerPort.getID() };
+          }),
     };
   }
 
