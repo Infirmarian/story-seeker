@@ -34,7 +34,7 @@ def validate_json(story):
     if len(story) == 0:
         errors.append('Story is empty')  # Empty story
     unvisited = set()
-    for i in range(len(story)):
+    for i in range(1, len(story)):
         unvisited.add(i)
     for element in story:
         if not isinstance(element, dict):
@@ -90,9 +90,10 @@ def compile_to_alexa(serialized, title, author):
             mapping[node['id']] = count
             count += 1
         content[mapping[node['id']]]['main'] = node['text']
-        content[mapping[node['id']]]['question'] = node['question']
-        content[mapping[node['id']]]['options'] = [[a['text'], a['id']]
-                                                   for a in node['outputPortAnswers']]
+        if not node['end']:
+            content[mapping[node['id']]]['question'] = node['question']
+            content[mapping[node['id']]]['options'] = [[a['text'], a['id']]
+                                                    for a in node['outputPortAnswers']]
     for link in serialized['links']:
         content[mapping[link['sourceID']]
                 ]['options'][link['sourceIndex']][1] = mapping[link['sink']]

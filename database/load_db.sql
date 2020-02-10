@@ -19,6 +19,7 @@ CREATE TYPE a.access_level AS ENUM('user', 'admin');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
+    iid SERIAL NOT NULL UNIQUE,
     name VARCHAR(128) NOT NULL,
     email VARCHAR(320),
     paypal VARCHAR(256),
@@ -106,6 +107,21 @@ CREATE TABLE IF NOT EXISTS a.payments(
     PRIMARY KEY (authorid, month)
 );
 
+CREATE TABLE IF NOT EXISTS a.moderators(
+    userid VARCHAR(256) PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    email VARCHAR(320) NOT NULL,
+    access_level a.access_level NOT NULL DEFAULT 'user'
+);
+
+CREATE TABLE IF NOT EXISTS a.moderator_tokens(
+    token VARCHAR(64) PRIMARY KEY,
+    userid VARCHAR(256) NOT NULL,
+    access_level a.access_level NOT NULL,
+    expiration TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 HOUR' NOT NULL,
+    FOREIGN KEY (userid) REFERENCES a.moderators(userid)
+);
+
 --CREATE USER lambda WITH PASSWORD '########';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM lambda;
 GRANT USAGE ON SCHEMA ss TO lambda;
@@ -116,6 +132,7 @@ GRANT DELETE ON ss.saved_state TO lambda;
 GRANT SELECT ON ss.users TO lambda;
 GRANT UPDATE ON ss.users TO lambda;
 GRANT INSERT ON ss.users TO lambda;
+GRANT SELECT ON ss.authors TO lambda;
 GRANT SELECT ON ss.libraries TO lambda;
 GRANT INSERT ON ss.libraries TO lambda;
 GRANT SELECT ON ss.stories TO lambda;
@@ -130,6 +147,7 @@ GRANT INSERT ON ss.stories TO server;
 GRANT UPDATE ON ss.stories TO server;
 GRANT DELETE ON ss.stories TO server;
 GRANT USAGE, SELECT ON SEQUENCE ss.stories_id_seq TO server; -- Needed to update sequencing
+GRANT USAGE, SELECT ON SEQUENCE ss.authors_iid_seq TO server;
 GRANT SELECT ON ss.authors TO server;
 GRANT INSERT ON ss.authors TO server;
 GRANT SELECT ON a.tokens TO server;
@@ -142,6 +160,13 @@ GRANT SELECT ON ss.readings TO server;
 
 --CREATE USER catalog WITH PASSWORD '#######';
 REVOKE ALL ON ALL TABLES IN SCHEMA ss FROM catalog;
+REVOKE ALL ON ALL TABLES IN SCHEMA a FROM catalog;
 GRANT USAGE ON SCHEMA ss TO catalog;
+GRANT USAGE ON SCHEMA a TO catalog;
 GRANT SELECT ON ss.authors TO catalog;
 GRANT SELECT ON ss.stories TO catalog;
+GRANT UPDATE ON ss.stories TO catalog;
+GRANT SELECT ON a.moderators TO catalog;
+GRANT INSERT ON a.moderators TO catalog;
+GRANT SELECT ON a.moderator_tokens TO catalog;
+GRANT INSERT ON a.moderator_tokens TO catalog;

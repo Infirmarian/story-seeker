@@ -1,0 +1,6 @@
+dispatch:
+  - url: "www.storyseeker.fun/*"
+    service: default
+
+  - url: "mgmt.storyseeker.fun/*"
+    service: management

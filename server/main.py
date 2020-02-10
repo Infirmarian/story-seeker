@@ -35,7 +35,6 @@ def redirect_www():
 def get_token(request) -> str:
     if dev():
         return 'XJDp21MH1YMY2N5jgbBZsHKaaz8hGbJ5StnnkKkiNI8'
-        return 'iB_JnUtM48VdtIsPngKk_A-3iVD6zCLLkI-AflsynYk'
     return request.cookies.get('token')
 
 
@@ -258,7 +257,7 @@ def submit_story_for_review(storyid):
         return app.response_class(status=status.HTTP_400_BAD_REQUEST)
     try:
         query(db.compile_and_submit_story, token, storyid)
-        return app.response_class()
+        return app.response_class(status=200)
     except DBError as e:
         return app.response_class(status=e.status, response=e.response, mimetype='application/json')
 
