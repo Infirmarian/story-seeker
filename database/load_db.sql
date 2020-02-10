@@ -19,6 +19,7 @@ CREATE TYPE a.access_level AS ENUM('user', 'admin');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
+    iid SERIAL NOT NULL UNIQUE,
     name VARCHAR(128) NOT NULL,
     email VARCHAR(320),
     paypal VARCHAR(256),
@@ -130,6 +131,7 @@ GRANT DELETE ON ss.saved_state TO lambda;
 GRANT SELECT ON ss.users TO lambda;
 GRANT UPDATE ON ss.users TO lambda;
 GRANT INSERT ON ss.users TO lambda;
+GRANT SELECT ON ss.authors TO lambda;
 GRANT SELECT ON ss.libraries TO lambda;
 GRANT INSERT ON ss.libraries TO lambda;
 GRANT SELECT ON ss.stories TO lambda;

@@ -6,12 +6,12 @@ from utils import get_authorization
 import json
 import requests
 import secrets
-
 def dev():
     return True
 
 from db_connector import query, DBError
 import db_connector as db
+import update_models
 import time
 CLIENT_SECRET = os.environ['CLIENT_SECRET']
 CLIENT_ID = os.environ['CLIENT_ID']

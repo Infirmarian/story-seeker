@@ -132,6 +132,34 @@ def generate_monthly_author_payments(month, year):
                 WHERE p.authorid = a.payments.authorid;''', (month, year, month, year))
         conn.commit()
 
+def generate_authors_json():
+    with conn.cursor() as cursor:
+        cursor.execute(
+            "SELECT name, iid FROM ss.authors JOIN ss.stories s ON s.authorid = userid WHERE s.published = 'published' GROUP BY name, iid;")
+        row = cursor.fetchone()
+        comma = ''
+        with open('catalog/authors.json', 'w') as f:
+            f.write('{"values": [')
+            while row:
+                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' % (comma, row[1], row[0]))
+                comma = ','
+                row = cursor.fetchone()
+            f.write(']}\n')
+
+
+def generate_titles_json():
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT title, id FROM ss.stories WHERE published = 'published';")
+        row = cursor.fetchone()
+        comma = ''
+        with open('catalog/titles.json', 'w') as f:
+            f.write('{"values": [')
+            while row:
+                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' % (comma, row[1], row[0]))
+                comma = ','
+                row = cursor.fetchone()
+            f.write(']}\n')
+
 
 def get_user_and_auth(token, cursor):
     cursor.execute(
