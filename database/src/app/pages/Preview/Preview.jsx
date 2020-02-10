@@ -43,6 +43,7 @@ function Preview(props) {
       </button>
     ) : null;
   let optCount = 0;
+  console.log(story);
   return loading ? (
     <h1>Loading</h1>
   ) : (

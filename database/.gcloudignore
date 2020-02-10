@@ -16,6 +16,12 @@
 # Python pycache:
 __pycache__/
 
+# Python packages
+venv/
+
+# React source files
+src/
+
 # Node Modules
 node_modules/
 

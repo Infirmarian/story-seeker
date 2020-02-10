@@ -13,8 +13,9 @@
     "react-scripts": "3.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_SERVER_STATE=DEVELOPMENT react-scripts start",
+    "dev": "REACT_APP_SERVER_STATE=DEVELOPMENT react-scripts build",
+    "prod": "REACT_APP_SERVER_STATE=PRODUCTION react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -32,5 +33,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "homepage": "https://mgmt.storyseeker.fun/build"
 }
