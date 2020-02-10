@@ -9,7 +9,8 @@ import json
 import os
 
 def dev():
-    return os.environ['SERVER_STATE'] == 'DEVELOPMENT'
+    d =  os.environ['SERVER_STATE'] == 'DEVELOPMENT'
+    return d
 
 import utils
 import db_connection as db
@@ -33,7 +34,7 @@ def redirect_www():
 
 def get_token(request) -> str:
     if dev():
-        return 'tUVBHXeT6nlkyvY0EtgaI-oBoK21jPxoSC1OjFQC3_8'
+        return 'XJDp21MH1YMY2N5jgbBZsHKaaz8hGbJ5StnnkKkiNI8'
     return request.cookies.get('token')
 
 
