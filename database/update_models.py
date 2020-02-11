@@ -22,7 +22,7 @@ storage_client = storage.Client()
 BUCKET_NAME="story-seeker-catalogues"
 
 def compile_authors():
-    db.query(db.generate_authors_json)
+    authors = db.query(db.generate_authors_json)
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob("authors.json")
     try:
@@ -30,10 +30,10 @@ def compile_authors():
     except NotFound:
         pass
     blob = bucket.blob("authors.json")
-    blob.upload_from_filename("catalog/authors.json")
+    blob.upload_from_string(authors)
 
 def compile_titles():
-    db.query(db.generate_titles_json)
+    titles = db.query(db.generate_titles_json)
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob("titles.json")
     try:
@@ -41,7 +41,7 @@ def compile_titles():
     except NotFound:
         pass
     blob = bucket.blob("titles.json")
-    blob.upload_from_filename("catalog/titles.json")
+    blob.upload_from_string(titles)
 
 def update_authors():
     compile_authors()

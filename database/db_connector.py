@@ -203,32 +203,14 @@ def generate_authors_json():
     with conn.cursor() as cursor:
         cursor.execute(
             "SELECT name, iid FROM ss.authors JOIN ss.stories s ON s.authorid = userid WHERE s.published = 'published' GROUP BY name, iid;")
-        row = cursor.fetchone()
-        comma = ''
-        with open('catalog/authors.json', 'w') as f:
-            f.write('{"values": [')
-            while row:
-                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' %
-                        (comma, row[1], row[0]))
-                comma = ','
-                row = cursor.fetchone()
-            f.write(']}\n')
+        return json.dumps({"values": [{"id": row[1], "name":{"value": row[0]}} for row in cursor.fetchall()]})
 
 
 def generate_titles_json():
     with conn.cursor() as cursor:
         cursor.execute(
             "SELECT title, id FROM ss.stories WHERE published = 'published';")
-        row = cursor.fetchone()
-        comma = ''
-        with open('catalog/titles.json', 'w') as f:
-            f.write('{"values": [')
-            while row:
-                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' %
-                        (comma, row[1], row[0]))
-                comma = ','
-                row = cursor.fetchone()
-            f.write(']}\n')
+        return json.dumps({"values": [{"id": row[1], "name":{"value": row[0]}} for row in cursor.fetchall()]})
 
 
 def require_admin(token, cursor):
