@@ -131,6 +131,23 @@ def approve_story(token: str, storyid: str):
     update_titles()
 
 
+def reject_story(token, storyid):
+    if token is None:
+        raise DBError(403, 'No token provided')
+    with conn.cursor() as cursor:
+        require_moderator(token, cursor)
+        cursor.execute(
+            'SELECT published FROM ss.stories WHERE id = %s;', (storyid,))
+        status = cursor.fetchone()[0]
+        if status != 'pending':
+            raise DBError(500, 'The selected story is not pending')
+        cursor.execute(
+            '''UPDATE ss.stories SET published = 'not published' WHERE id = %s''', (
+                storyid,)
+        )
+        conn.commit()
+
+
 def generate_monthly_author_payments(month, year):
     with conn.cursor() as cursor:
         cursor.execute(
@@ -186,32 +203,14 @@ def generate_authors_json():
     with conn.cursor() as cursor:
         cursor.execute(
             "SELECT name, iid FROM ss.authors JOIN ss.stories s ON s.authorid = userid WHERE s.published = 'published' GROUP BY name, iid;")
-        row = cursor.fetchone()
-        comma = ''
-        with open('catalog/authors.json', 'w') as f:
-            f.write('{"values": [')
-            while row:
-                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' %
-                        (comma, row[1], row[0]))
-                comma = ','
-                row = cursor.fetchone()
-            f.write(']}\n')
+        return json.dumps({"values": [{"id": row[1], "name":{"value": row[0]}} for row in cursor.fetchall()]})
 
 
 def generate_titles_json():
     with conn.cursor() as cursor:
         cursor.execute(
             "SELECT title, id FROM ss.stories WHERE published = 'published';")
-        row = cursor.fetchone()
-        comma = ''
-        with open('catalog/titles.json', 'w') as f:
-            f.write('{"values": [')
-            while row:
-                f.write('''%s{"id":"%s","name":{"value":"%s"}}''' %
-                        (comma, row[1], row[0]))
-                comma = ','
-                row = cursor.fetchone()
-            f.write(']}\n')
+        return json.dumps({"values": [{"id": row[1], "name":{"value": row[0]}} for row in cursor.fetchall()]})
 
 
 def require_admin(token, cursor):

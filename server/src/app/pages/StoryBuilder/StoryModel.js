@@ -1,5 +1,6 @@
 import { DiagramModel, DefaultLinkModel } from "@projectstorm/react-diagrams";
 import { StoryNode } from "./StoryNode";
+import { InputPort } from "./CustomPorts";
 
 class StoryModel extends DiagramModel {
   storyID;
@@ -15,20 +16,37 @@ class StoryModel extends DiagramModel {
       result.nodes.push(e.serializeNode());
     });
     this.getLinks().forEach((l) => {
-      result.links.push({
-        sourceID: l
-          .getSourcePort()
-          .getNode()
-          .getID(),
-        sourceIndex: l
-          .getSourcePort()
-          .getNode()
-          .getPortIndex(l.getSourcePort().getID()),
-        sink: l
-          .getTargetPort()
-          .getNode()
-          .getID(),
-      });
+      if (l.sourcePort instanceof InputPort) {
+        result.links.push({
+          sourceID: l
+            .getTargetPort()
+            .getNode()
+            .getID(),
+          sourceIndex: l
+            .getTargetPort()
+            .getNode()
+            .getPortIndex(l.getTargetPort().getID()),
+          sink: l
+            .getSourcePort()
+            .getNode()
+            .getID(),
+        });
+      } else {
+        result.links.push({
+          sourceID: l
+            .getSourcePort()
+            .getNode()
+            .getID(),
+          sourceIndex: l
+            .getSourcePort()
+            .getNode()
+            .getPortIndex(l.getSourcePort().getID()),
+          sink: l
+            .getTargetPort()
+            .getNode()
+            .getID(),
+        });
+      }
     });
     console.log(result);
     return JSON.stringify(result);
@@ -55,7 +73,7 @@ class StoryModel extends DiagramModel {
     obj.links.forEach((l) => {
       let ln = new DefaultLinkModel();
       let sink = nodes[l.sink].getInputPort();
-      console.log("sink", sink);
+      if (!sink) return;
       ln.setTargetPort(sink);
       let source = nodes[l.sourceID].getOutPorts()[l.sourceIndex];
       if (source) {
