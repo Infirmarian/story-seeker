@@ -99,6 +99,16 @@ def approve(storyid):
         return app.response_class(e.response, e.status, mimetype='application/json')
 
 
+@app.route('/api/reject/<storyid>')
+def reject(storyid):
+    auth = get_authorization(request)
+    try:
+        query(db.reject_story, auth, storyid)
+        return app.response_class(status=200)
+    except DBError as e:
+        return app.response_class(e.response, e.status, mimetype='application/json')
+
+
 @app.route('/api/revoke/<storyid>')
 def revoke(storyid):
     auth = get_authorization(request)

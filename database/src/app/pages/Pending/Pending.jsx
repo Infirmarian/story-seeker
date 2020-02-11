@@ -84,7 +84,22 @@ function Pending(props) {
                             `Are you sure you want to reject ${story.title}?`
                           )
                         ) {
-                          console.log("Rejected!");
+                          const token = sessionStorage.getItem("token");
+                          fetch(`${URL}/api/reject/${story.id}`, {
+                            method: "GET",
+                            headers: new Headers({
+                              Authorization: token,
+                            }),
+                          }).then((resp) => {
+                            if (resp.ok) {
+                              console.log("Rejected");
+                              history.push("/pending");
+                            } else {
+                              window.alert(
+                                "Something went wrong and it failed to be rejected"
+                              );
+                            }
+                          });
                         }
                       }}
                     >

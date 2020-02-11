@@ -131,6 +131,23 @@ def approve_story(token: str, storyid: str):
     update_titles()
 
 
+def reject_story(token, storyid):
+    if token is None:
+        raise DBError(403, 'No token provided')
+    with conn.cursor() as cursor:
+        require_moderator(token, cursor)
+        cursor.execute(
+            'SELECT published FROM ss.stories WHERE id = %s;', (storyid,))
+        status = cursor.fetchone()[0]
+        if status != 'pending':
+            raise DBError(500, 'The selected story is not pending')
+        cursor.execute(
+            '''UPDATE ss.stories SET published = 'not published' WHERE id = %s''', (
+                storyid,)
+        )
+        conn.commit()
+
+
 def generate_monthly_author_payments(month, year):
     with conn.cursor() as cursor:
         cursor.execute(
