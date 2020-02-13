@@ -13,12 +13,13 @@ CREATE TYPE ss.category AS ENUM(
     'detective',
     'dystopia');
 CREATE TYPE ss.rating AS ENUM('G', 'PG', 'PG-13', 'R', 'NR');
-CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published');
+CREATE TYPE ss.publication_status AS ENUM('not published', 'pending', 'published', 'unlisted');
 CREATE TYPE ss.reading_type AS ENUM('subscribed', 'owned');
-CREATE TYPE a.access_level AS ENUM('user', 'admin');
+CREATE TYPE a.access_level AS ENUM('user', 'admin', 'moderator');
 
 CREATE TABLE IF NOT EXISTS ss.authors(
     userid VARCHAR(256) PRIMARY KEY,
+    amazonID VARCHAR(256) UNIQUE,
     iid SERIAL NOT NULL UNIQUE,
     name VARCHAR(128) NOT NULL,
     email VARCHAR(320),

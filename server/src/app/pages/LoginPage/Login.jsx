@@ -18,14 +18,27 @@ function Setup() {
   })(document);
 }
 
+function SetupGoogle() {
+  var a = document.createElement("script");
+  a.type = "text/javascript";
+  a.async = true;
+  a.src = "https://apis.google.com/js/platform.js?onload=renderButton";
+  document.getElementsByClassName("g-signin2")[0].appendChild(a);
+  var meta = document.createElement("meta");
+  meta.name = "google-signin-client_id";
+  meta.content =
+    "821263154043-vtlolhs344g4b7fgpv908pevmrj0ockb.apps.googleusercontent.com";
+  document.head.appendChild(meta);
+}
+
 function LoadAmazon(history) {
   let options = {};
   options.scope = "profile";
   options.scope_data = {
-    profile: { essential: false }
+    profile: { essential: false },
   };
   options.response_type = "code";
-  window.amazon.Login.authorize(options, response => {
+  window.amazon.Login.authorize(options, (response) => {
     if (response.error) {
       alert("oauth error " + response.error);
       return false;
@@ -35,13 +48,13 @@ function LoadAmazon(history) {
       cache: "no-cache",
       credentials: "same-origin", // include, *same-origin, omit
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       redirect: "follow", // manual, *follow, error
       referrer: "no-referrer", // no-referrer, *client
-      body: JSON.stringify({ code: response.code }) // body data type must match "Content-Type" header
+      body: JSON.stringify({ code: response.code }), // body data type must match "Content-Type" header
     })
-      .then(data => {
+      .then((data) => {
         if (data.status > 200) {
           console.error(data);
         } else {
@@ -49,26 +62,33 @@ function LoadAmazon(history) {
           history.push("/viewer");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   });
   return false;
 }
+
 function Login() {
   useEffect(() => {
     Setup();
+    SetupGoogle();
   }, []);
   let history = useHistory();
   return (
     <div>
       <div id="amazon-root"></div>
-      <div id="textbox">
-        <div className="login-container">
+      <div className="wrapper">
+        <div id="login-container">
           <h3 className="text-primary centered-text">
-            Log in with your Amazon Account to create, save and publish stories
-            for other users
+            Log in to create, save and publish stories for other users
           </h3>
+          <div
+            className="g-signin2"
+            data-onsuccess="onSignIn"
+            data-width="240"
+            data-height="50"
+          ></div>
           <div id="LoginWithAmazon">
             <img
               border="0"

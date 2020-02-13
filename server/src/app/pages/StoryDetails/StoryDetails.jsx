@@ -180,7 +180,6 @@ function StoryDetails(props) {
       Delete Story
     </Button>
   ) : null;
-  console.log(storyDetails.published);
   const submitStoryButton =
     id && storyDetails.published === "not published" ? (
       <Button

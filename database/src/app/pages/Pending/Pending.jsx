@@ -51,7 +51,7 @@ function Pending(props) {
                   <td>{story.title}</td>
                   <td>{story.last_modified}</td>
                   <td>
-                    <Link to={`/pending/${story.id}`}>Story</Link>
+                    <Link to={`/story/${story.id}`}>Story</Link>
                   </td>
                   <td>
                     <button
@@ -68,6 +68,14 @@ function Pending(props) {
                             headers: new Headers({
                               Authorization: token,
                             }),
+                          }).then((resp) => {
+                            if (resp.ok) {
+                              window.alert("Accepted story");
+                            } else {
+                              window.alert(
+                                "Something went wrong and it failed to be accepted"
+                              );
+                            }
                           });
                         }
                       }}
