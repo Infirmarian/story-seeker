@@ -28,3 +28,15 @@ class Rating(Enum):
     PG = 2
     PG_13 = 3
     R = 4
+
+
+class PublicationStatus(Enum):
+    not_published = 0
+    unlisted = 1
+    pending = 2
+    published = 3
+
+
+class ReadingType(Enum):
+    subscribed = 0
+    owned = 1
