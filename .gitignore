@@ -24,3 +24,5 @@ app.yaml
 
 # Key for cloud storage
 database/storage-key.json
+*.pyc
+
