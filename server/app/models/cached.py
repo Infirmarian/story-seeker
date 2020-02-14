@@ -1,5 +1,6 @@
 from .. import db
 from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, Enum, ARRAY
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.models.enums import AccessLevel
 
@@ -10,9 +11,10 @@ class Pause(db.Model):
     #path = Column(ARRAY(Integer), nullable=False)
 
 
-class Tokens(db.Model):
+class Token(db.Model):
     token = Column(String(32), primary_key=True)
-    id = Column(Integer, ForeignKey('author.id'), nullable=False)
+    author_id = Column(Integer, ForeignKey('author.id'), nullable=False)
+    author = relationship('Author', back_populates='tokens')
     expiration = Column(DateTime(timezone=True), nullable=False)
 
 

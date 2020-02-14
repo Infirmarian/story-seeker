@@ -26,10 +26,7 @@ from .views import static_routes
 from .views import react_routes
 
 
+import datetime
 @app.before_first_request
 def init():
     db.create_all()
-    a = Author()
-    db.session.add(a)
-    l = Tokens(token='hiboy', id=a.id)
-    db.session.add(l()

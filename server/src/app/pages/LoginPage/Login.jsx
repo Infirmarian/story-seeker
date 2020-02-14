@@ -43,7 +43,7 @@ function LoadAmazon(history) {
       alert("oauth error " + response.error);
       return false;
     }
-    fetch(URL + "/api/login", {
+    fetch(URL + "/api/login/amazon", {
       method: "POST",
       cache: "no-cache",
       credentials: "same-origin", // include, *same-origin, omit

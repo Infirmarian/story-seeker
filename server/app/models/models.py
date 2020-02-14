@@ -14,6 +14,7 @@ class User(db.Model):
 
 class Author(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(length=256), nullable=False)
     googleID = Column(String(length=256), unique=True)
     amazonID = Column(String(length=256), unique=True)
     email = Column(String(320))
@@ -21,6 +22,7 @@ class Author(db.Model):
     joined = Column(TIMESTAMP(timezone=True),
                     default=func.now(), nullable=False)
     stories = relationship('Story', backref='author', lazy=True)
+    tokens = relationship('Token', back_populates='author')
 
 
 class Moderator(db.Model):
