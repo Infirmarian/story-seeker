@@ -15,8 +15,8 @@ class User(db.Model):
 class Author(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(length=256), nullable=False)
-    googleID = Column(String(length=256), unique=True)
-    amazonID = Column(String(length=256), unique=True)
+    googleID = Column(String(length=256), unique=True, index=True)
+    amazonID = Column(String(length=256), unique=True, index=True)
     email = Column(String(320))
     paypal = Column(String(256))
     joined = Column(TIMESTAMP(timezone=True),

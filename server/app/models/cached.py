@@ -13,7 +13,8 @@ class Pause(db.Model):
 
 class Token(db.Model):
     token = Column(String(32), primary_key=True)
-    author_id = Column(Integer, ForeignKey('author.id'), nullable=False)
+    author_id = Column(Integer, ForeignKey(
+        'author.id'), nullable=False, index=True)
     author = relationship('Author', back_populates='tokens')
     expiration = Column(DateTime(timezone=True), nullable=False)
 

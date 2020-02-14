@@ -21,7 +21,7 @@ def redirect_www():
 from .models.models import *
 from .models.stories import *
 from .models.cached import *
-from .views.api import auth
+from .views.api import auth, story
 from .views import static_routes
 from .views import react_routes
 

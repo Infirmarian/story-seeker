@@ -10,7 +10,6 @@ class Story(db.Model):
     title = Column(String(128), nullable=False)
     content = Column(JSON)
     serialized_story = Column(JSON)
-    author_id = Column(Integer, ForeignKey('author.id'), nullable=False)
     price = Column(Integer, nullable=False, default=0)
     summary = Column(Text, nullable=False)
     genre = Column(Enum(Genre))
@@ -20,3 +19,5 @@ class Story(db.Model):
     created = Column(DateTime(timezone=True), default=func.now())
     last_modified = Column(DateTime(timezone=True), default=func.now())
     last_compiled = Column(DateTime(timezone=True), default=0)
+    author_id = Column(Integer, ForeignKey('author.id'), nullable=False)
+# TODO    author = relationship

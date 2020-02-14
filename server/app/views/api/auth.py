@@ -35,11 +35,11 @@ def login():
             amazonID=user_data['user_id'], name=user_data['name'], email=user_data['email'])
         db.session.add(author)
     token = Token(token=secrets.token_urlsafe(32), author=author,
-                  expiration=datetime.now() + timedelta(days=1))
+                  expiration=datetime.now() + timedelta(seconds=24 * 60 * 60))
     db.session.add(token)
     db.session.commit()
     r = app.response_class(dumps({'error': None}), 200)
-    r.set_cookie('token', token.token, expires=24 * 60 * 60, httponly=True)
+    r.set_cookie('token', token.token, max_age=24 * 60 * 60, httponly=True)
     return r
 
 
@@ -49,3 +49,13 @@ def login():
 def logout(user):
     Token.query.filter_by(author=user).delete()
     db.session.commit()
+    r = app.response_class(dumps({'error': None}))
+    r.set_cookie('token', value='', expires=0)
+    return r
+
+
+@app.route('/api/current_user')
+@json_response
+@authenticated
+def current_user(user):
+    return {'user': user.name}
