@@ -20,6 +20,7 @@ class Genre(Enum):
     mystery = 7
     detective = 8
     dystopia = 9
+    NA = 10
 
 
 class Rating(Enum):
