@@ -2,8 +2,10 @@ from flask import request
 from app import app, db
 from app.views.api.common import json_response, authenticated
 from app.models.stories import Story
+from app.models.enums import PublicationStatus
 from sqlalchemy.sql import func
 import json
+from app.utils.validation import compile, check_story
 
 
 @app.route('/api/list')
@@ -88,3 +90,17 @@ def save_builder(user, storyid):
 
 # Compile and build story
 # TODO:
+@app.route('/api/submit/<storyid>', methods=['GET'])
+@json_response
+@authenticated
+def submit_story(user, storyid):
+    story = Story.query.get(storyid)
+    if story is None or story.author != user:
+        return {'error': 'Specified story is not found'}, 404
+    if story.published == PublicationStatus.published or story.published == PublicationStatus.pending:
+        return {'error': 'Specified story is already published or pending'}, 400
+    try:
+        compiled = compile(story.builder)
+        checked = check_story(compiled)
+    except ValueError as e:
+        return {'error': str(e)}

@@ -59,4 +59,9 @@ class Story(db.Model):
     last_compiled = Column(DateTime(timezone=True), default=func.now())
     author_id = Column(Integer, ForeignKey('author.id'), nullable=False)
 
-# TODO    author = relationship
+
+class Library(db.Model):
+    storyid = Column(Integer, ForeignKey('story.id'), nullable=False)
+    userid = Column(Integer, ForeignKey('user.id'), nullable=False)
+    acquired = Column(DateTime(timezone=True), default=func.now())
+    story = relationship('Story', back_populates='library')
