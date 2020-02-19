@@ -6,11 +6,11 @@ from sqlalchemy.orm import relationship
 
 
 class User(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    amazonID = Column(String(256))
-    tokens = Column(Integer, nullable=False, default=0)
-    joined = Column(TIMESTAMP(timezone=True),
-                    default=func.now(), nullable=False)
+    id = db.Column(Integer, primary_key=True, autoincrement=True)
+    amazonID = db.Column(String(256))
+    tokens = db.Column(Integer, nullable=False, default=0)
+    joined = db.Column(TIMESTAMP(timezone=True),
+                       default=func.now(), nullable=False)
 
 
 class Author(db.Model):

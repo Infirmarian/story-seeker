@@ -1,5 +1,5 @@
 from .. import db
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, JSON, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, JSON, Enum, PrimaryKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.models.enums import Genre, Rating, PublicationStatus
@@ -61,7 +61,8 @@ class Story(db.Model):
 
 
 class Library(db.Model):
-    storyid = Column(Integer, ForeignKey('story.id'), nullable=False)
-    userid = Column(Integer, ForeignKey('user.id'), nullable=False)
+    storyid = Column(Integer, ForeignKey('story.id'),
+                     nullable=False, primary_key=True)
+    userid = Column(Integer, ForeignKey('user.id'),
+                    nullable=False, primary_key=True)
     acquired = Column(DateTime(timezone=True), default=func.now())
-    story = relationship('Story', back_populates='library')

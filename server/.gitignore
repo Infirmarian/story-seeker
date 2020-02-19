@@ -10,4 +10,6 @@ startup.sh
 #GCP File
 app.yaml
 app/config.py
-temp.db
+
+# SQLite Databases
+*.db
