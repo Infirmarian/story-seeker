@@ -27,7 +27,7 @@ from .views import static_routes
 from .views import react_routes
 
 
-import datetime
-@app.before_first_request
-def init():
-    db.create_all()
+# import datetime
+# @app.before_first_request
+# def init():
+#     db.create_all()

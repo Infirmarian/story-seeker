@@ -59,3 +59,10 @@ def logout(user):
 @authenticated
 def current_user(user):
     return {'user': user.name}
+
+@app.route('/api/current_user/details')
+@json_response
+@authenticated
+def current_user_details(user):
+    return {"name": user.name, "email": user.email, "paypal": user.paypal}
+#                "payments": [{"month": p[0].strftime("%m/%Y"), "payment":float(p[1]), "paid":p[2]} for p in values]}

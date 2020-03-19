@@ -102,5 +102,21 @@ def submit_story(user, storyid):
     try:
         compiled = compile(story.builder)
         checked = check_story(compiled)
+        story.compiled = checked
+        story.published = PublicationStatus.pending
+        db.session.commit()
+        return
     except ValueError as e:
-        return {'error': str(e)}
+        return {'error': str(e)}, 400
+
+@app.route('/api/preview/<storyid>', methods=['GET'])
+@json_response
+@authenticated
+def preview_story(user, storyid):
+    story = Story.query.get(storyid)
+    if story is None or story.author != user:
+        return {'error': 'Specified story is not found'}, 404
+    result = story.content
+    if story.last_modified > story.last_compiled:
+        result = compile(story)
+    return result

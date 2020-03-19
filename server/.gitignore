@@ -13,3 +13,7 @@ app/config.py
 
 # SQLite Databases
 *.db
+alembic.ini
+
+# Pytest files
+.pytest_cache/

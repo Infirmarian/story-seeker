@@ -4,6 +4,7 @@ from app import app, db
 from app.models.cached import Token
 from flask import request, Response
 from datetime import datetime
+import pytz
 
 
 def json_response(func):
@@ -30,7 +31,8 @@ def authenticated(func):
         if f is None:
             return app.response_class(dumps({'error': 'No authorization provided'}), status=403, mimetype='application/json')
         token = Token.query.get(f)
-        if token is None or token.expiration < datetime.now():
+        l = pytz.utc.localize(datetime.utcnow())
+        if token is None or token.expiration < l:#datetime.utcnow():
             return app.response_class(dumps({'error': 'Expired or invalid login token provided'}), status=403, mimetype='application/json')
         kwargs['user'] = token.author
         return func(*args, **kwargs)

@@ -12,7 +12,7 @@ class Pause(db.Model):
 
 
 class Token(db.Model):
-    token = Column(String(32), primary_key=True)
+    token = Column(String(48), primary_key=True)
     author_id = Column(Integer, ForeignKey(
         'author.id'), nullable=False, index=True)
     author = relationship('Author', back_populates='tokens')
@@ -20,6 +20,6 @@ class Token(db.Model):
 
 
 class ModeratorTokens(db.Model):
-    token = Column(String(32), primary_key=True)
-    id = Column(Integer, ForeignKey('moderator.id'), nullable=False)
+    token = Column(String(48), primary_key=True)
+    id = Column(String(256), ForeignKey('moderator.id'), nullable=False)
     access_level = Column(Enum(AccessLevel), nullable=False)
