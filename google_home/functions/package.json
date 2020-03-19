@@ -1,0 +1,30 @@
+{
+  "name": "hello-action",
+  "description": "Actions SDK sample for Cloud Functions for Firebase",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": "8"
+  },
+  "scripts": {
+    "lint": "eslint --fix \"**/*.js\"",
+    "start": "firebase serve --only functions",
+    "deploy": "firebase deploy --only functions",
+    "test": "npm run lint"
+  },
+  "dependencies": {
+    "actions-on-google": "^2.6.0",
+    "dialogflow-fulfillment": "^0.6.1",
+    "dotenv": "^8.2.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "firebase-admin": "^7.4.0",
+    "firebase-functions": "^3.3.0",
+    "pg": "^7.17.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1"
+  }
+}
