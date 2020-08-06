@@ -1,9 +1,0 @@
-.StoryBuilder {
-  display: flex;
-  flex-direction: row;
-}
-
-.Workspace {
-  display: flex;
-  flex-direction: column;
-}
