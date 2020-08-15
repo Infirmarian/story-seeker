@@ -1,8 +1,5 @@
 .graph {
   width: 500px;
   height: 500px;
-  background-color: cornflowerblue;
-}
-.graph-box {
-  background-color: cornflowerblue;
+  background-color: rgb(32, 46, 65);
 }

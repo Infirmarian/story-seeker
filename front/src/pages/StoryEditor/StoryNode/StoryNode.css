@@ -1,0 +1,23 @@
+.in-port {
+  width: 15px;
+  height: 15px;
+  margin-left: 0px;
+  background-color: dimgray;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.delete-button {
+  border-radius: 100%;
+  background-color: tomato;
+  color: white;
+  border-color: white;
+  border-style: solid;
+  margin-right: -3px;
+  margin-top: -3px;
+  float: right;
+}
+.delete-button:hover {
+  background-color: red;
+  cursor: pointer;
+}

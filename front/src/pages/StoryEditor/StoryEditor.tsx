@@ -5,59 +5,55 @@ import { Firestore } from "../../components/Firebase";
 import Navbar from "../../components/Navbar";
 import Spinner from "../../components/Spinner";
 import "./StoryEditor.css";
-import { StoryNodeModel, StoryNodeFactory } from "./StoryNode";
-import { CanvasWidget } from "@projectstorm/react-canvas-core";
+import StoryNodeFactory from "./StoryNode/StoryNode";
+import { CanvasWidget, InputType } from "@projectstorm/react-canvas-core";
 import createEngine, {
-  DefaultLinkModel,
-  DefaultNodeModel,
-  DiagramModel,
-  DefaultNodeFactory,
+  DefaultDiagramState,
   DefaultPortModel,
-  DefaultPortFactory,
 } from "@projectstorm/react-diagrams";
+import StoryModel from "./StoryModel";
+import StoryNodeModel from "./StoryNode/StoryNodeModel";
 export default function StoryEditor() {
-  //1) setup the diagram engine
-  var engine = createEngine();
+  const engine = createEngine();
   engine.getNodeFactories().registerFactory(new StoryNodeFactory());
-  //2) setup the diagram model
-  var model = new DiagramModel();
-  //3-A) create a default node
+
+  // const model = new StoryModel();
+
+  const model = StoryModel.load(
+    JSON.parse(
+      '{"view":{"x":0,"y":0,"zoom":100},"nodes":[{"id":"d72dc50a-1b66-4f20-bb11-03f437c63bc0","text":"","terminal":false,"question":"","root":false,"position":{"x":259,"y":300},"output":[{"text":"","id":"963b90a3-087e-4f7b-b53e-1c5bfe4980e9"},{"text":"","id":"a5c53400-f65b-4e48-b5b5-9886eb329bb4"}],"input":[{"id":"d812fb81-ec2f-442c-839e-ee15df38a56d"}]},{"id":"9c638903-920b-4e5e-a79e-1799d4440a6c","text":"","terminal":false,"question":"","root":false,"position":{"x":-2,"y":222},"output":[{"text":"","id":"96422711-26aa-492b-b620-6bbeb611c882"},{"text":"","id":"84dfd084-b615-4385-a327-7e172a337d37"}],"input":[{"id":"b36016d7-b541-4a0f-b3ce-b706d573cd27"}]}],"links":[{"sourceNode":"9c638903-920b-4e5e-a79e-1799d4440a6c","sourcePort":"96422711-26aa-492b-b620-6bbeb611c882","targetNode":"d72dc50a-1b66-4f20-bb11-03f437c63bc0"},{"sourceNode":"9c638903-920b-4e5e-a79e-1799d4440a6c","sourcePort":"84dfd084-b615-4385-a327-7e172a337d37","targetNode":"d72dc50a-1b66-4f20-bb11-03f437c63bc0"}]}'
+    )
+  );
   var node1 = new StoryNodeModel();
-  let port1 = node1.addInPort("In");
+  node1.addPort(new DefaultPortModel(true, "In"));
+  node1.setPosition(50, 50);
+  model.addAll(node1);
 
-  //3-B) create another default node
-  var node2 = new DefaultNodeModel("Node 2", "rgb(192,255,0)");
-  let port2 = node2.addInPort("In");
-  node2.setPosition(400, 100);
-
-  // link the ports
-  // let link1 = port1.link<DefaultLinkModel>(port2);
-  // link1.getOptions().testName = "Test";
-  // link1.addLabel("Hello World!");
-
-  //4) add the models to the root graph
-  model.addAll(node1, node2);
-
-  // model.deserializeModel(
-  //   JSON.parse(
-  //     '{"id":"562551fe-892f-49bd-a68f-003ba9b9f7b4","offsetX":0,"offsetY":0,"zoom":100,"gridSize":0,"layers":[{"id":"35231f26-6008-45cd-b75b-1b2e2203e602","type":"diagram-links","isSvg":true,"transformed":true,"models":{"3643ea2a-bf71-4e6e-897b-fa6f63633e8b":{"id":"3643ea2a-bf71-4e6e-897b-fa6f63633e8b","type":"default","source":"53119570-c332-4daf-b3ad-beb9339299b5","sourcePort":"aaddcf42-a90f-43c9-a7ec-aece18d20256","target":"f64a77c6-8779-4784-a392-bc4596d10609","targetPort":"bac75626-d4da-4f13-a1b8-8b27625f46ea","points":[{"id":"2f7ff6ba-a9fc-470a-a035-c8d1e6b46c2e","type":"point","x":147.234375,"y":133.5},{"id":"215af588-5eb6-49db-9d4a-5bb385e84cc2","type":"point","x":251.5,"y":356.5}],"labels":[{"id":"399d5e51-2e15-4820-9c7e-a52829e3f0fd","type":"default","offsetX":0,"offsetY":-23,"label":"Hello World!"}],"width":3,"color":"gray","curvyness":50,"selectedColor":"rgb(0,192,255)"}}},{"id":"04d6655a-1b20-48c9-863b-479442dc1736","type":"diagram-nodes","isSvg":false,"transformed":true,"models":{"53119570-c332-4daf-b3ad-beb9339299b5":{"id":"53119570-c332-4daf-b3ad-beb9339299b5","type":"default","x":100,"y":100,"ports":[{"id":"aaddcf42-a90f-43c9-a7ec-aece18d20256","type":"default","x":139.734375,"y":126,"name":"Out","alignment":"right","parentNode":"53119570-c332-4daf-b3ad-beb9339299b5","links":["3643ea2a-bf71-4e6e-897b-fa6f63633e8b"],"in":false,"label":"Out"}],"name":"Node 1","color":"rgb(0,192,255)","portsInOrder":[],"portsOutOrder":["aaddcf42-a90f-43c9-a7ec-aece18d20256"]},"f64a77c6-8779-4784-a392-bc4596d10609":{"id":"f64a77c6-8779-4784-a392-bc4596d10609","type":"default","selected":true,"x":242,"y":323,"ports":[{"id":"bac75626-d4da-4f13-a1b8-8b27625f46ea","type":"default","x":244,"y":349,"name":"In","alignment":"left","parentNode":"f64a77c6-8779-4784-a392-bc4596d10609","links":["3643ea2a-bf71-4e6e-897b-fa6f63633e8b"],"in":true,"label":"In"}],"name":"Node 2","color":"rgb(192,255,0)","portsInOrder":["bac75626-d4da-4f13-a1b8-8b27625f46ea"],"portsOutOrder":[]}}}]}'
-  //   ),
-  //   engine
-  // );
-  //5) load model into engine
   engine.setModel(model);
-
+  const state = engine.getStateMachine().getCurrentState();
+  if (state instanceof DefaultDiagramState) {
+    state.dragNewLink.config.allowLooseLinks = false;
+  }
+  const actions = engine
+    .getActionEventBus()
+    .getActionsForType(InputType.KEY_DOWN);
+  if (actions[0]) {
+    engine.getActionEventBus().deregisterAction(actions[0]);
+  }
   //6) render the diagram!
   return (
-    <div className="graph">
-      <button
-        onClick={() => {
-          console.log(JSON.stringify(model.serialize()));
-        }}
-      >
-        Save Me
-      </button>
-      <CanvasWidget engine={engine} className="graph" />
-    </div>
+    <>
+      <Navbar />
+      <div className="graph">
+        <CanvasWidget engine={engine} className="graph" />
+        <button
+          onClick={() => {
+            console.log(JSON.stringify(model.save()));
+          }}
+        >
+          Save Me
+        </button>
+      </div>
+    </>
   );
 }

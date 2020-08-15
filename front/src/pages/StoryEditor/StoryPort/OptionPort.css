@@ -1,0 +1,32 @@
+.option-port {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.out-port {
+  height: 20px;
+  margin-right: 0px;
+  margin-left: auto;
+  margin-top: 10px;
+  margin-bottom: auto;
+  display: inline-block;
+}
+.out-text {
+  margin-left: 0px;
+  margin-right: auto;
+  display: inline-block;
+  padding: 0px 10px 0px 10px;
+}
+
+.port-img {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  background-color: dimgray;
+  border-radius: 100%;
+  margin-right: -2px;
+}
+.port-img:hover {
+  background-color: slategrey;
+}
