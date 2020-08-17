@@ -1,8 +1,13 @@
-import { DefaultNodeModel } from "@projectstorm/react-diagrams";
+import {
+  DefaultNodeModel,
+  DiagramEngine,
+  DiagramModel,
+} from "@projectstorm/react-diagrams";
 import OptionPortModel, {
   SerializedOptionPort,
 } from "../StoryPort/OptionPortModel";
 import { v4 } from "uuid";
+import InputPortModel from "../StoryPort/InputPortModel";
 
 export interface SerializedNode {
   text: string;
@@ -15,12 +20,10 @@ export interface SerializedNode {
     y: number;
   };
   output: SerializedOptionPort[];
-  input: any;
 }
 export default class StoryNodeModel extends DefaultNodeModel {
   text: string = "";
   question: string = "";
-  root: boolean = false;
   terminal: boolean = true;
   portsOut: OptionPortModel[] = [];
   constructor(id?: string) {
@@ -29,10 +32,6 @@ export default class StoryNodeModel extends DefaultNodeModel {
       id: id || v4(),
     });
   }
-  setText(text: string) {
-    this.text = text;
-  }
-
   makeNonTerminal() {
     this.terminal = false;
     this.addPort(new OptionPortModel(v4()));
@@ -41,8 +40,23 @@ export default class StoryNodeModel extends DefaultNodeModel {
   makeTerminal() {
     this.terminal = true;
     [...this.getOutPorts()].forEach((p) => {
+      Object.values(p.getLinks()).forEach((l) =>
+        (this.getParentCanvasModel() as DiagramModel).removeLink(l)
+      );
       this.removePort(p);
     });
+  }
+  addInputPort() {
+    if (this.getPort("in")) throw new Error();
+    this.addPort(new InputPortModel());
+  }
+  delete() {
+    Object.values(this.getPorts()).forEach((p) =>
+      Object.values(p.getLinks()).forEach((l) =>
+        (this.getParentCanvasModel() as DiagramModel).removeLink(l)
+      )
+    );
+    (this.getParentCanvasModel() as DiagramModel).removeNode(this);
   }
   save(): SerializedNode {
     return {
@@ -50,26 +64,22 @@ export default class StoryNodeModel extends DefaultNodeModel {
       text: this.text,
       terminal: this.terminal,
       question: this.question,
-      root: this.root,
+      root: this.portsIn.length === 0,
       position: {
         x: this.getX(),
         y: this.getY(),
       },
       output: this.portsOut.map((p) => p.save()),
-      input: this.portsIn.map((p) => ({
-        id: p.getID(),
-      })),
     };
   }
   static load(serialized: SerializedNode) {
     const node = new StoryNodeModel(serialized.id);
     node.position.x = serialized.position.x;
     node.position.y = serialized.position.y;
-    node.root = serialized.root;
     node.text = serialized.text;
     node.question = serialized.question;
     node.terminal = serialized.terminal;
-    if (!node.root) node.addInPort("In");
+    if (!serialized.root) node.addInputPort();
     serialized.output.forEach((o) => node.addPort(OptionPortModel.load(o)));
     return node;
   }

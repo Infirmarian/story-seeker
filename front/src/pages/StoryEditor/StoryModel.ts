@@ -4,7 +4,7 @@ import {
   LinkModel,
 } from "@projectstorm/react-diagrams";
 import StoryNodeModel, { SerializedNode } from "./StoryNode/StoryNodeModel";
-interface serialized {
+export interface SerializedModel {
   view: {
     x: number;
     y: number;
@@ -18,7 +18,7 @@ interface serialized {
   }[];
 }
 export default class StoryModel extends DiagramModel {
-  save(): serialized {
+  save(): SerializedModel {
     const nodes = this.getNodes().map((n) => (n as StoryNodeModel).save());
     const links = this.getLinks().map((l) => ({
       sourceNode: l.getSourcePort().getNode().getID(),
@@ -36,7 +36,7 @@ export default class StoryModel extends DiagramModel {
       links,
     };
   }
-  static load(story: serialized): StoryModel {
+  static load(story: SerializedModel): StoryModel {
     const model = new StoryModel();
     model.setOffsetX(story.view.x);
     model.setOffsetY(story.view.y);

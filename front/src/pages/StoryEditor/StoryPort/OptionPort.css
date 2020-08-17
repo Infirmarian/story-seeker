@@ -21,12 +21,29 @@
 
 .port-img {
   cursor: pointer;
-  width: 15px;
-  height: 15px;
-  background-color: dimgray;
-  border-radius: 100%;
-  margin-right: -2px;
+  border-top: 8px solid transparent;
+  border-left: 10px solid #555;
+  border-bottom: 8px solid transparent;
 }
 .port-img:hover {
-  background-color: slategrey;
+  border-left: 10px solid slategray;
+}
+
+.delete-option {
+  border-radius: 100%;
+  background-color: tomato;
+  color: white;
+  border-color: white;
+  border-style: solid;
+  height: fit-content;
+  width: fit-content;
+  margin-top: auto;
+  margin-left: -10px;
+}
+.delete-option:hover {
+  background-color: red;
+  cursor: pointer;
+}
+.ml0 {
+  margin-left: -11px;
 }

@@ -1,5 +1,16 @@
 .graph {
-  width: 500px;
-  height: 500px;
+  width: 100vw;
+  height: 100%;
   background-color: rgb(32, 46, 65);
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+      to right,
+      rgb(71, 71, 71) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgb(71, 71, 71) 1px, transparent 1px);
+}
+.graph-box {
+  height: calc(100vh - 100px);
+  overflow: hidden;
 }

@@ -21,3 +21,17 @@
   background-color: red;
   cursor: pointer;
 }
+
+.delete-question {
+  border-radius: 100%;
+  background-color: tomato;
+  color: white;
+  border-color: white;
+  border-style: solid;
+  margin-left: -20px;
+}
+
+.delete-question:hover {
+  background-color: red;
+  cursor: pointer;
+}

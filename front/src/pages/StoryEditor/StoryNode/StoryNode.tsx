@@ -42,6 +42,7 @@ function StoryNodeWidget(props: {
         borderWidth: 3,
         borderColor: "white",
         margin: props.node.isSelected() ? 0 : 3,
+        padding: 5,
         overflow: "visible",
       }}
     >
@@ -51,20 +52,20 @@ function StoryNodeWidget(props: {
           if (
             window.confirm("Are you sure you want to delete part of the story?")
           ) {
-            engine.getModel().removeNode(node);
+            node.delete();
             engine.repaintCanvas();
           }
         }}
       >
         x
       </button>
-      {node.root ? null : (
+      {node.getPorts()["in"] ? (
         <div className="out-port">
-          <PortWidget engine={engine} port={node.getPorts()["In"]}>
+          <PortWidget engine={engine} port={node.getPorts()["in"]}>
             <div className="port-img" />
           </PortWidget>
         </div>
-      )}
+      ) : null}
       <TextField
         placeholder="Dialog"
         multiline
@@ -74,12 +75,14 @@ function StoryNodeWidget(props: {
         }
         onChange={(e) => {
           const text = e.target.value.replace(/[\r\n\v]+/g, "");
-          node.setText(text);
+          node.text = text;
           setState({ ...state, text });
         }}
       />
       {node.terminal ? (
         <Button
+          variant="contained"
+          style={{ display: "block", margin: "auto" }}
           onClick={() => {
             node.makeNonTerminal();
             engine.repaintCanvas();
@@ -89,17 +92,19 @@ function StoryNodeWidget(props: {
         </Button>
       ) : (
         <>
-          <Button
-            onClick={() => {
-              node.makeTerminal();
-              engine.repaintCanvas();
-            }}
-          >
-            X
-          </Button>
           <div>
+            <button
+              className="delete-question"
+              onClick={() => {
+                node.makeTerminal();
+                engine.repaintCanvas();
+              }}
+            >
+              x
+            </button>
             <TextField
               placeholder="Question"
+              multiline
               InputProps={{ style: { fontSize: 10 } }}
               value={node.question}
               onChange={(e) => {
@@ -116,6 +121,7 @@ function StoryNodeWidget(props: {
                 engine={engine}
                 port={p as OptionPortModel}
                 optional={i === 2}
+                number={i + 1}
               />
             );
           })}

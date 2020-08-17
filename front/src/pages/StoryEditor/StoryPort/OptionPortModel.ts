@@ -1,5 +1,4 @@
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
-import { v4 } from "uuid";
 export interface SerializedOptionPort {
   text: string;
   id: string;
@@ -10,6 +9,9 @@ export default class OptionPortModel extends DefaultPortModel {
     super({ in: false, name: id, label: id });
     this.setMaximumLinks(1);
     this.text = text || "";
+  }
+  canLinkToPort(port: DefaultPortModel) {
+    return super.canLinkToPort(port) && this.getNode() !== port.getNode();
   }
   save(): SerializedOptionPort {
     return {
